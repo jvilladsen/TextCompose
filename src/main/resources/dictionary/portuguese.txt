@@ -1,0 +1,9 @@
+WinEdt Portuguese (Portugal version) word list:
+
+- 385681 words
+- based on the ISPELL dictionary documented on
+  http://natura.di.uminho.pt/~jj/pln/pln.html
+
+email: esteves@di.uminho.pt, jj@di.uminho.pt
+
+Date: 20 July 2000

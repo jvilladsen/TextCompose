@@ -1,0 +1,584 @@
+
+### font
+
+Change font
+
+Use this tag to control the font. You can choose from most of the fonts that
+you have installed, but note there may be some that, for various reasons, cannot
+be used in PDF documents. In addition, you can of course find many fonts online.
+
+For some fonts there is a choice of "code page" which is a choice of which
+set of characters to use related to the language of the text.
+
+The fonts that you use are embedded in the PDF document to ensures that the
+document will be shown in exactly the same fonts on any other computer. This
+also means that the document file is larger than it would otherwise have been.
+
+If a font cannot be embedded, e.g. due to license restrictions, you can use the
+keyword 'local' for the 'font' tag. Writesetter will then not attempt to embed
+the font, for example<br>
+
+&#160;&#160;&lt;font "A Yummy Apology" local&gt;<br>
+
+This allows you to try the font before paying the license.
+
+
+### size
+
+Change font size
+
+Use this tag to control font size. You can specify the size in absolute terms
+as the size in points or relative to the current font size, such as +2, -2 or
++30%.
+
+
+### face
+
+Change font face
+
+Use this tag to control font face (italic and bold) in case you are using a font
+that does not come with italic and bold forms.
+
+Note that when you choose a font with the 'font' tag, you can select each form of
+the fonts that you have installed, so for example you may have 'Fontin Bold',
+'Fontin Italic', 'Fontin Regular' and 'Fontin SmallCaps' not just 'Fontin'.
+In such cases where the different forms have been crafted, this is they way to go.
+The 'face' tag performs a transformation of whichever font you have selection
+to make it appear more bold or italic. This can be okay if you do not have those
+fonts but is typically not nearly as good.
+
+If you have a document set in 'Fontin Regular' you could defined a tag 'i' and corresponding
+end tag '/i' to switch to 'Fontin Italic' and back.
+
+
+### color
+
+Change text color
+
+Use this tag to control the text color. The color can be specified in either RGB
+(Red, Green, Blue) or HSL (Hue, Saturation, Lightness). You can specify RGB
+these as either three decimal numbers in the range 0-255 or in hexadecimal notation.
+
+Examples: &lt;color RGB 221 40 33&gt; or &lt;color RGB #DD2821&gt;
+Hue, saturation and lightness are specified as three decimal numbers,
+hue in the range 0-360 and the other two in the range 0-100.
+
+
+### underline
+
+Underline text
+
+Use this tag to select underlining of text. 
+
+You can also specify the color of the line, the thickness of the line and the height
+of the line in relation to the baseline. Both the thickness and height can be specified
+in points or as a percentage of font size.
+
+
+### highlight
+
+Highlight text
+
+Use this tag to select background color behind the text.
+
+You can also specify the color and the size of the background coloring.
+
+
+### letter-spacing
+
+Change letter-spacing
+
+Letter-spacing is the space between the characters. The tag allows you to change this spacing.
+
+Letter-spacing is specified either in absolute terms as number of points or as a percentage of
+the font size. So for example, 10% means adding 10% of font size to the regular letter-spacing
+and -1 means subtracting 1 point from the regular letter-spacing.
+
+
+### scale-letter
+
+Stretch or squeeze letters horizontally
+
+Letter scaling is horizontal scaling of the characters, so stretching them out or squeezing
+them together without changing their height.
+
+Letter scaling is specified as a percentage where 100 is the regular font without scaling.
+Since it is always specified as a percentage, the '%' sign is left out.
+
+
+### height
+
+Change line height
+
+So changes the amount of space between the lines, the "leading".
+
+Line height can be specified in points or as a percentage of font size.
+
+
+### paragraph-space
+
+Change paragraph space
+
+Use this to change the vertical space before (above) and after (below) paragraphs.
+This can be specified in points or as a percentage of font size.
+
+One way to lay out paragraphs is to use space between paragraphs. Another common
+way is to have no additional space, but instead indent the first line of each
+paragraph. This is accomplished with the tag 'paragraph-indent'
+
+
+### paragraph-indent
+
+Change paragraph indentation
+
+Change the setting for indentation of (first line of) paragraphs.
+
+This is typically used instead of additional vertical space between paragraphs.
+
+The tag allows you to set up the indentation in points or as a percentage of font size.
+Moreover, you can specify if the indentation should be "delayed" meaning that the
+first paragraph after enabling the paragraph indentation is not indented - so the
+indentation is delayed until the second (and subsequent) paragraphs.
+
+
+### new
+
+Break to new line, paragraph, column or page
+
+In general, a line break in the source file does not give rise to a line break in the
+PDF document. However, note that the 'whitespace' tag allows you to change this behavior.
+
+In general, an empty line in the source file gives rise to a new paragraph.
+However, note that the 'whitespace' tag can change this behavior.
+
+The number of columns on a page is set up using the 'columns' tag.
+
+You can specify a number of points as a "limit" for when to actually break to a new
+column or page. If the tag is encountered when the text is at a distance of the bottom
+margin which is within this limit then a new column/page is started. This can be used when
+you define a new tag for section headers for example, if you do not wish such headers
+to appear too close the bottom margin.
+
+
+### align
+
+Control alignment of text, images, cells
+
+You have the choice between left and right alignment, centered and full justification
+of text and table cell content.
+
+
+### indent
+
+Control text indentation
+
+You can specify left and right indentation, both in points.
+
+
+### rise
+
+Raise or lower text
+
+Change vertical position of text relative to the baseline.
+
+
+### position
+
+Control text position
+
+Place the latest chunk of text at a give position and angle.
+
+This can be used for inserting page number and page headers.
+
+
+### document
+
+Set document properties
+
+Specify any of the PDF document properties: title, author, subject and keywords.
+
+Keywords are separated by comma, e.g. "political reform, social justice".
+
+Note that this is "meta data" which can be seen in PDF viewers.
+
+
+### view
+
+Set PDF viewer preferences
+
+Allows you to control the viewing preferences when the document is opened in a
+PDF viewer. Note that not all PDF viewer applications respect these preferences.
+The viewer that comes with Mac OS X, for instance, ignores the preferences whereas
+Adobe Reader handles them as you would expect.
+
+The first parameter allow you to choose between page or column view with one or
+two pages or columns side by side.
+
+The second parameter allows you to select outline view, page thumbnails or full screen.
+
+
+### encrypt
+
+Encrypt the document
+
+You can specify "user password" and "owner password". The strength of the encryption
+depends entirely on you choice of password! The longer the safer.
+
+A user entering the user password can read the document. You can specify which other
+possibilities the user should be granted, such as allowing the user to copy from
+the document.
+
+A user entering the owner password has full access to the document.
+
+Note that the encryption must be specified first thing, before the content.
+
+
+### page-size
+
+Change page size
+
+You can either choose a standard page size such as A4, Letter, Ledger or specify
+the height and width in points.
+
+
+### orientation
+
+Change page orientation
+
+The choice between landscape and portrait.
+
+
+### columns
+
+Lay out text in columns
+
+You specify the number of columns per page and the size of the "gutter",
+the space between the columns.
+
+
+### margins
+
+Change size of margins
+
+
+### pagecolor
+
+Change page color
+
+The color of a page is determined by the latest page color assigned at the moment that page
+is started. This means that the page color for the first page should be specified before
+adding content to the page. If you wish to change page color from one page to the next
+then do so before the page break. 
+
+
+### image
+
+Insert image
+
+Use this tag to insert images into the document.
+
+If you insert an image more than once, consider using the keyword 'cache'. This will reduce the
+size of the document file because the image only will be embedded once into the document.
+
+You can control the opacity of the image as a percentage.
+
+You can specify the position of the image relative to any of the corners or center of the page or margin. 
+Note that when you specify position, the flow of text is not affected by the insertion of the image.
+If you wish text to be visible over the image, use the keyword 'under' for the image.
+
+
+### scale-image
+
+Scale inserted image
+
+Use this to scale up/down the images that you insert into the document. Horizontal and vertical
+scaling are specified independently. The scaling can be specified either as absolute size in points
+or relative to the original size of the image, relative to page size, relative to size within
+margins, or relative to the column.
+
+
+### fit-image
+
+Scale-to-fit inserted image
+
+Use this to scale up/down the images that you insert into the document by specifying the
+rectangle that the image should be scaled to fit into. The scaling can be specified either as
+absolute size in points or relative to the page size, relative to size within margins, or
+relative to the column. As opposed to the 'scale-image' tag, this tag preserves the aspect ratio.
+
+
+### frame
+
+Frame images
+
+Use this to get a frame on the images that you insert. The tag can either be given a single
+parameter 'on' or 'off' to enable/disable frames, or several parameters to specify the width
+and color or the frame.
+
+### rotate-image
+
+Rotate images
+
+Use this tag to rotate the images that you insert into the document by specifying the
+degrees of rotation (so a number between 0 and 360 with 90 being a right angle counter-clockwise).
+
+
+### blend
+
+Specify how overlapping images should blend
+
+Note that the current preview window does NOT render this correctly. So to see
+the actual result, please open the document in your PDF viewer.
+
+
+### format-list
+
+Specify format of list
+
+Use this tag to control the the formatting and appearance of lists.
+The two first parameters are indentations: indentation of the list and additional
+indentation of the content of the list.
+
+The third parameter is the "number" or "bullet" of the list
+such as (1), 1., [1] &#167;1,... or &#149;. The specification uses $1 for the number,
+so to get (1), (2), (3),... you would write ($1).
+
+You could also get (i), (ii), (iii), (iv),... by writing "&lt;Roman L $1&gt;" in the
+third parameter. For a bullet list, you could write "&lt;char 8226&gt;", which works
+if you use a font that contains this standard bullet.
+
+
+### list
+
+Insert list
+
+Use this tag to start a list and the tag 'item' for each item in the list.
+
+The formatting of the list items can be controlled with the tag 'format-list'.
+
+Note that you can insert lists inside list.
+
+
+### item
+
+Insert item in list.
+
+
+### /list
+
+End list.
+
+
+### table
+
+Insert table.
+
+
+### /table
+
+End table.
+
+
+### cell
+
+Insert cell into table
+
+
+### cell-color
+
+Control table cell color
+
+
+### cell-padding
+
+Control table cell padding
+
+
+### border-width
+
+Control table border width
+
+
+### border-color
+
+Control table border color
+
+
+### line-width
+
+
+### line-color
+
+
+### line-cap
+
+
+### line-dash
+
+
+### move-to
+
+
+### line-to
+
+
+### draw
+
+
+### opacity
+
+
+### insert
+
+Insert other source file
+
+It may be convenient to break up a large document into sections that you work with in
+individual source files (files with extension 'wr'), or to collection multiple sources
+into one document.
+
+The tag takes one parameter which is the name of the file that you wish to insert.
+
+The file chooser insert the file name including the full path, but it actually
+also works with just the file name provided that the two source files are in the
+same directory/folder.
+
+
+### char
+
+
+### Roman
+
+Format number as Roman number
+
+The first parameter, U or L, allows you to choose between upper and lower case (IV or iv).
+The second parameter is that number to present as a Roman number.
+
+### bookmark
+
+
+### label
+
+
+### ref
+
+
+### /ref
+
+
+### store
+
+
+### restore
+
+
+### var
+
+Declare a new variable
+
+The first parameter is the name of the variable. The second parameter is the type, either Int or Str.
+The third, optional, parameter is the keyword 'converge'; it has the effect that you get out the final,
+converged value. The content of variables is manipulated with the tags 'set' and 'add' and inserted
+into the document with tag 'show'.
+
+If you wish to include page number of the form "x of y" where y is the number of pages, then this would
+require two variables of type Int: one for the current page number and one for the "final" page number.
+The page number variable you would update with the 'add' tag and the final page number would be set to
+the page number. The final page number variable would use the 'converge' keyword.
+
+Another use of 'converge' is when you wish to present a list of content in the beginning of a document.
+Here you can have a variable of type Str and marked 'converge'. Note that Str variables can contain
+not just plain text, but also tags.
+
+The effect of declaring a variable with 'converge' is that the 'show' tag gives you the "final" value
+instead of the current value. However, note that it can take some iterations for a variable to
+converge to this "final" value.
+ 
+
+### set
+
+Assign a value to a variable
+
+Takes one parameter - the name of the variable. The variable is assigned to whatever appears between
+this tag and the subsequent end tag, &lt;/set&gt;. 
+
+### /set
+
+End tag for &lt;set&gt;
+
+### add
+
+Add a value to a variable
+
+Takes one parameter - the name of the variable. The variable is incremented by whatever appears between
+this tag and the subsequent end tag, &lt;/add&gt; For variables of type Int this means addition and for type
+Str this means concatenation.
+
+### /add
+
+End tag for &lt;add&gt;
+
+### show
+
+Show variable in document.
+
+Takes one parameter - the name of the variable. This tag gives you the content of the variable.
+This typically means that you show the content of the variable, i.e. insert the content into the document.
+
+Note that if you use 'show' inside a parameter for a tag, then the value is inserted at that moment of
+the evaluation. In other words, the 'show' tag is not passed along into the tag. This has some advantages.
+For example, you can pass a variable to the 'bookmark' tag with the effect that you see the content of the
+variable in (or as part of) the bookmark. However, this feature can lead to situations where you keep
+seeing the initial value instead of the updated value. This can be worked around by moving the 'show' tag
+into a separate tag definition (in an inclusion).
+
+
+### include
+
+
+
+### inclusion
+
+
+### def
+
+
+### /def
+
+
+### sub
+
+
+### /sub
+
+
+### main
+
+
+### /main
+
+
+### template
+
+Declare name of template
+
+A template is a file that you have added to the list of templates in the menu 'Templates'.
+When you create a new file, you can choose from the list of templates. The only requirement
+to a file before you can add it as a template is that you have used the tag 'template' in the
+first line to give it a name.
+
+
+### inject
+
+
+### replace
+
+
+### loop
+
+
+### whitespace
+
+Keep or trim whitespace
+
+Control if leading whitespace and line-breaks should be trimmed (default) or kept.
+

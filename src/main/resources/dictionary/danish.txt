@@ -1,0 +1,5 @@
+WinEdt dictionary dk.dic was compiled from the word list for
+amspell with permission from Erik Frambach
+<E.H.M.Frambach@eco.rug.nl>:
+
+     ftp://frambach.eco.rug.nl/4tex/amspell/

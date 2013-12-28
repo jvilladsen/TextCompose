@@ -1,0 +1,21 @@
+Third party software used in Writesetter:
+iText, http://itextpdf.com
+Bouncy Castle, http://www.bouncycastle.org
+ICEpdf, http://www.icesoft.org/java/projects/ICEpdf
+Jazzy, http://jazzy.sourceforge.net
+Scala, http://www.scala-lang.org
+
+Icons:
+Everaldo / Yellowicon, http://www.everaldo.com
+Oxygen Icons, http://www.oxygen-icons.org
+Gnome, http://www.gnome.org
+
+Dictionaries:
+English (UK) Dictionary, Erik Frambach
+English (US) Dictionary, Erik Frambach
+Danish Dictionary, Erik Frambach
+German Dictionary, GNU General Public License v. 2 or later
+French Dictionary, GNU General Public License v. 2 or later
+Portuguese Dictionary, José João Dias de Almeida ?
+Russian Dictionary, Igor A. Kotelnikov
+Spanish Dictionary, Juan L. Varona
