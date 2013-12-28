@@ -1,0 +1,8 @@
+.cache
+.classpath
+.project
+lib/
+project/target/
+project/project/target/
+target/
+.settings/org.scala-ide.sdt.core.prefs
