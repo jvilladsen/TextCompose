@@ -169,12 +169,12 @@ class TextFile {
     storage.SourcesMetaData.updateFileData(fullFileName, fileName, encoding, dictionary)
   }
 
-  def CheckFileStamp: Boolean = {
+  def checkFileStamp: Boolean = {
     var completed = true
     if (!fileIsReadOnly) {
 
       if (storage.FileMethods.IsFile(fullFileName) &&
-        fileLatestTimeStamp != storage.FileMethods.GetTimeStamp(fullFileName)) {
+        fileLatestTimeStamp < storage.FileMethods.GetTimeStamp(fullFileName)) {
         val message = "This file has been modified from elsewhere. " +
           "If you continue, you will overwrite a newer version with an older version!"
         completed = DialogBox.warning(message)

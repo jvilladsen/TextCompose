@@ -47,7 +47,7 @@ class TextFileEditor(fontSize: Int) {
   private def saveFile(saveEvenIfNotDirty: Boolean): Boolean = {
     var completed = true
     if (!file.fileIsReadOnly && (saveEvenIfNotDirty || editor.fileIsDirty)) {
-      completed = file.CheckFileStamp
+      completed = file.checkFileStamp
       if (completed) {
         editor.writeTextToFile(file.fullFileName, true, file.encoding)
         file.updateTimeStampAfterSave()
