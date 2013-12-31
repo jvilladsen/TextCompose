@@ -35,14 +35,12 @@ object Launch {
 
   def main(args: Array[String]): Unit = {
 
-    if (isMac) { macSetup("WriteSetter") }
-
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    if (isMac) { macSetup() }
 
     writesetter.editor.CompileOrGUI.switcher(args);
   }
 
-  private def macSetup(appName: String) {
+  private def macSetup() {
 
     com.apple.eawt.Application.getApplication.setOpenFileHandler(
       new OpenFilesHandler {
