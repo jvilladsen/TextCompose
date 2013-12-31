@@ -1,29 +1,4 @@
-seq(appbundle.settings: _*)
-
-appbundle.name := "Writesetter"
-
-appbundle.version := "Writesetter 0.7.1 (c) 2013 Jesper S Villadsen"
-
-appbundle.javaOptions += "-Xmx1024m"
-
-appbundle.icon := Some(file("src/main/resources/Writesetter.icns"))
-
-appbundle.mainClass := Some("writesetter.startup.Launch")
-
-appbundle.documents := Seq(appbundle.Document(
-    "Writesetter source",
-    role = appbundle.Document.Editor,
-    mimeTypes = Seq("text/plain"),
-    extensions = Seq("wr"),
-    icon = Some(file("src/main/resources/Writesetter_doc.icns"))))
-
-
-seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
-
-mainClass in oneJar := Some("writesetter.startup.Launch")
-
-
-mainClass := Some("writesetter.startup.Launch")
+// Assuming use of sbt version 0.13.1 (or later?)
 
 name := "Writesetter"
 
@@ -38,5 +13,35 @@ libraryDependencies ++= Seq(
     "org.bouncycastle" % "bcpkix-jdk15on" % "1.49",
     "net.sf.jazzy" % "jazzy-core" % "0.5.2")
 
+mainClass := Some("writesetter.startup.Launch")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
+
+fork := true
+
+// appbundle
+    
+seq(appbundle.settings: _*)
+
+appbundle.name := name.value
+
+appbundle.version := name.value + " " + version.value + " (c) 2013 Jesper S Villadsen" // Writesetter 0.7.1
+
+appbundle.javaOptions += "-Xmx1024m"
+
+appbundle.icon := Some(file("src/main/resources/Writesetter.icns"))
+
+appbundle.mainClass := Some("writesetter.startup.Launch")
+
+appbundle.documents := Seq(appbundle.Document(
+    "Writesetter source",
+    role = appbundle.Document.Editor,
+    mimeTypes = Seq("text/plain"),
+    extensions = Seq("wr"),
+    icon = Some(file("src/main/resources/Writesetter_doc.icns"))))
+
+// one-jar
+
+seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
+
+mainClass in oneJar := Some("writesetter.startup.Launch")

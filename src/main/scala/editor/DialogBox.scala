@@ -20,8 +20,8 @@ package writesetter.editor
 
 import swing.Dialog._
 import swing.Component
-import java.io.{StringWriter, PrintWriter}
-import writesetter.{editor, modals}
+import java.io.{ StringWriter, PrintWriter }
+import writesetter.{ editor, modals }
 
 // http://www.scala-lang.org/api/current/scala/swing/Dialog$.html
 
@@ -29,66 +29,69 @@ import writesetter.{editor, modals}
 
 object DialogBox {
 
-	def stackTrace(message: String, e: Exception) {
-		val stringWriter = new StringWriter
-		e.printStackTrace(new PrintWriter(stringWriter))
-		val stacktrace = stringWriter.toString
-		val d = new modals.ScrollText(
-				900,	// width
-				"System Error: " + message,
-				"",		// sub text
-				stacktrace,
-				"",		// html file name
-				editor.Images.systemErrorIcon)
-	}
-	
-	def systemError(message: String) {
-		if (CompileOrGUI.canExpectGUI) {
-			showMessage(null, "System Error: " + message, "Writesetter", Message.Info, Images.systemErrorIcon)
-		} else {
-			println("System Error: " + message)
-		}
-	}
-	
-	def error(message: String) {
-		if (CompileOrGUI.canExpectGUI) {
-			showMessage(null, message, "Writesetter", Message.Info, Images.errorIcon)
-		} else {
-			println("Error: " + message)
-		}
-	}
-	
-	def info(message: String) {
-		if (CompileOrGUI.canExpectGUI) {
-			showMessage(null, message, "Writesetter", Message.Info, Images.infoIcon)
-		} else {
-			println(message)
-		}
-	}
-	
-	// THE REST only in GUI context
-	
-	def warning(message: String): Boolean = {
-		val confirmation = showConfirmation(null, message, "Writesetter", Options.OkCancel, Message.Question, Images.warningIcon)
-		confirmation == Result.Ok
-	}
-	
-	def question(message: String): String = {
-		val result = showConfirmation(null, message, "Writesetter", Options.YesNoCancel, Message.Question, Images.warningIcon)
-		if (result == Result.Yes) { "Yes" } else if (result == Result.No) { "No" } else { "Cancel" }  
-	}
-	
-	def complete(message: String) {
-		showMessage(null, message, "Writesetter", Message.Info, Images.checkmarkIcon)
-	}
-	
-	def about {
-		val d = new modals.ScrollText(
-				700,	// width
-				"Writesetter",
-				"Copyright \u00A9 2013 J S Villadsen",
-				"",		// plain text
-				ResourceHandling.licenseText,
-				editor.Images.writeSetterIcon)
-	}
+  val appTitle = writesetter.startup.Launch.appTitle
+  val appVersion = writesetter.startup.Launch.appVersion
+
+  def stackTrace(message: String, e: Exception) {
+    val stringWriter = new StringWriter
+    e.printStackTrace(new PrintWriter(stringWriter))
+    val stacktrace = stringWriter.toString
+    val d = new modals.ScrollText(
+      900, // width
+      "System Error: " + message,
+      "", // sub text
+      stacktrace,
+      "", // html file name
+      editor.Images.systemErrorIcon)
+  }
+
+  def systemError(message: String) {
+    if (CompileOrGUI.canExpectGUI) {
+      showMessage(null, "System Error: " + message, appTitle, Message.Info, Images.systemErrorIcon)
+    } else {
+      println("System Error: " + message)
+    }
+  }
+
+  def error(message: String) {
+    if (CompileOrGUI.canExpectGUI) {
+      showMessage(null, message, appTitle, Message.Info, Images.errorIcon)
+    } else {
+      println("Error: " + message)
+    }
+  }
+
+  def info(message: String) {
+    if (CompileOrGUI.canExpectGUI) {
+      showMessage(null, message, appTitle, Message.Info, Images.infoIcon)
+    } else {
+      println(message)
+    }
+  }
+
+  // THE REST only in GUI context
+
+  def warning(message: String): Boolean = {
+    val confirmation = showConfirmation(null, message, appTitle, Options.OkCancel, Message.Question, Images.warningIcon)
+    confirmation == Result.Ok
+  }
+
+  def question(message: String): String = {
+    val result = showConfirmation(null, message, appTitle, Options.YesNoCancel, Message.Question, Images.warningIcon)
+    if (result == Result.Yes) { "Yes" } else if (result == Result.No) { "No" } else { "Cancel" }
+  }
+
+  def complete(message: String) {
+    showMessage(null, message, appTitle, Message.Info, Images.checkmarkIcon)
+  }
+
+  def about {
+    val d = new modals.ScrollText(
+      700, // width
+      appTitle + " " + appVersion,
+      "Copyright \u00A9 2013 J S Villadsen",
+      "", // plain text
+      ResourceHandling.licenseText,
+      editor.Images.writeSetterIcon)
+  }
 }
