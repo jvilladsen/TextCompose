@@ -274,7 +274,6 @@ object Application extends SimpleSwingApplication {
     }
 
     // Menu bar
-    System.setProperty("apple.laf.useScreenMenuBar", "true") // FIXME: only do this on Mac ?
     menuBar = new MenuBar
     menuBar.contents += fileMenu
     menuBar.contents += editMenu

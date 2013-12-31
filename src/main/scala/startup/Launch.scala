@@ -44,9 +44,6 @@ object Launch {
 
   private def macSetup(appName: String) {
 
-    System.setProperty("apple.laf.useScreenMenuBar", "true");
-    System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
-
     com.apple.eawt.Application.getApplication.setOpenFileHandler(
       new OpenFilesHandler {
         def openFiles(e: AppEvent.OpenFilesEvent) {

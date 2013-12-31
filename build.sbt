@@ -25,7 +25,7 @@ seq(appbundle.settings: _*)
 
 appbundle.name := name.value
 
-appbundle.version := name.value + " " + version.value + " (c) 2013 Jesper S Villadsen" // Writesetter 0.7.1
+appbundle.version := name.value + " " + version.value + " (c) 2013 J S Villadsen"
 
 appbundle.javaOptions += "-Xmx1024m"
 
