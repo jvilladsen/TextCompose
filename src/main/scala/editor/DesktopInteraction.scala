@@ -43,7 +43,7 @@ object DesktopInteraction {
 			} else {
 				DialogBox.systemError("Not prepared to open PDF on " + osName)
 			}
-			var runTime = Runtime.getRuntime()
+			val runTime = Runtime.getRuntime()
 			try {
 				val process = runTime.exec(command)
 			} catch {

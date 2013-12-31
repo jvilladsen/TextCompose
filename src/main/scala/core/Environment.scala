@@ -23,23 +23,21 @@ import java.io.File
 object Environment {
   // Get some information about the OS and current user
   val OperatingSystemName = System.getProperty("os.name") // e.g. 'Mac OS X'
-  val OperatingSystemVersion = System.getProperty("os.version")
-  val OperatingSystemArchitecture = System.getProperty("os.arch")
   val FileSeparator = System.getProperty("file.separator") // '/' on Mac OS X
-  val CurrentUserName = System.getProperty("user.name")
   val CurrentUserHome = System.getProperty("user.home")
 
-  var ConfigurationsDirectory = ""
-  if (Environment.OperatingSystemName == "Mac OS X") {
-    ConfigurationsDirectory = CurrentUserHome + FileSeparator + ".Writesetter"
-  } else {
-    ConfigurationsDirectory = CurrentUserHome + FileSeparator + "\\AppData\\Writesetter" // FIXME: linux
-  }
+  val ConfigurationsDirectory =
+    if (OperatingSystemName == "Mac OS X") {
+      CurrentUserHome + FileSeparator + ".Writesetter"
+    } else {
+      CurrentUserHome + FileSeparator + "\\AppData\\Writesetter" // FIXME: Linux
+    }
+
   (new File(ConfigurationsDirectory)).mkdir()
 
   def PathIsAbsolute(path: String): Boolean = {
     if (FileSeparator == "/") {
-      // Linux and Mac - root
+      // Linux and OS X - root
       path(0) == '/'
     } else {
       // Windows - some drive
