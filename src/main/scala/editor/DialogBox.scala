@@ -31,6 +31,7 @@ object DialogBox {
 
   val appTitle = writesetter.startup.Launch.appTitle
   val appVersion = writesetter.startup.Launch.appVersion
+  val operatingSystem = writesetter.startup.Launch.os
 
   def stackTrace(message: String, e: Exception) {
     val stringWriter = new StringWriter
@@ -39,7 +40,7 @@ object DialogBox {
     val d = new modals.ScrollText(
       900, // width
       "System Error: " + message,
-      "", // sub text
+      operatingSystem, // sub text
       stacktrace,
       "", // html file name
       editor.Images.systemErrorIcon)
