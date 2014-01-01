@@ -25,10 +25,7 @@ import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
-import javax.swing.SwingUtilities
 import writesetter.{ core, modals, storage }
-
-import com.apple.eawt.{ AppEvent, AboutHandler, PreferencesHandler, QuitHandler, QuitResponse }
 
 class WorkspaceTabs {
 
@@ -203,54 +200,6 @@ class WorkspaceTabs {
       index -= 1
       if (!textFileEditor(index).editor.fileIsDirty && textFileEditor(index).file.fullFileName == "") removeTab(index)
     }
-  }
-
-  def macRuntimeHandlers {
-
-    com.apple.eawt.Application.getApplication.setQuitHandler(
-      new QuitHandler {
-        def handleQuitRequestWith(e: AppEvent.QuitEvent, response: QuitResponse) {
-          SwingUtilities.invokeLater(new Runnable() {
-            def run() {
-              if (quitHandleDirtyFile()) {
-                response.performQuit()
-              } else {
-                response.cancelQuit()
-              }
-            }
-          })
-        }
-      })
-
-    com.apple.eawt.Application.getApplication.setPreferencesHandler(
-      new PreferencesHandler {
-        def handlePreferences(e: AppEvent.PreferencesEvent) {
-          SwingUtilities.invokeLater(new Runnable() {
-            def run() {
-              val configFileName = storage.Configurations.fullFileName
-              try {
-                val dialog = new modals.Preferences
-              } catch {
-                case e: Exception => {
-                  val message = "Configuration file (" + configFileName + ") could not be opened: " + e.getMessage
-                  DialogBox.stackTrace(message, e)
-                }
-              }
-            }
-          })
-        }
-      })
-
-    com.apple.eawt.Application.getApplication.setAboutHandler(
-      new AboutHandler {
-        def handleAbout(e: AppEvent.AboutEvent) {
-          SwingUtilities.invokeLater(new Runnable() {
-            def run() {
-              DialogBox.about
-            }
-          })
-        }
-      })
   }
 
   def quitHandleDirtyFile(): Boolean = {

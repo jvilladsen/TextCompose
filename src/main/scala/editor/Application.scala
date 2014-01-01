@@ -160,8 +160,10 @@ object Application extends SimpleSwingApplication {
 
     // Quit menu item in either File menu or the Mac application menu.
     if (writesetter.startup.Launch.isMac) {
-      workspaceTabs.macRuntimeHandlers
+
+      writesetter.startup.SpecialitiesMacOSX.prepareQuit(workspaceTabs)
     } else {
+      
       def quitAction = new Action("Quit") {
         enabled = true
         title = "Quit"

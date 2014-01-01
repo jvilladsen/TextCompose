@@ -18,16 +18,10 @@
 
 package writesetter.startup
 
-import javax.swing._
-import com.apple.eawt.{ AppEvent, OpenFilesHandler }
-import scala.collection.JavaConverters._
-import javax.swing.SwingUtilities
-import java.io.File
-
 object Launch {
 
   val os = System.getProperty("os.name").toLowerCase()
-  val isMac = os.startsWith("mac os x")
+  val isMac = os == "mac os x"
 
   val p = getClass.getPackage
   val appTitle = p.getImplementationTitle
@@ -35,22 +29,8 @@ object Launch {
 
   def main(args: Array[String]): Unit = {
 
-    if (isMac) { macSetup() }
+    if (isMac) SpecialitiesMacOSX.prepare()
 
-    writesetter.editor.CompileOrGUI.switcher(args);
-  }
-
-  private def macSetup() {
-
-    com.apple.eawt.Application.getApplication.setOpenFileHandler(
-      new OpenFilesHandler {
-        def openFiles(e: AppEvent.OpenFilesEvent) {
-          val files = e.getFiles().asScala
-          for (file <- files) {
-            val fullFileName = file.getAbsolutePath();
-            writesetter.editor.CompileOrGUI.handleOpenFile(fullFileName);
-          }
-        }
-      })
+    writesetter.editor.CompileOrGUI.switcher(args)
   }
 }
