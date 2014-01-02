@@ -24,6 +24,7 @@ import writesetter.{ core, storage }
 
 object ResourceHandling {
 
+  val baseDir = "/main/resources/"
   val licenseText = core.Environment.GetConfigFilePath("license.html")
 
   private def getFullName(name: String): String = {
@@ -38,7 +39,7 @@ object ResourceHandling {
     if (!storage.FileMethods.IsFile(targetFileName)) {
       warning()
 
-      val fullStreamName = "/main/resources/" + dir + "/" + name
+      val fullStreamName = baseDir + dir + "/" + name
       val streamIn = getClass().getResourceAsStream(fullStreamName)
       if (streamIn == null) throw new Exception("Could not open resource '" + fullStreamName + "'.")
       val streamOut = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(targetFileName)))
@@ -80,7 +81,7 @@ object ResourceHandling {
     /* The reason for the low-level implementation below is that we are
 		 * moving a "resource" (file inside a jar file) to a "regular" file.
 		 */
-    val streamIn = getClass().getResourceAsStream("/main/resources/documentation.txt")
+    val streamIn = getClass().getResourceAsStream(baseDir + "documentation.txt")
     if (streamIn == null) throw new Exception("Could not open resource 'documentation.txt'.")
     var line = ""
     var b = 0
@@ -108,7 +109,7 @@ object ResourceHandling {
     /* The reason for the low-level implementation below is that we are
 		 * moving a "resource" (file inside a jar file) to a "regular" file.
 		 */
-    val streamIn = getClass().getResourceAsStream("/main/resources/license/" + fileName)
+    val streamIn = getClass().getResourceAsStream(baseDir + "license/" + fileName)
     if (streamIn == null) throw new Exception("Could not open resource license text '" + fileName + "'.")
     var text = ""
     var b = 0
