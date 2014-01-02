@@ -159,11 +159,11 @@ object Application extends SimpleSwingApplication {
     fileMenu.contents += new MenuItem(workspaceTabs.showInFinderAction)
 
     // Quit menu item in either File menu or the Mac application menu.
-    if (writesetter.startup.Launch.isMac) {
+    if (core.Environment.isMacOSX) {
 
       writesetter.startup.SpecialitiesMacOSX.prepareQuit(workspaceTabs)
     } else {
-      
+
       def quitAction = new Action("Quit") {
         enabled = true
         title = "Quit"
@@ -188,6 +188,14 @@ object Application extends SimpleSwingApplication {
     editMenu.contents += getMenuItem(workspaceTabs.findAction, KeyEvent.VK_F, false)
     editMenu.contents += getMenuItem(workspaceTabs.findNextAction, KeyEvent.VK_K, false)
     editMenu.contents += getMenuItem(workspaceTabs.findPreviousAction, KeyEvent.VK_K, true)
+
+    // On OS X the about menu is part of the applications menu item. On Gnome, KDE, Windows it's under Edit.
+    if (!core.Environment.isMacOSX) {
+      editMenu.contents += new Separator
+      editMenu.contents += new MenuItem(new Action("About") {
+        def apply() { DialogBox.about }
+      })
+    }
 
     // Spelling menu
     val spellingMenu = new Menu("Spelling")

@@ -24,13 +24,17 @@ object Environment {
   // Get some information about the OS and current user
   val OperatingSystemName = System.getProperty("os.name") // e.g. 'Mac OS X'
   val FileSeparator = System.getProperty("file.separator") // '/' on Mac OS X
-  val CurrentUserHome = System.getProperty("user.home")
+  val CurrentUserHome = System.getProperty("user.home") // e.g. '/Users/harry'
+
+  val isMacOSX = OperatingSystemName.toUpperCase() == "MAC OS X"
+  val isLinux = OperatingSystemName.toUpperCase() == "LINUX"
+  val isWindows = OperatingSystemName.toUpperCase() == "WINDOWS"
 
   val ConfigurationsDirectory =
-    if (OperatingSystemName == "Mac OS X") {
-      CurrentUserHome + FileSeparator + ".Writesetter"
+    if (isWindows) {
+      CurrentUserHome + FileSeparator + "\\AppData\\Writesetter"
     } else {
-      CurrentUserHome + FileSeparator + "\\AppData\\Writesetter" // FIXME: Linux
+      CurrentUserHome + FileSeparator + ".Writesetter"
     }
 
   (new File(ConfigurationsDirectory)).mkdir()

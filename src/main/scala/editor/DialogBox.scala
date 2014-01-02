@@ -30,8 +30,6 @@ import writesetter.{ editor, modals }
 object DialogBox {
 
   val appTitle = writesetter.startup.Launch.appTitle
-  val appVersion = writesetter.startup.Launch.appVersion
-  val operatingSystem = writesetter.startup.Launch.os
 
   def stackTrace(message: String, e: Exception) {
     val stringWriter = new StringWriter
@@ -40,7 +38,7 @@ object DialogBox {
     val d = new modals.ScrollText(
       900, // width
       "System Error: " + message,
-      operatingSystem, // sub text
+      writesetter.core.Environment.OperatingSystemName, // sub text
       stacktrace,
       "", // html file name
       editor.Images.systemErrorIcon)
@@ -89,7 +87,7 @@ object DialogBox {
   def about {
     val d = new modals.ScrollText(
       700, // width
-      appTitle + " " + appVersion,
+      appTitle + " " + writesetter.startup.Launch.appVersion,
       "Copyright \u00A9 2013 J S Villadsen",
       "", // plain text
       ResourceHandling.licenseText,

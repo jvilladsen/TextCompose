@@ -20,16 +20,13 @@ package writesetter.startup
 
 object Launch {
 
-  val os = System.getProperty("os.name").toLowerCase()
-  val isMac = os == "mac os x"
-
   val p = getClass.getPackage
   val appTitle = p.getImplementationTitle
   val appVersion = p.getImplementationVersion
 
   def main(args: Array[String]): Unit = {
 
-    if (isMac) SpecialitiesMacOSX.prepare()
+    if (writesetter.core.Environment.isMacOSX) SpecialitiesMacOSX.prepare()
 
     writesetter.editor.CompileOrGUI.switcher(args)
   }

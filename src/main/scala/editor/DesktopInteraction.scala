@@ -34,21 +34,24 @@ object DesktopInteraction {
       }
     } else {
       val osName = core.Environment.OperatingSystemName
-      var command = Array[String]("")
-      if (osName == "Mac OS X") {
-        command = Array[String]("open", "-a", "Preview.app", PDFFileName)
-      } else if (osName.contains("Windows")) {
-        command = Array[String]("cmd", "/C", "start ", PDFFileName)
-        //command = "cmd /C \"start " + PDFFileName + "\""
-      } else {
-        DialogBox.systemError("Not prepared to open PDF on " + osName)
-      }
+      
+      val command =
+        if (core.Environment.isMacOSX) {
+          Array[String]("open", "-a", "Preview.app", PDFFileName)
+        } else if (core.Environment.isWindows) {
+          Array[String]("cmd", "/C", "start ", PDFFileName)
+        } else if (core.Environment.isLinux) {
+          Array[String]("xdg-open", PDFFileName)
+        } else {
+          throw new Exception("Not prepared for opening PDF on '" + osName + "'.")
+        }
+      
       val runTime = Runtime.getRuntime()
       try {
         val process = runTime.exec(command)
       } catch {
         case e: Exception => {
-          val message = "Could not open PDF viewer on " + osName + ": " + e.getMessage
+          val message = "Could not open PDF viewer on '" + osName + "': " + e.getMessage
           DialogBox.stackTrace(message, e)
         }
       }
