@@ -23,7 +23,7 @@ import java.net.URL
 
 object Images {
 	
-	private def getResource(name: String): URL = getClass().getResource("/graphics/" + name) // Was "/writesetter/resources/graphics/".
+	private def getResource(name: String): URL = getClass().getResource("/main/resources/graphics/" + name) // Was "/writesetter/resources/graphics/".
 	
 	private def getIcon(name: String): ImageIcon = new ImageIcon(getResource(name))
 	

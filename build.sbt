@@ -19,6 +19,8 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 fork := true
 
+resourceDirectory in Compile <<= baseDirectory { _ / "src" }
+
 // appbundle
     
 seq(appbundle.settings: _*)
