@@ -209,18 +209,18 @@ class TextFile {
     if (fullFileName != "" && storage.FileMethods.IsFile(fullFileName)) {
       val osName = core.Environment.OperatingSystemName
       var command = Array[String]("")
-      if (osName == "Mac OS X") {
+      if (core.Environment.isMacOSX) {
         command = Array[String]("open", "-R", fullFileName)
       } else {
         throw new Exception("Not prepared to view in Finder on '" + osName + "'.")
       }
-      var runTime = Runtime.getRuntime()
+      val runTime = Runtime.getRuntime()
       val process = runTime.exec(command)
     }
   }
 
   private def getPDFFileName: (String, String) = {
-    var args = new core.Arguments(
+    val args = new core.Arguments(
       true, // internal
       getFileKey,
       fullFileName == "", // temporaryLocation

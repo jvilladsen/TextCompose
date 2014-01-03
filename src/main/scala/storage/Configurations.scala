@@ -122,18 +122,21 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   }
 
   def StoreDefaults {
-    if (core.Environment.OperatingSystemName == "Mac OS X") {
-      val defaultLocation1 = "/Library/Fonts"
-      if (FileMethods.IsDirectory(defaultLocation1)) {
-        update(List("FontLocation", defaultLocation1))
-      }
-      val defaultLocation2 = core.Environment.CurrentUserHome + "/Library/Fonts"
-      if (FileMethods.IsDirectory(defaultLocation2)) {
-        update(List("FontLocation", defaultLocation2))
-      }
-    } else {
-      update(List("FontLocation", "C:\\Windows\\Fonts"))
-    } // FIXME: Handle Linux.
+    
+    def updateFontLocation(dir: String) {
+      if (FileMethods.IsDirectory(dir)) update(List("FontLocation", dir))
+    }
+    
+    if (core.Environment.isMacOSX) {
+      updateFontLocation("/Library/Fonts")
+      updateFontLocation(core.Environment.CurrentUserHome + "/Library/Fonts")
+    } else if (core.Environment.isLinux) {
+      updateFontLocation("/usr/share/fonts")
+      updateFontLocation("/usr/local/share/fonts")
+      updateFontLocation(core.Environment.CurrentUserHome + "/.fonts")
+    } else if (core.Environment.isWindows) {
+      updateFontLocation("C:\\Windows\\Fonts")
+    }
 
     update(List("TabSize", "2"))
     update(List("SaveBeforeCompile", "true"))

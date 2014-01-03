@@ -22,9 +22,9 @@ import java.io.File
 
 object Environment {
   // Get some information about the OS and current user
-  val OperatingSystemName = System.getProperty("os.name") // e.g. 'Mac OS X'
-  val FileSeparator = System.getProperty("file.separator") // '/' on Mac OS X
-  val CurrentUserHome = System.getProperty("user.home") // e.g. '/Users/harry'
+  val OperatingSystemName = System.getProperty("os.name")
+  val FileSeparator = System.getProperty("file.separator")
+  val CurrentUserHome = System.getProperty("user.home")
 
   val isMacOSX = OperatingSystemName.toUpperCase() == "MAC OS X"
   val isLinux = OperatingSystemName.toUpperCase() == "LINUX"

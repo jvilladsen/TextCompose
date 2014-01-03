@@ -20,11 +20,11 @@ package writesetter.storage
 
 import scala.collection.mutable.Stack
 import scala.collection.mutable.HashMap
-import writesetter.{core, editor}
+import writesetter.{ core, editor }
 
 object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
-	/* FORMAT:
+  /* FORMAT:
 	 * font file name -- is the primary key
 	 * can be installed (true/false)
 	 * can be embedded (true/false)
@@ -47,188 +47,188 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 	 * sampleText
 	 * encodings
 	 */
-	
-	private var fontTitleToFileName = new HashMap[String, String]	// Only for fonts that can be installed.
-	private var fontTitleToJavaFont = new HashMap[String, java.awt.Font]
-	
-	minimumFieldCount = 21
-	
-	override def getKeyLength(configuration: List[String]) = 1
-	
-	private def addAllNewFonts() {
-		
-		def countNewFonts: Int = {
-			var numberOfNewFonts = 0
-			for (f <- core.FontFileRegister.getListOfFullNames) {
-				if (getIndexOf(List(f)) == -1) numberOfNewFonts += 1
-			}
-			numberOfNewFonts
-		}
-		
-		def getFontProperties(fontName: String) = {
-			
-			def registerFont(embed: Boolean) = {
-				val font = new core.DocumentFont(
-						fontName,
-						core.FontFileRegister.getFullName(fontName),
-						false,
-						embed,
-						"")
-				font.register(false)	// without caching
-				font.updateAttributes()
-				(font.valid, font.errorMessage, font.getFontInfo)
-			}
-			
-			if (core.FontFileRegister.isBuiltIn(fontName)) {
-				List(fontName, "true", "true", "", fontName, fontName, "", "")
-			} else {
-				var result = registerFont(false)
-				val canBeInstalled = result._1
-				var canBeEmbedded = false
-				if (canBeInstalled) {
-					result = registerFont(true)
-					canBeEmbedded = result._1
-				}
-				List(fontName, canBeInstalled.toString, canBeEmbedded.toString, result._2) ++ result._3
-			}
-		}
-		
-		def updateCharacterStorage(fontName: String) {
-			if (!core.FontFileRegister.isBuiltIn(fontName)) {
-				val index = getIndexOf(List(fontName))
-				if (index > -1) {
-					val canBeInstalled = dataSet(index)(1)
-					if (canBeInstalled == "true") {
-						var encodings = dataSet(index)(20)
-						if (encodings == "") encodings = "1252 Latin 1" // FIXME: What is the correct solution?
-						var successFullEncodings = ""
-						var updateRequired = false
-						for (encoding <- unpackEncodingsString(encodings)) {
-							val success = FontCharacters.addNewFont(fontName, encoding)
-							if (success) {
-								successFullEncodings += (if (successFullEncodings == "") "" else "#") + encoding
-							} else {
-								updateRequired = true
-							}
-						}
-						if (updateRequired) {
-							updateFrom(List(fontName), 20, List(successFullEncodings))
-							store()
-						}
-					}
-				}
-			}
-			// FIXME: Find a way to include the built in fonts, such as Times and Symbol.
-		}
-		
-		val numberOfFonts = countNewFonts
-		var counter = 0
-		
-		// Get font properties for all fonts not yet analyzed and store the result.
-		for (fontName <- core.FontFileRegister.getListOfFullNames) {
-			if (getIndexOf(List(fontName)) == -1) {
-				
-				update(getFontProperties(fontName))
-				updateCharacterStorage(fontName)
-				counter += 1
-			}
-		}
-		if (counter > 0) {
-			editor.DialogBox.info(counter.toString+" new fonts found")
-		}
-	}
-	
-	def updateStorage() {
-		
-		def updateMapsFromDataSet() {
-			for (configuration <- dataSet) {
-				val fontFileName = configuration(0)
-				val canBeInstalled = configuration(1)
-				
-				val length = configuration.length
-				val fontName = configuration(4)
-				val fontTitle = configuration(5)
-				fontTitleToFileName(fontTitle) = fontFileName
-				val (hasJavaFont, javaFont) = GUIFonts.getFontWithMatchingName(fontName, fontTitle, fontFileName)
-				if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
-			}
-		}
-		addAllNewFonts()
-		store()
-		FontCharacters.store()	// Built up in parallel.
-		GUIFonts.calculate()
-		updateMapsFromDataSet()
-	}
-	
-	def initialize {
-		
-		def prune {
-			for (configuration <- dataSet) {
-				val fontName = configuration(0)
-				if (!core.FontFileRegister.exists(fontName)) {
-					remove(configuration)
-				}
-			}
-		}
-		
-		if (!initialized) {
-			if (fileExists) {
-				load()
-				prune
-			} else {
-				editor.DialogBox.info("Since it is the first time you run Writesetter on this installation,\n"+
-						"your fonts will be analyzed. This can take a minute.")
-			}
-			updateStorage()
-			initialized = true
-		}
-	}
-	
-	def recalculate(clearStorage: Boolean) {
-		if (clearStorage) clear()
-		
-		fontTitleToFileName.clear()
-		fontTitleToJavaFont.clear()
-		
-		updateStorage()
-	}
-	
-	def GetListOfInstallableFonts: List[String] = {
-		var result = new Stack[String]
-		for (configuration <- dataSet) {
-			val canBeInstalled = configuration(1)
-			val fontName = configuration(5)
-			if (canBeInstalled == "true") result.push(fontName)
-		}
-		result.toList.sortWith((a, b) => a < b)
-	}
-	
-	private def unpackEncodingsString(encodings: String): List[String] = {
-		def isInt(s: String): Boolean = try {
-		  s.toInt; true
-		} catch { 
-		  case e: Exception => false
-		}
-		def startsWithInt(enc: String): Boolean = isInt(enc.split(" ")(0))
-		encodings.split("#").toList.filter(startsWithInt(_))		
-	}
-	
-	def getEncodingsOfFont(fontTitle: String): List[String] = {
-		val index = getIndexOf(List(fontTitleToFileName(fontTitle)))
-		val encodings = dataSet(index)(20)
-		unpackEncodingsString(encodings)
-	}
-	
-	def getRecordForFont(fontTitle: String) = {
-		val index = getIndexOf(List(fontTitleToFileName(fontTitle)))
-		dataSet(index)
-	}
-	
-	def hadFontTitle(fontTitle: String): Boolean = fontTitleToFileName.contains(fontTitle)
-	
-	def getFileName(fontTitle: String): String = fontTitleToFileName(fontTitle)
-	
-	def hasJavaFont(fontTitle: String): Boolean = fontTitleToJavaFont.contains(fontTitle)
-	
-	def getJavaFont(fontTitle: String): java.awt.Font = fontTitleToJavaFont(fontTitle)
+
+  private var fontTitleToFileName = new HashMap[String, String] // Only for fonts that can be installed.
+  private var fontTitleToJavaFont = new HashMap[String, java.awt.Font]
+
+  minimumFieldCount = 21
+
+  override def getKeyLength(configuration: List[String]) = 1
+
+  private def addAllNewFonts() {
+
+    def countNewFonts: Int = {
+      var numberOfNewFonts = 0
+      for (f <- core.FontFileRegister.getListOfFullNames) {
+        if (getIndexOf(List(f)) == -1) numberOfNewFonts += 1
+      }
+      numberOfNewFonts
+    }
+
+    def getFontProperties(fontName: String) = {
+
+      def registerFont(embed: Boolean) = {
+        val font = new core.DocumentFont(
+          fontName,
+          core.FontFileRegister.getFullName(fontName),
+          false,
+          embed,
+          "")
+        font.register(false) // without caching
+        font.updateAttributes()
+        (font.valid, font.errorMessage, font.getFontInfo)
+      }
+
+      if (core.FontFileRegister.isBuiltIn(fontName)) {
+        List(fontName, "true", "true", "", fontName, fontName, "", "")
+      } else {
+        var result = registerFont(false)
+        val canBeInstalled = result._1
+        var canBeEmbedded = false
+        if (canBeInstalled) {
+          result = registerFont(true)
+          canBeEmbedded = result._1
+        }
+        List(fontName, canBeInstalled.toString, canBeEmbedded.toString, result._2) ++ result._3
+      }
+    }
+
+    def updateCharacterStorage(fontName: String) {
+      if (!core.FontFileRegister.isBuiltIn(fontName)) {
+        val index = getIndexOf(List(fontName))
+        if (index > -1) {
+          val canBeInstalled = dataSet(index)(1)
+          if (canBeInstalled == "true") {
+            var encodings = dataSet(index)(20)
+            if (encodings == "") encodings = "1252 Latin 1" // FIXME: What is the correct solution?
+            var successFullEncodings = ""
+            var updateRequired = false
+            for (encoding <- unpackEncodingsString(encodings)) {
+              val success = FontCharacters.addNewFont(fontName, encoding)
+              if (success) {
+                successFullEncodings += (if (successFullEncodings == "") "" else "#") + encoding
+              } else {
+                updateRequired = true
+              }
+            }
+            if (updateRequired) {
+              updateFrom(List(fontName), 20, List(successFullEncodings))
+              store()
+            }
+          }
+        }
+      }
+      // FIXME: Find a way to include the built in fonts, such as Times and Symbol.
+    }
+
+    val numberOfFonts = countNewFonts
+    var counter = 0
+
+    // Get font properties for all fonts not yet analyzed and store the result.
+    for (fontName <- core.FontFileRegister.getListOfFullNames) {
+      if (getIndexOf(List(fontName)) == -1) {
+
+        update(getFontProperties(fontName))
+        updateCharacterStorage(fontName)
+        counter += 1
+      }
+    }
+    if (counter > 0) {
+      editor.DialogBox.info(counter.toString + " new fonts found")
+    }
+  }
+
+  def updateStorage() {
+
+    def updateMapsFromDataSet() {
+      for (configuration <- dataSet) {
+        val fontFileName = configuration(0)
+        val canBeInstalled = configuration(1)
+
+        val length = configuration.length
+        val fontName = configuration(4)
+        val fontTitle = configuration(5)
+        fontTitleToFileName(fontTitle) = fontFileName
+        val (hasJavaFont, javaFont) = GUIFonts.getFontWithMatchingName(fontName, fontTitle, fontFileName)
+        if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
+      }
+    }
+    addAllNewFonts()
+    store()
+    FontCharacters.store() // Built up in parallel.
+    GUIFonts.calculate()
+    updateMapsFromDataSet()
+  }
+
+  def initialize {
+
+    def prune {
+      for (configuration <- dataSet) {
+        val fontName = configuration(0)
+        if (!core.FontFileRegister.exists(fontName)) {
+          remove(configuration)
+        }
+      }
+    }
+
+    if (!initialized) {
+      if (fileExists) {
+        load()
+        prune
+      } else {
+        editor.DialogBox.info("Since it is the first time you run Writesetter on this installation,\n" +
+          "your fonts will be analyzed. This can take a minute.")
+      }
+      updateStorage()
+      initialized = true
+    }
+  }
+
+  def recalculate(clearStorage: Boolean) {
+    if (clearStorage) clear()
+
+    fontTitleToFileName.clear()
+    fontTitleToJavaFont.clear()
+
+    updateStorage()
+  }
+
+  def GetListOfInstallableFonts: List[String] = {
+    var result = new Stack[String]
+    for (configuration <- dataSet) {
+      val canBeInstalled = configuration(1)
+      val fontName = configuration(5)
+      if (canBeInstalled == "true") result.push(fontName)
+    }
+    result.toList.sortWith((a, b) => a < b)
+  }
+
+  private def unpackEncodingsString(encodings: String): List[String] = {
+    def isInt(s: String): Boolean = try {
+      s.toInt; true
+    } catch {
+      case e: Exception => false
+    }
+    def startsWithInt(enc: String): Boolean = isInt(enc.split(" ")(0))
+    encodings.split("#").toList.filter(startsWithInt(_))
+  }
+
+  def getEncodingsOfFont(fontTitle: String): List[String] = {
+    val index = getIndexOf(List(fontTitleToFileName(fontTitle)))
+    val encodings = dataSet(index)(20)
+    unpackEncodingsString(encodings)
+  }
+
+  def getRecordForFont(fontTitle: String) = {
+    val index = getIndexOf(List(fontTitleToFileName(fontTitle)))
+    dataSet(index)
+  }
+
+  def hadFontTitle(fontTitle: String): Boolean = fontTitleToFileName.contains(fontTitle)
+
+  def getFileName(fontTitle: String): String = fontTitleToFileName(fontTitle)
+
+  def hasJavaFont(fontTitle: String): Boolean = fontTitleToJavaFont.contains(fontTitle)
+
+  def getJavaFont(fontTitle: String): java.awt.Font = fontTitleToJavaFont(fontTitle)
 }
