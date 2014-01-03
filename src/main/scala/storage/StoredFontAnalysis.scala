@@ -153,6 +153,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
       }
     }
+    
     addAllNewFonts()
     store()
     FontCharacters.store() // Built up in parallel.

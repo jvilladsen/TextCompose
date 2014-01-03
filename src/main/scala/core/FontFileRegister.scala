@@ -25,34 +25,39 @@ import scala.util.matching.Regex
 
 object FontFileRegister {
 
-  private var directories = new Stack[String]
+  private val directories = new Stack[String]
 
   // key is file name (excluding extension)
-  private var fontFileNameToFullName = new HashMap[String, String]
+  private val fontFileNameToFullName = new HashMap[String, String]
   val builtInFonts = scala.collection.immutable.List("Courier", "Helvetica", "Times", "Symbol", "Zapfdingbats")
 
   def addBuildInFonts { for (f <- builtInFonts) fontFileNameToFullName(f) = "" }
 
+  val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
+
   def addDirectory(directory: String) {
 
     def traverseDirectory(directory: String) {
-      var fontDirectory = new java.io.File(directory)
-      var listOfFiles = fontDirectory.listFiles()
+      val fontDirectory = new java.io.File(directory)
+      val listOfFiles = fontDirectory.listFiles()
       for (file <- listOfFiles) {
         val fileName = file.getName
 
-        var fontFileName = ""
-        val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
-        fileName match {
-          case fileNameWithExtension(beforeExtensionPoint, afterExtensionPoint) => {
-            fontFileName = beforeExtensionPoint
+        if (file.isDirectory()) {
+          traverseDirectory(file.getAbsolutePath)
+        } else {
+          val fontFileName =
+            fileName match {
+              case fileNameWithExtension(beforeExtensionPoint, afterExtensionPoint) => {
+                beforeExtensionPoint
+              }
+              case _ => {
+                fileName
+              }
+            }
+          if (!fontFileNameToFullName.contains(fontFileName)) {
+            fontFileNameToFullName(fontFileName) = file.getAbsolutePath
           }
-          case _ => {
-            fontFileName = fileName
-          }
-        }
-        if (!fontFileNameToFullName.contains(fontFileName)) {
-          fontFileNameToFullName(fontFileName) = file.getAbsolutePath
         }
       }
     }
