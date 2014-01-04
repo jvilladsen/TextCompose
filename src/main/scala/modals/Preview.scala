@@ -28,7 +28,7 @@ import javax.swing.ImageIcon
 import event._
 import Key._
 import scala.math.{ min, max }
-import writesetter.{ editor, modals, storage }
+import writesetter.{ core, editor, modals, storage }
 
 class Preview(filePath: String, fileTitle: String, initialPageNumber: Int) extends Dialog {
 
@@ -100,8 +100,11 @@ class Preview(filePath: String, fileTitle: String, initialPageNumber: Int) exten
 
   modal = true
   val applicationWindowSize = editor.Application.top.size
-  minimumSize = applicationWindowSize
-  maximumSize = applicationWindowSize
+  val height = applicationWindowSize.getHeight
+  val width = applicationWindowSize.getWidth
+  val proposedSize = new Dimension(width.toInt, height.toInt - (if (core.Environment.isLinux) 1 else 0))
+  minimumSize = proposedSize
+  maximumSize = proposedSize
   centerOnScreen
   open
 }
