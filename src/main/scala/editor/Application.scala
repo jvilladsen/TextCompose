@@ -189,11 +189,11 @@ object Application extends SimpleSwingApplication {
     editMenu.contents += getMenuItem(workspaceTabs.findNextAction, KeyEvent.VK_K, false)
     editMenu.contents += getMenuItem(workspaceTabs.findPreviousAction, KeyEvent.VK_K, true)
 
-    // On OS X the about menu is part of the applications menu item. On Gnome, KDE, Windows it's under Edit.
+    // On OS X the settings menu is part of the app menu item. On Gnome, KDE, Windows it's under Help.
     if (!core.Environment.isMacOSX) {
       editMenu.contents += new Separator
-      editMenu.contents += new MenuItem(new Action("About") {
-        def apply() { DialogBox.about }
+      editMenu.contents += new MenuItem(new Action("Preferences") {
+        def apply() { new modals.Preferences }
       })
     }
 
@@ -283,6 +283,14 @@ object Application extends SimpleSwingApplication {
       }
     }
 
+    val helpMenu = new Menu("Help")
+    // On OS X the about menu is part of the app menu item. On Gnome, KDE, Windows it's under Help.
+    if (!core.Environment.isMacOSX) {
+      helpMenu.contents += new MenuItem(new Action("About") {
+        def apply() { DialogBox.about }
+      })
+    }
+
     // Menu bar
     menuBar = new MenuBar
     menuBar.contents += fileMenu
@@ -293,6 +301,7 @@ object Application extends SimpleSwingApplication {
     menuBar.contents += inclusionsMenu
     menuBar.contents += templatesMenu
     menuBar.contents += historyMenu
+    menuBar.contents += helpMenu
 
     private def getButton(a: Action, i: ImageIcon): Button = {
       val button = new Button(a)

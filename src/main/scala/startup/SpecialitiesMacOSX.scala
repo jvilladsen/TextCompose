@@ -25,15 +25,7 @@ object SpecialitiesMacOSX {
         def handlePreferences(e: AppEvent.PreferencesEvent) {
           SwingUtilities.invokeLater(new Runnable() {
             def run() {
-              val configFileName = storage.Configurations.fullFileName
-              try {
-                val dialog = new modals.Preferences
-              } catch {
-                case e: Exception => {
-                  val message = "Configuration file (" + configFileName + ") could not be opened: " + e.getMessage
-                  editor.DialogBox.stackTrace(message, e)
-                }
-              }
+              new modals.Preferences
             }
           })
         }
