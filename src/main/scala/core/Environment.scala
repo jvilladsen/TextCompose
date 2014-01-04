@@ -28,7 +28,7 @@ object Environment {
 
   val isMacOSX = OperatingSystemName.toUpperCase() == "MAC OS X"
   val isLinux = OperatingSystemName.toUpperCase() == "LINUX"
-  val isWindows = OperatingSystemName.toUpperCase() == "WINDOWS"
+  val isWindows = OperatingSystemName.toUpperCase().startsWith("WINDOWS")
 
   val ConfigurationsDirectory =
     if (isWindows) {
