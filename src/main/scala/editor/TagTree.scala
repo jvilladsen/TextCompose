@@ -54,12 +54,16 @@ class TagTree {
     setOpenIcon(null)
     setClosedIcon(null)
     setLeafIcon(null)
-    setBackgroundNonSelectionColor(Colors.supportPane)
-    setTextNonSelectionColor(Colors.standard)
+    if (!core.Environment.isLinux) {
+      setBackgroundNonSelectionColor(Colors.supportPane)
+      setTextNonSelectionColor(Colors.standard)
+      setBorder(Swing.EmptyBorder(2, 5, 2, 5)) // top, left, bottom, right
+    } else {
+      setBorder(Swing.EmptyBorder(2, 7, 2, 5)) // top, left, bottom, right
+    }
     setBorderSelectionColor(Colors.selectionBorder)
     setBackgroundSelectionColor(Colors.selectionBackground)
     setTextSelectionColor(Colors.selectionForeground)
-    setBorder(Swing.EmptyBorder(2, 5, 2, 5)) // top, left, bottom, right
   }
   jtree.setCellRenderer(renderer)
   ToolTipManager.sharedInstance().registerComponent(jtree)
@@ -155,8 +159,10 @@ class TagTree {
   }
 
   def updateColors() {
-    renderer.setBackgroundNonSelectionColor(Colors.supportPane)
-    renderer.setTextNonSelectionColor(Colors.standard)
+    if (!core.Environment.isLinux) {
+      renderer.setBackgroundNonSelectionColor(Colors.supportPane)
+      renderer.setTextNonSelectionColor(Colors.standard)
+    }
     renderer.setBorderSelectionColor(Colors.selectionBorder)
     renderer.setBackgroundSelectionColor(Colors.selectionBackground)
     renderer.setTextSelectionColor(Colors.selectionForeground)
