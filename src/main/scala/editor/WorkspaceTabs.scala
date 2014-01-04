@@ -42,7 +42,11 @@ class WorkspaceTabs {
   private var fontSize = 16
 
   var tabsPane = new TabbedPane {
-    border = Swing.EmptyBorder(1, -13, -15, -12) // FIXME: ONLY IF MAC OS X (2, -10, -13, -10) !
+    border = if (core.Environment.isMacOSX) {
+      Swing.EmptyBorder(1, -13, -15, -12)
+    } else {
+      Swing.EmptyBorder(-1, -3, -4, -5)
+    }
     tabLayoutPolicy = scala.swing.TabbedPane.Layout.Wrap // FIXME: never worked - any of them.
     tabLayoutPolicy = scala.swing.TabbedPane.Layout.Scroll
   }
@@ -268,7 +272,11 @@ class WorkspaceTabs {
     }
   }
 
-  val showInFinderAction = new Action("Show in Finder") {
+  val showInFinderTitle =
+    if (core.Environment.isMacOSX) "Show in Finder"
+      else "Show in File System"
+  
+  val showInFinderAction = new Action(showInFinderTitle) {
     enabled = false
     def apply() {
       val index = getIndexOfSelectedTab

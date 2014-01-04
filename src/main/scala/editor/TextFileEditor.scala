@@ -150,7 +150,7 @@ class TextFileEditor(fontSize: Int) {
       file.showInFinder()
     } catch {
       case e: Exception => {
-        DialogBox.stackTrace("Could not show in Finder: " + e.getMessage, e)
+        DialogBox.stackTrace("Could not show in file system: " + e.getMessage, e)
       }
     }
     grabFocus

@@ -206,14 +206,21 @@ class TextFile {
   }
 
   def showInFinder() {
-    if (fullFileName != "" && storage.FileMethods.IsFile(fullFileName)) {
-      val osName = core.Environment.OperatingSystemName
-      var command = Array[String]("")
-      if (core.Environment.isMacOSX) {
-        command = Array[String]("open", "-R", fullFileName)
-      } else {
-        throw new Exception("Not prepared to view in Finder on '" + osName + "'.")
+    if (fullFileName != "") {
+      if (!storage.FileMethods.IsFile(fullFileName)) {
+        throw new Exception("There is no file '" + fullFileName + "'.")
       }
+      val osName = core.Environment.OperatingSystemName
+      val command =
+        if (core.Environment.isMacOSX) {
+          Array[String]("open", "-R", fullFileName)
+        } else if (core.Environment.isLinux) {
+          Array[String]("xdg-open", fileDirectory)
+        } else if (core.Environment.isWindows) {
+          Array[String]("explorer", fileDirectory)
+        } else {
+          throw new Exception("Not prepared to show in file system on '" + osName + "'.")
+        }
       val runTime = Runtime.getRuntime()
       val process = runTime.exec(command)
     }
