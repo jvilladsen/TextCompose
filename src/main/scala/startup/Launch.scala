@@ -18,6 +18,8 @@
 
 package writesetter.startup
 
+import javax.swing.UIManager
+
 object Launch {
 
   val p = getClass.getPackage
@@ -26,7 +28,11 @@ object Launch {
 
   def main(args: Array[String]): Unit = {
 
-    if (writesetter.core.Environment.isMacOSX) SpecialitiesMacOSX.prepare()
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+
+    if (writesetter.core.Environment.isMacOSX) {
+      SpecialitiesMacOSX.prepare()
+    }
 
     writesetter.editor.CompileOrGUI.switcher(args)
   }
