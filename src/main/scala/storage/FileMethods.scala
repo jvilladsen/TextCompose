@@ -31,22 +31,22 @@ package writesetter.storage
 object FileMethods {
 
 	def IsFile(fullFileName: String): Boolean = {
-		var fileHandle = new java.io.File(fullFileName)
+		val fileHandle = new java.io.File(fullFileName)
 		return fileHandle.exists && fileHandle.isFile
 	}
 	
 	def IsDirectory(directoryName: String): Boolean = {
-		var fileHandle = new java.io.File(directoryName)
+		val fileHandle = new java.io.File(directoryName)
 		return fileHandle.exists && fileHandle.isDirectory
 	}
 
 	def GetTimeStamp(fullFileName: String): Long = {
-		var FileHandle = new java.io.File(fullFileName)
-		return FileHandle.lastModified
+		val fileHandle = new java.io.File(fullFileName)
+		return fileHandle.lastModified
 	}
 	
 	def GetDirectory(fullFileName: String): String = {
-		var fileHandle = new java.io.File(fullFileName)
+		val fileHandle = new java.io.File(fullFileName)
 		fileHandle.getParent
 	}
 }

@@ -27,7 +27,7 @@ object BatchBuilding {
 	def validSourceName(n: String) = n.endsWith(".wr") && !n.startsWith(".")
 	
 	def buildDirectory {
-		var openFileChooser = new java.awt.FileDialog(Application.top.peer, "Build for all .wr files in same folder as selected file", FileDialog.LOAD)
+		val openFileChooser = new java.awt.FileDialog(Application.top.peer, "Build for all .wr files in same folder as selected file", FileDialog.LOAD)
 		openFileChooser.setDirectory(storage.Configurations.GetLatestDirectory("OpenFile"))
 		// openFileChooser.setMultipleMode // Java 7
 		openFileChooser.setVisible(true)
@@ -36,8 +36,8 @@ object BatchBuilding {
 		if (openFileChooser.getFile != null) {
 			
 			val directory = openFileChooser.getDirectory
-			var fontDirectory = new java.io.File(directory)
-			var listOfFiles = fontDirectory.listFiles()
+			val fontDirectory = new java.io.File(directory)
+			val listOfFiles = fontDirectory.listFiles()
 			
 			var numberOfFiles = 0
 			for (file <- listOfFiles) if (validSourceName(file.getName)) numberOfFiles += 1

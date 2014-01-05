@@ -43,7 +43,7 @@ class Arguments(
   LatestInclusions.addFileName(providedSourceName)
 
   private def checkAndSplitSourceFileName() {
-    var fileHandle = new java.io.File(providedSourceName)
+    val fileHandle = new java.io.File(providedSourceName)
     if (fileHandle.exists) {
       if (fileHandle.isDirectory) {
         editor.DialogBox.error("Please specify a file name. '" + providedSourceName + "' is a directory")
