@@ -58,7 +58,7 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 	}
 	
 	def GetListOfFileNames: List[List[String]] = {
-		var result = new Stack[List[String]]
+		val result = new Stack[List[String]]
 		for (configuration <- dataSet) {
 			val fullFileName = configuration(0)
 			val fileName = configuration(1)
@@ -73,23 +73,26 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 	}
 	
 	def getEncoding(fullFileName: String, forcedEncoding: String): String = {
-		var result = ""
 		val i = getIndexOf(List(fullFileName))
 		val storedEncoding = if (i == -1) "" else dataSet(i)(4)
 		
-		var continue = true
-		if (forcedEncoding != "" && storedEncoding != "" && forcedEncoding != storedEncoding) {
-			val message = "This file has previously been saved with encoding " + storedEncoding
-			continue = editor.DialogBox.warning(message)
-		}
-		if (forcedEncoding != "") {
-			result = forcedEncoding
+		val continue =
+		  if (forcedEncoding != ""
+		      && storedEncoding != ""
+		      && forcedEncoding != storedEncoding) {
+		  	
+		    val message = "This file has previously been saved with encoding " + storedEncoding
+		  	editor.DialogBox.warning(message)
+		  } else {
+		    true
+		  }
+		if (forcedEncoding != "" && continue) {
+			forcedEncoding
 		} else if (storedEncoding != "") {
-			result = storedEncoding
+			storedEncoding
 		} else {
-			result = Configurations.GetCharacterEncoding
+			Configurations.GetCharacterEncoding
 		}
-		result
 	}
 	
 	def getCreationTime(fullFileName: String): String = {
