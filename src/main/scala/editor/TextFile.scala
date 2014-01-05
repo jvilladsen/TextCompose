@@ -113,41 +113,24 @@ class TextFile {
   }
 
   private def ensureExtensionOnFullFileName() {
-    val pathList = fullFileName.split(core.Environment.FileSeparator)
-    val pathLength = pathList.length
-    var localFileName = if (pathLength > 0) { pathList(pathLength - 1) } else { "" }
-    val dotList = localFileName.split('.')
+    val fileHandle = new java.io.File(fullFileName)
+    val localName = fileHandle.getName
+    val dotList = localName.split('.')
     val dotLength = dotList.length
     if (dotLength == 1) fullFileName += ".wr"
   }
 
   def updateFromFullName() {
-    var FileHandle = new java.io.File(fullFileName)
-    fileIsReadOnly = !FileHandle.canWrite
-    updateTimeStamp(FileHandle.lastModified)
-
-    val separator = core.Environment.FileSeparator
-    val pathList = fullFileName.split(separator)
-    val len = pathList.length
-    fileName = if (len > 0) {
-      pathList(len - 1)
-    } else {
-      throw new Exception("Could not split file path '" + fullFileName + "' with spearator '" + separator + "'.")
-    }
-
-    fileDirectory = ""
-    if (len > 1) { fileDirectory = pathList(0) }
-    var index = 0
-    while (index < len - 1) {
-      if (index > 0) fileDirectory += core.Environment.FileSeparator
-      fileDirectory += pathList(index)
-      index += 1
-    }
+    val fileHandle = new java.io.File(fullFileName)
+    fileIsReadOnly = !fileHandle.canWrite
+    updateTimeStamp(fileHandle.lastModified)
+    fileName = fileHandle.getName
+    fileDirectory = fileHandle.getParent + core.Environment.FileSeparator
     updatePropertiesPane()
   }
 
   def chooseFile(forcedEncoding: String) {
-    var openFileChooser = new java.awt.FileDialog(Application.top.peer, "Open File", FileDialog.LOAD)
+    val openFileChooser = new java.awt.FileDialog(Application.top.peer, "Open File", FileDialog.LOAD)
     openFileChooser.setDirectory(storage.Configurations.GetLatestDirectory("OpenFile"))
     openFileChooser.setVisible(true)
 
