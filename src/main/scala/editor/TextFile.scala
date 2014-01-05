@@ -87,7 +87,7 @@ class TextFile {
 
   private def updatePropertiesPane() {
     fileStatusLabel.text =
-      if (fullFileName == "") "Not Saved" else { if (fileIsReadOnly) "Read-Only" else "Writable" }
+      if (fullFileName == "") "Not Saved" else if (fileIsReadOnly) "Read-Only" else "Writable"
     fullFileNameLabel.text = fullFileName
     fileEncodingLabel.text = encoding
   }
@@ -126,9 +126,14 @@ class TextFile {
     fileIsReadOnly = !FileHandle.canWrite
     updateTimeStamp(FileHandle.lastModified)
 
-    val pathList = fullFileName.split(core.Environment.FileSeparator)
+    val separator = core.Environment.FileSeparator
+    val pathList = fullFileName.split(separator)
     val len = pathList.length
-    if (len > 0) { fileName = pathList(len - 1) }
+    fileName = if (len > 0) {
+      pathList(len - 1)
+    } else {
+      throw new Exception("Could not split file path '" + fullFileName + "' with spearator '" + separator + "'.")
+    }
 
     fileDirectory = ""
     if (len > 1) { fileDirectory = pathList(0) }
