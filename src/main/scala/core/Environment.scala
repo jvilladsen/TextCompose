@@ -32,7 +32,7 @@ object Environment {
 
   val ConfigurationsDirectory =
     if (isWindows) {
-      CurrentUserHome + FileSeparator + "\\AppData\\Writesetter"
+      CurrentUserHome + FileSeparator + "AppData\\Writesetter"
     } else {
       CurrentUserHome + FileSeparator + ".Writesetter"
     }
