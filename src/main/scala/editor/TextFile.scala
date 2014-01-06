@@ -161,10 +161,11 @@ class TextFile {
     var completed = true
     if (!fileIsReadOnly) {
 
-      if (storage.FileMethods.IsFile(fullFileName) &&
-        fileLatestTimeStamp < storage.FileMethods.GetTimeStamp(fullFileName)) {
+      val difference = storage.FileMethods.GetTimeStamp(fullFileName) - fileLatestTimeStamp
+      if (difference > 0) {
         val message = "This file has been modified from elsewhere. " +
-          "If you continue, you will overwrite a newer version with an older version!"
+          "If you continue, you will overwrite a newer version with an older version! " +
+          "It is newer by " + difference.toString + "ms."
         completed = DialogBox.warning(message)
       }
     }
