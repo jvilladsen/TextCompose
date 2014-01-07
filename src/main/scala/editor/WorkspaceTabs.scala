@@ -311,24 +311,24 @@ class WorkspaceTabs {
     }
   }
 
-  val addInclusionAction = new Action("Add Inclusion") {
+  val addExtensionAction = new Action("Add Extension") {
     enabled = false
 
     def apply() {
       saveTab(false, false, "")
       val index = getIndexOfSelectedTab
-      textFileEditor(index).registerNewInclusion()
-      inclusionsMenuFakeAction.enabled = !inclusionsMenuFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
+      textFileEditor(index).registerNewExtension()
+      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
     }
   }
 
-  val removeInclusionAction = new Action("Remove Inclusion") {
+  val removeExtensionAction = new Action("Remove Extension") {
     enabled = false
 
     def apply() {
       val index = getIndexOfSelectedTab
-      textFileEditor(index).file.unRegisterInclusion()
-      inclusionsMenuFakeAction.enabled = !inclusionsMenuFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
+      textFileEditor(index).file.unregisterExtension()
+      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
     }
   }
 
@@ -384,8 +384,8 @@ class WorkspaceTabs {
     buildPDFAction.enabled = exists
     viewPDFAction.enabled = exists
     // Inclusions
-    addInclusionAction.enabled = exists
-    removeInclusionAction.enabled = exists
+    addExtensionAction.enabled = exists
+    removeExtensionAction.enabled = exists
     // Template
     addTemplateAction.enabled = exists
     removeTemplateAction.enabled = exists
@@ -572,7 +572,7 @@ class WorkspaceTabs {
     }
   }
 
-  val inclusionsMenuFakeAction = new Action("<signal to inclusions menu>") {
+  val extensionsMenuFakeAction = new Action("<signal to inclusions menu>") {
     enabled = false
     def apply() { None }
   }

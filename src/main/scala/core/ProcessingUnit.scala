@@ -68,7 +68,7 @@ class ProcessingUnit(Incl: Inclusions) {
 
   def addUserOrMainTag(s: sourceType.Value, tagName: String, initialLineNumber: Long) {
     if (elements.exists(e => e.source == sourceType.tag && e.name == tagName)) {
-      throw new TagError("Circular references in tags defined in inclusions detected for the tag '" + tagName + "'.")
+      throw new TagError("Circular references in tags defined in extensions detected for the tag '" + tagName + "'.")
     }
     elements.push(new Element(s, tagName, initialLineNumber - 1))
   }
@@ -135,11 +135,11 @@ class ProcessingUnit(Incl: Inclusions) {
           case sourceType.insertion => result += nameAndLine(e.name, e.getNumber)
           case sourceType.tag => {
             val inclusionName = Incl.TagDefinitions(e.name).inclusionName
-            result += "tag '" + e.name + "' in inclusion '" + nameAndLine(inclusionName, e.getNumber) + "'"
+            result += "tag '" + e.name + "' in extension '" + nameAndLine(inclusionName, e.getNumber) + "'"
           }
           case sourceType.mainTag => {
             val inclusionName = Incl.TagDefinitions(e.name).inclusionName
-            result += "main of inclusion '" + nameAndLine(inclusionName, e.getNumber) + "'"
+            result += "main of extension '" + nameAndLine(inclusionName, e.getNumber) + "'"
             index -= 1 // it appear twice on the stack, first as a mainTag then as tag.
           }
           case sourceType.inLineTag    => result += "in-line " + e.name

@@ -26,7 +26,7 @@ object TagRegister {
   private var TagNames = new HashSet[String]
 
   def addBuiltInTags {
-    TagNames += "inclusion"
+    TagNames += "extension"
     TagNames += "def"
     TagNames += "/def"
     TagNames += "sub"

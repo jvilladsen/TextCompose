@@ -233,14 +233,14 @@ class TextFile {
     }
   }
 
-  def unRegisterInclusion() {
-    if (storage.Configurations.IsKnownInclusion(fullFileName)) {
-      var confirmed = DialogBox.warning("Make the file '" + fileName + "' unavailable for inclusion? It will not be deleted, just removed from the list of inclusions.")
+  def unregisterExtension() {
+    if (storage.Configurations.isKnownExtensionFile(fullFileName)) {
+      var confirmed = DialogBox.warning("Make the file '" + fileName + "' unavailable for inclusion? It will not be deleted, just removed from the list of extensions.")
       if (confirmed) {
-        storage.Configurations.unRegisterInclusion(fullFileName)
+        storage.Configurations.unregisterExtension(fullFileName)
       }
     } else {
-      DialogBox.info("This file (" + fileName + ") is not in the list of inclusions.")
+      DialogBox.info("This file (" + fileName + ") is not in the list of extensions.")
     }
   }
 

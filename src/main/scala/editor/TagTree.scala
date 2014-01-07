@@ -133,14 +133,14 @@ class TagTree {
   builtInTags += "GRAPHICS" -> "blend opacity image draw"
   builtInTags += "STATE" -> "store restore"
   builtInTags += "VARIABLE" -> "var set /set add /add show"
-  builtInTags += "EXTENSION" -> "include inclusion def sub main template"
+  builtInTags += "EXTENSION" -> "include extension def sub main template"
   builtInTags += "ADVANCED" -> "inject replace loop"
   val builtInFolders = List("FONT", "SPACE", "POSITION", "DOCUMENT", "IMAGE", "LIST", "TABLE", "DRAW", "INSERT", "GRAPHICS", "STATE", "VARIABLE", "EXTENSION", "ADVANCED")
 
   var folderNode = new HashMap[String, DefaultMutableTreeNode]
   var availableTagName = new HashMap[String, Boolean]
 
-  // Here we should add the included tags in the same way, with one folder for each inclusion file.
+  // Here we should add the included tags in the same way, with one folder for each extension file.
   // So we need access to Inclusions object - maybe there is a timing issue?
   // We will certainly have to refresh and redraw the tag tree whenever a file is compiled
   // if the LatestInclusions object may have changed.
@@ -184,7 +184,7 @@ class TagTree {
     }
 
     if (fullFileName != "") {
-      val inclusions = core.LatestInclusions.getListOfInclusions(fullFileName)
+      val inclusions = core.LatestInclusions.getListOfExtensions(fullFileName)
       for (inclusionName <- inclusions) {
         val folderName = inclusionName.toUpperCase
         var tags = core.LatestInclusions.getListOfTags(inclusionName)

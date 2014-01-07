@@ -37,7 +37,7 @@ class MetaDataPane {
 	
 	def updateErrors() {
 		errors.update()
-		metaDataFakeAction.enabled = !metaDataFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
+		metaDataFakeAction.enabled = !metaDataFakeAction.enabled // toggle to trigger showing meta data (hack)
 	}
 	
 	def updateColors() {

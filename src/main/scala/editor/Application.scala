@@ -231,17 +231,17 @@ object Application extends SimpleSwingApplication {
     pdfMenu.contents += new Separator
     pdfMenu.contents += getMenuItem(buildInBatchAction, KeyEvent.VK_B, true)
 
-    // Inclusions menu
-    val inclusionsMenu = new Menu("Inclusions")
-    updateInclusionsMenu()
+    // Extensions menu
+    val extensionsMenu = new Menu("Extensions")
+    updateExtensionsMenu()
 
-    private def updateInclusionsMenu() {
-      inclusionsMenu.contents.clear()
-      inclusionsMenu.contents += new MenuItem(workspaceTabs.addInclusionAction)
-      inclusionsMenu.contents += new MenuItem(workspaceTabs.removeInclusionAction)
-      inclusionsMenu.contents += new Separator
-      for (i <- storage.Configurations.GetListOfInclusions) {
-        inclusionsMenu.contents += new MenuItem(Action(i) { openNamedFile(storage.Configurations.GetInclusionFileName(i)) })
+    private def updateExtensionsMenu() {
+      extensionsMenu.contents.clear()
+      extensionsMenu.contents += new MenuItem(workspaceTabs.addExtensionAction)
+      extensionsMenu.contents += new MenuItem(workspaceTabs.removeExtensionAction)
+      extensionsMenu.contents += new Separator
+      for (i <- storage.Configurations.getListOfExtensions) {
+        extensionsMenu.contents += new MenuItem(Action(i) { openNamedFile(storage.Configurations.getExtensionFileName(i)) })
       }
     }
 
@@ -298,7 +298,7 @@ object Application extends SimpleSwingApplication {
     menuBar.contents += spellingMenu
     menuBar.contents += viewMenu
     menuBar.contents += pdfMenu
-    menuBar.contents += inclusionsMenu
+    menuBar.contents += extensionsMenu
     menuBar.contents += templatesMenu
     menuBar.contents += historyMenu
     menuBar.contents += helpMenu
@@ -371,16 +371,16 @@ object Application extends SimpleSwingApplication {
     // layout managers: FlowLayout, BoxLayout, GridLayout, SpringLayout, BorderLayout....?
     // http://download.oracle.com/javase/tutorial/uiswing/components/panel.html
 
-    // Update the inclusion menu
-    var updateInclMenu = new PropertyChangeListener() {
+    // Update the extension menu
+    val updateExtMenu = new PropertyChangeListener() {
       def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-        updateInclusionsMenu()
+        updateExtensionsMenu()
       }
     }
-    workspaceTabs.inclusionsMenuFakeAction.peer.addPropertyChangeListener(updateInclMenu)
+    workspaceTabs.extensionsMenuFakeAction.peer.addPropertyChangeListener(updateExtMenu)
 
     // Update the template menu
-    var updateTemplateMenu = new PropertyChangeListener() {
+    val updateTemplateMenu = new PropertyChangeListener() {
       def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
         updateTemplatesMenu()
       }
@@ -388,7 +388,7 @@ object Application extends SimpleSwingApplication {
     workspaceTabs.templatesMenuFakeAction.peer.addPropertyChangeListener(updateTemplateMenu)
 
     // Update the history menu
-    var updateHistMenu = new PropertyChangeListener() {
+    val updateHistMenu = new PropertyChangeListener() {
       def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
         updateHistoryMenu()
       }

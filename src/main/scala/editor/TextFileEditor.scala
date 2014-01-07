@@ -156,8 +156,8 @@ class TextFileEditor(fontSize: Int) {
     grabFocus
   }
 
-  def registerNewInclusion() {
-    core.FileRegistration.NewFile(file.fullFileName, "inclusion")
+  def registerNewExtension() {
+    core.FileRegistration.NewFile(file.fullFileName, "extension")
   }
   def registerNewTemplate() {
     core.FileRegistration.NewFile(file.fullFileName, "template")

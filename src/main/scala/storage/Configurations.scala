@@ -28,7 +28,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   /*
 	 * Values in first field:
 	 * - FontLocation
-	 * - Inclusion
+	 * - Extension
 	 * - TabSize
 	 * - SaveBeforeCompile
 	 * - WriteErrorMessagesToDocument
@@ -41,7 +41,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 	 * - PreviewZoomPercentage
 	 */
 
-  private var inclusionToFileName = new HashMap[String, String]
+  private var extensionToFileName = new HashMap[String, String]
   private var templateToFileName = new HashMap[String, String]
   private var latestDirectory = new HashMap[String, String]
   private var tabSize = 2
@@ -58,7 +58,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 
   override def getKeyLength(configuration: List[String]): Int = {
     if (configuration(0) == "FontLocation"
-      || configuration(0) == "Inclusion"
+      || configuration(0) == "Extension"
       || configuration(0) == "Template"
       || configuration(0) == "LatestDirectory") {
       2
@@ -72,14 +72,14 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     for (configuration <- dataSet) {
       if (configuration(0) == "FontLocation" && configuration.length == 2) {
         core.FontFileRegister.addDirectory(configuration(1))
-      } else if (configuration(0) == "Inclusion" && configuration.length == 3) {
-        val inclusionName = configuration(1)
+      } else if (configuration(0) == "Extension" && configuration.length == 3) {
+        val extensionName = configuration(1)
         val fullFileName = configuration(2)
         if (FileMethods.IsFile(fullFileName)) {
-          inclusionToFileName += inclusionName -> fullFileName
+          extensionToFileName += extensionName -> fullFileName
         } else {
           toBeRemoved += configuration
-          val message = "Previously registered inclusion '" + inclusionName + "' has been renamed/removed. " +
+          val message = "Previously registered extension '" + extensionName + "' has been renamed/removed. " +
             "\nIt was placed in '" + fullFileName + "'."
           errorsDuringInitialization += message
         }
@@ -169,28 +169,28 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     }
   }
 
-  def registerNewInclusion(inclusionName: String, fileName: String) {
-    inclusionToFileName += inclusionName -> fileName
-    update(List("Inclusion", inclusionName, fileName))
+  def registerNewExtension(extensionName: String, fileName: String) {
+    extensionToFileName += extensionName -> fileName
+    update(List("Extension", extensionName, fileName))
     store()
   }
 
-  def IsKnownInclusion(fileName: String): Boolean = {
+  def isKnownExtensionFile(fileName: String): Boolean = {
     var found = false
-    for (i <- inclusionToFileName) {
+    for (i <- extensionToFileName) {
       if (i._2 == fileName) { found = true }
     }
     found
   }
 
-  def unRegisterInclusion(fileName: String) {
-    var inclusions = new ArrayBuffer[String]
-    for (i <- inclusionToFileName) {
-      if (i._2 == fileName) { inclusions += i._1 }
+  def unregisterExtension(fileName: String) {
+    val extensions = new ArrayBuffer[String]
+    for (i <- extensionToFileName) {
+      if (i._2 == fileName) { extensions += i._1 }
     }
-    for (i <- inclusions) {
-      inclusionToFileName.remove(i)
-      remove(List("Inclusion", i, fileName))
+    for (i <- extensions) {
+      extensionToFileName.remove(i)
+      remove(List("Extension", i, fileName))
     }
     store()
   }
@@ -259,13 +259,11 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     store()
   }
 
-  // getters
+  def isKnownExtensionName(extension: String): Boolean = extensionToFileName.isDefinedAt(extension)
 
-  def IsKnownInclusionName(inclusion: String): Boolean = inclusionToFileName.isDefinedAt(inclusion)
+  def getExtensionFileName(extension: String): String = extensionToFileName(extension)
 
-  def GetInclusionFileName(inclusion: String): String = inclusionToFileName(inclusion)
-
-  def GetListOfInclusions: List[String] = inclusionToFileName.keys.toList.sortWith((a, b) => a < b)
+  def getListOfExtensions: List[String] = extensionToFileName.keys.toList.sortWith((a, b) => a < b)
 
   def IsKnownTemplateName(template: String): Boolean = templateToFileName.isDefinedAt(template)
 

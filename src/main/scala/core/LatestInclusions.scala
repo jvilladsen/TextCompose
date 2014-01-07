@@ -23,20 +23,20 @@ import scala.collection.mutable.ArrayBuffer
 
 object LatestInclusions {
 
-  // This object keeps track of the latest known inclusion files used by a given source.
-  // It also keeps track of the latest known list of tag names defined in those inclusion files.
+  // This object keeps track of the latest known extension files used by a given source.
+  // It also keeps track of the latest known list of tag names defined in those extension files.
   // We refresh the information when a source is compiled to PDF.
   // Future extension: save to a file, and load when starting the editor.
-  // Alternative improvement: keep an updated list of inclusions mentioned in the current editor.
+  // Alternative improvement: keep an updated list of extensions mentioned in the current editor.
 
   class Tag(t: String, d: List[String]) {
     val tagName = t
     val parameterDescriptions = d
   }
 
-  private var fullFileNameToInclusionList = new HashMap[String, ArrayBuffer[String]]
-  private var inclusionNameToTagList = new HashMap[String, ArrayBuffer[String]]
-  private var inclusionToTagParameterDescriptions = new HashMap[String, ArrayBuffer[Tag]]
+  private val fullFileNameToInclusionList = new HashMap[String, ArrayBuffer[String]]
+  private val inclusionNameToTagList = new HashMap[String, ArrayBuffer[String]]
+  private val inclusionToTagParameterDescriptions = new HashMap[String, ArrayBuffer[Tag]]
 
   private var currentFileName = ""
 
@@ -69,7 +69,7 @@ object LatestInclusions {
     }
   }
 
-  def getListOfInclusions(fileName: String): List[String] = {
+  def getListOfExtensions(fileName: String): List[String] = {
     if (fullFileNameToInclusionList.contains(fileName)) {
       fullFileNameToInclusionList(fileName).toList
     } else {

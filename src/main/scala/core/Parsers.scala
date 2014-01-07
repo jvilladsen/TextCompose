@@ -196,7 +196,7 @@ object Parsers {
   replace.addFlag("t")
 
   val include = new TagParser("include")
-  include.addString("name of inclusion", true)
+  include.addString("name of extension", true)
 
   val encrypt = new TagParser("encrypt")
   encrypt.addString("user password", true)

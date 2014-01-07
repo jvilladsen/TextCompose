@@ -88,7 +88,7 @@ class SourceProcessor(
     inclusions.addNewInclusion(parser.getNextString, processingUnit)
     for ((message, unit) <- inclusions.errorMessages) { showErrorMessage(message, unit) }
     /* If a 'main' was encountered in the inclusion, then we should throw it into the stream here.
-		 * Note that there may be more than one, since inclusion can use the include tag.
+		 * Note that there may be more than one, since extension can use the include tag.
 		 */
     for (mainTagName <- inclusions.mainTags) {
       val tagLineNumber = inclusions.TagDefinitions(mainTagName).lineNumber
@@ -397,22 +397,22 @@ class SourceProcessor(
     document.writer.setViewerPreferences(parser.getNextOption, parser.getNextOption)
   }
 
-  private def inclusionTag {
-    throw new TagError("Building a document from an inclusion file? The 'inclusion' tag is used in the top of " +
-      "inclusion files for specifying a name of the inclusion.")
+  private def extensionTag {
+    throw new TagError("Building a document from an extension file? The 'extension' tag is used in the top of " +
+      "extension files for specifying a name of the extension.")
   }
   private def defTag {
-    throw new TagError("The 'def' tag, used for defining new tags, can only be used in inclusions. " +
-      "Inclusions are separate files with the 'inclusion' tag in the top. Before you can refer to " +
-      "an inclusion, with the 'include' tag, you must add it by choosing 'Add' in the 'Inclusions' menu.")
+    throw new TagError("The 'def' tag, used for defining new tags, can only be used in extensions. " +
+      "Extensions are separate files with the 'extension' tag in the top. Before you can refer to " +
+      "an extension, with the 'include' tag, you must add it by choosing 'Add' in the 'Extensions' menu.")
   }
   private def subTag {
-    throw new TagError("The 'sub' tag, used for defining new tags, can only be used in inclusions. The only " +
+    throw new TagError("The 'sub' tag, used for defining new tags, can only be used in extensions. The only " +
       "difference between 'sub' and 'def' is that sub's do not appear in the tag menu.")
   }
   private def mainTag {
     throw new TagError("The 'main' tag, used for specifying stuff that should be inserted along with the " +
-      "inclusion, can only be used in inclusions.")
+      "extension, can only be used in extensions.")
   }
 
   private def marginsTag(parser: TagParser, se: SourceElement) {
@@ -1036,7 +1036,7 @@ class SourceProcessor(
       case "show"             => showTag(Parsers.show, element)
       // EXTENSION
       case "include"          => includeTag(Parsers.include, element)
-      case "inclusion"        => inclusionTag
+      case "extension"        => extensionTag
       case "def"              => defTag
       case "sub"              => subTag
       case "main"             => mainTag

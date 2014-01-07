@@ -52,9 +52,6 @@ class Inclusions {
     var lineContent = ""
     var lineNumber = 0
 
-    // FIXME: Arguments.CheckAndSplitSourceFileName has some good validation that we could use here!
-    // That should be split out somewhere, for use whenever we get a filename - to check existence.
-
     var insideTagDefinition = false
     var definitionType = ""
     var currentTagName = ""
@@ -74,7 +71,7 @@ class Inclusions {
           insideTagDefinition = false
           val subTrimmed = timmedLine.substring(2, timmedLine.length - 1)
           if (definitionType != subTrimmed) {
-            errorMessages.append(("Error in the definition of the tag '" + currentTagName + "' in the inclusion '" +
+            errorMessages.append(("Error in the definition of the tag '" + currentTagName + "' in the extension '" +
               inclusionName + "': Finish 'def' with '/def', 'sub' with '/sub' and 'main' with '/main'.", processingUnit))
           }
         } else {
@@ -126,10 +123,10 @@ class Inclusions {
             } else {
               errorMessages.append(("The 'include' tag should have a parameter.", processingUnit))
             }
-          } else if (tagName != "inclusion") {
-            errorMessages.append(("Unexpected tag '" + tagName + "' in the inclusion '" + inclusionName +
-              "'. Inclusions are meant for specifying new tags using the tag 'def' (or 'sub', 'main'). " +
-              "It is also possible to use the 'include' tag in inclusions.", processingUnit))
+          } else if (tagName != "extension") {
+            errorMessages.append(("Unexpected tag '" + tagName + "' in the extension '" + inclusionName +
+              "'. Extensions are meant for specifying new tags using the tag 'def' (or 'sub', 'main'). " +
+              "It is also possible to use the 'include' tag in extensions.", processingUnit))
           }
         }
       } // if insideTagDefinition / else
@@ -142,13 +139,13 @@ class Inclusions {
     if (!inclusionNames.contains(inclusionName)) {
       var fullFileName = ""
       var encoding = ""
-      if (storage.Configurations.IsKnownInclusionName(inclusionName)) {
-        fullFileName = storage.Configurations.GetInclusionFileName(inclusionName)
+      if (storage.Configurations.isKnownExtensionName(inclusionName)) {
+        fullFileName = storage.Configurations.getExtensionFileName(inclusionName)
         encoding = storage.SourcesMetaData.getEncoding(fullFileName, "")
       } else {
-        throw new TagError("The 'include' tag refers to an inclusion '" + inclusionName +
-          "', that has not been registered. To register a file as an inclusion, simply open the " +
-          "file and choose the action 'Add Inclusion' in the 'Inclusions' menu.")
+        throw new TagError("The 'include' tag refers to an extension '" + inclusionName +
+          "', that has not been registered. To register a file as an extension, simply open the " +
+          "file and choose the action 'Add Extension' in the 'Extensions' menu.")
       }
 
       LatestInclusions.addInclusion(inclusionName)

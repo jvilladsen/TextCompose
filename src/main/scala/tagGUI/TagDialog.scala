@@ -493,8 +493,8 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "/add"             => None
       case "show"             => tagWithOneTextField("Variable")
       // EXTENSION
-      case "include"          => tagWithComboBox(storage.Configurations.GetListOfInclusions)
-      case "inclusion"        => tagWithOneTextField("Name")
+      case "include"          => tagWithComboBox(storage.Configurations.getListOfExtensions)
+      case "extension"        => tagWithOneTextField("Name")
       case "def"              => defTag()
       case "sub"              => defTag()
       case "main"             => None

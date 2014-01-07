@@ -57,17 +57,17 @@ object FileRegistration {
   private def Register {
     if (tagFound && parameters > 0) {
       var continue = true
-      if (fileType == "inclusion") {
-        if (storage.Configurations.IsKnownInclusionName(name)
-          && storage.Configurations.GetInclusionFileName(name) != fullFileName) {
-          val message = "There is already an inclusion named '" + name + "', registered from\n'" +
-            storage.Configurations.GetInclusionFileName(name) + "'.\n\n" +
-            "This inclusion name will now refer to the file '\n" +
+      if (fileType == "extension") {
+        if (storage.Configurations.isKnownExtensionName(name)
+          && storage.Configurations.getExtensionFileName(name) != fullFileName) {
+          val message = "There is already an extension named '" + name + "', registered from\n'" +
+            storage.Configurations.getExtensionFileName(name) + "'.\n\n" +
+            "This extension name will now refer to the file '\n" +
             fullFileName
           continue = editor.DialogBox.warning(message)
         }
         if (continue) {
-          storage.Configurations.registerNewInclusion(name, fullFileName)
+          storage.Configurations.registerNewExtension(name, fullFileName)
         }
       } else {
         if (name == "none") {
@@ -87,15 +87,15 @@ object FileRegistration {
         }
       }
     } else if (!tagFound) {
-      val message = if (fileType == "inclusion") {
-        "This file has no 'inclusion' tag. Inclusion files must have such a tag, specifying the name of the inclusion."
+      val message = if (fileType == "extension") {
+        "This file has no 'extension' tag. Extension files must have such a tag, specifying the name of the extension."
       } else {
         "This file has no 'template' tag. Templates must have such a tag, specifying the name of the template."
       }
       editor.DialogBox.error(message)
     } else {
-      val message = if (fileType == "inclusion") {
-        "The inclusion tag should have one parameter with the name of the inclusion."
+      val message = if (fileType == "extension") {
+        "The extension tag should have one parameter with the name of the extension."
       } else {
         "The template tag should have a parameter with the name of the template."
       }
@@ -109,11 +109,11 @@ object FileRegistration {
     } else {
       fullFileName = n
       fileType = t
-      if (fileType == "inclusion" || fileType == "template") {
+      if (fileType == "extension" || fileType == "template") {
         Parse
         Register
       } else {
-        editor.DialogBox.systemError("File type for registration must be 'inclusion' or 'template'. Got '" + fileType + "'.")
+        editor.DialogBox.systemError("File type for registration must be 'extension' or 'template'. Got '" + fileType + "'.")
       }
     }
   }
