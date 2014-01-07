@@ -235,7 +235,7 @@ class TextFile {
 
   def unregisterExtension() {
     if (storage.Configurations.isKnownExtensionFile(fullFileName)) {
-      var confirmed = DialogBox.warning("Make the file '" + fileName + "' unavailable for inclusion? It will not be deleted, just removed from the list of extensions.")
+      var confirmed = DialogBox.warning("Make the file '" + fileName + "' unavailable for extension? It will not be deleted, just removed from the list of extensions.")
       if (confirmed) {
         storage.Configurations.unregisterExtension(fullFileName)
       }

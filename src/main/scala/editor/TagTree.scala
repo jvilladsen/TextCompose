@@ -141,9 +141,9 @@ class TagTree {
   var availableTagName = new HashMap[String, Boolean]
 
   // Here we should add the included tags in the same way, with one folder for each extension file.
-  // So we need access to Inclusions object - maybe there is a timing issue?
+  // So we need access to Extensions object - maybe there is a timing issue?
   // We will certainly have to refresh and redraw the tag tree whenever a file is compiled
-  // if the LatestInclusions object may have changed.
+  // if the LatestExtensions object may have changed.
   // See how we clear the contents in TagPane and do the same for scrollPane below.
 
   def isAvailableTag(name: String): Boolean = availableTagName.contains(name)
@@ -184,16 +184,16 @@ class TagTree {
     }
 
     if (fullFileName != "") {
-      val inclusions = core.LatestInclusions.getListOfExtensions(fullFileName)
-      for (inclusionName <- inclusions) {
-        val folderName = inclusionName.toUpperCase
-        var tags = core.LatestInclusions.getListOfTags(inclusionName)
+      val extensions = core.LatestExtensions.getListOfExtensions(fullFileName)
+      for (extensionName <- extensions) {
+        val folderName = extensionName.toUpperCase
+        var tags = core.LatestExtensions.getListOfTags(extensionName)
         // The idea is that we could include a file which has sub's and main's only which 
         // should not appear in the menu, and there is no reason for showing empty folders.
         if (!tags.isEmpty) {
-          folderNode += inclusionName -> addNode(root, folderName)
+          folderNode += extensionName -> addNode(root, folderName)
           for (tag <- tags) {
-            folderNode += tag -> addNode(folderNode(inclusionName), tag)
+            folderNode += tag -> addNode(folderNode(extensionName), tag)
             availableTagName += tag -> true
           }
         }

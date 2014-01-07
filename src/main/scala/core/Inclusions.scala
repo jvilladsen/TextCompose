@@ -23,9 +23,9 @@ import scala.collection.mutable.HashSet
 import scala.collection.mutable.ArrayBuffer
 import writesetter.{ editor, storage }
 
-class Inclusions {
+class Extensions {
 
-  var inclusionNames = new HashSet[String] // to ensure that we don't try to include the same twice
+  var extensionNames = new HashSet[String] // to ensure that we don't try to include the same twice
 
   var TagDefinitions = new HashMap[String, TagDefinition] // tag name -> tag definition
 
@@ -35,15 +35,15 @@ class Inclusions {
 
   TagRegister.addBuiltInTags
 
-  def cleanUpAfterReadingInclusion {
+  def cleanUpAfterReadingExtension {
     errorMessages.clear
     mainTags.clear
   }
 
   def UserDefinedTag(tagName: String): Boolean = TagDefinitions.contains(tagName)
 
-  private def parseInclusion(
-    inclusionName: String,
+  private def parseExtension(
+    extensionName: String,
     fullFileName: String,
     encoding: String,
     processingUnit: ProcessingUnit) {
@@ -72,7 +72,7 @@ class Inclusions {
           val subTrimmed = timmedLine.substring(2, timmedLine.length - 1)
           if (definitionType != subTrimmed) {
             errorMessages.append(("Error in the definition of the tag '" + currentTagName + "' in the extension '" +
-              inclusionName + "': Finish 'def' with '/def', 'sub' with '/sub' and 'main' with '/main'.", processingUnit))
+              extensionName + "': Finish 'def' with '/def', 'sub' with '/sub' and 'main' with '/main'.", processingUnit))
           }
         } else {
           try {
@@ -98,7 +98,7 @@ class Inclusions {
             definitionType = tagName
             val isMainTag = tagName == "main"
 
-            var td = new TagDefinition(ses.LineElements(0), inclusionName, lineNumber + 1, isMainTag)
+            var td = new TagDefinition(ses.LineElements(0), extensionName, lineNumber + 1, isMainTag)
             // FIXME (+1 above) : change this when it becomes possible to define a tag on one single line.
             currentTagName = td.tagName
 
@@ -111,47 +111,47 @@ class Inclusions {
             if (definitionType == "def") {
               // Neither 'sub' nor 'main' definitions should appear in the tag tree.
               // This is actually the whole point with 'sub'. The point with 'main' definitions
-              // is that they get directly into the stream, just by inclusion.
-              LatestInclusions.addTag(inclusionName, currentTagName, td)
+              // is that they get directly into the stream, just by extension.
+              LatestExtensions.addTag(extensionName, currentTagName, td)
             }
             TagRegister.AddNewTag(currentTagName)
             insideTagDefinition = true
           } else if (tagName == "include") {
             val e = ses.LineElements(0)
             if (e.NumberOfParameters == 1) {
-              addNewInclusion(e.Parameters(0), processingUnit)
+              addNewExtension(e.Parameters(0), processingUnit)
             } else {
               errorMessages.append(("The 'include' tag should have a parameter.", processingUnit))
             }
           } else if (tagName != "extension") {
-            errorMessages.append(("Unexpected tag '" + tagName + "' in the extension '" + inclusionName +
+            errorMessages.append(("Unexpected tag '" + tagName + "' in the extension '" + extensionName +
               "'. Extensions are meant for specifying new tags using the tag 'def' (or 'sub', 'main'). " +
               "It is also possible to use the 'include' tag in extensions.", processingUnit))
           }
         }
       } // if insideTagDefinition / else
     } // end while
-    if (insideTagDefinition) errorMessages.append(("Error in '" + inclusionName + "': Incomplete tag definition at end of file.", processingUnit))
+    if (insideTagDefinition) errorMessages.append(("Error in '" + extensionName + "': Incomplete tag definition at end of file.", processingUnit))
   }
 
-  def addNewInclusion(inclusionName: String, processingUnit: ProcessingUnit) {
+  def addNewExtension(extensionName: String, processingUnit: ProcessingUnit) {
 
-    if (!inclusionNames.contains(inclusionName)) {
+    if (!extensionNames.contains(extensionName)) {
       var fullFileName = ""
       var encoding = ""
-      if (storage.Configurations.isKnownExtensionName(inclusionName)) {
-        fullFileName = storage.Configurations.getExtensionFileName(inclusionName)
+      if (storage.Configurations.isKnownExtensionName(extensionName)) {
+        fullFileName = storage.Configurations.getExtensionFileName(extensionName)
         encoding = storage.SourcesMetaData.getEncoding(fullFileName, "")
       } else {
-        throw new TagError("The 'include' tag refers to an extension '" + inclusionName +
+        throw new TagError("The 'include' tag refers to an extension '" + extensionName +
           "', that has not been registered. To register a file as an extension, simply open the " +
           "file and choose the action 'Add Extension' in the 'Extensions' menu.")
       }
 
-      LatestInclusions.addInclusion(inclusionName)
+      LatestExtensions.addExtension(extensionName)
 
-      inclusionNames += inclusionName
-      parseInclusion(inclusionName, fullFileName, encoding, processingUnit)
+      extensionNames += extensionName
+      parseExtension(extensionName, fullFileName, encoding, processingUnit)
     }
   }
 }

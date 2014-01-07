@@ -318,7 +318,7 @@ class WorkspaceTabs {
       saveTab(false, false, "")
       val index = getIndexOfSelectedTab
       textFileEditor(index).registerNewExtension()
-      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
+      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of extensions menu (hack)
     }
   }
 
@@ -328,7 +328,7 @@ class WorkspaceTabs {
     def apply() {
       val index = getIndexOfSelectedTab
       textFileEditor(index).file.unregisterExtension()
-      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of inclusions menu (hack)
+      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of extensions menu (hack)
     }
   }
 
@@ -383,7 +383,7 @@ class WorkspaceTabs {
     // Document
     buildPDFAction.enabled = exists
     viewPDFAction.enabled = exists
-    // Inclusions
+    // Extensions
     addExtensionAction.enabled = exists
     removeExtensionAction.enabled = exists
     // Template
@@ -572,7 +572,7 @@ class WorkspaceTabs {
     }
   }
 
-  val extensionsMenuFakeAction = new Action("<signal to inclusions menu>") {
+  val extensionsMenuFakeAction = new Action("<signal to extensions menu>") {
     enabled = false
     def apply() { None }
   }

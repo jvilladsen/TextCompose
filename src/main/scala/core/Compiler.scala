@@ -26,15 +26,15 @@ object Compiler {
       while (compile) {
 
         DocumentFontRegister.initialize
-        val inclusions = new Inclusions
-        val processingUnit = new ProcessingUnit(inclusions)
+        val extensions = new Extensions
+        val processingUnit = new ProcessingUnit(extensions)
         processingUnit.setCaretPosition(arguments.caretPostionForPreview)
         val encoding = writesetter.storage.SourcesMetaData.getEncoding(arguments.sourceFullFileName, "")
         val source = new SourceFile(arguments.sourceFullFileName, encoding, processingUnit, true)
 
         //val wordsVectors = new WordVectors
         val document = new PDFDocument(arguments) //, wordsVectors)
-        val processor = new SourceProcessor(document, processingUnit, inclusions, arguments)
+        val processor = new SourceProcessor(document, processingUnit, extensions, arguments)
         val EH = new PDFEventHandler(processor)
         document.writer.setEventHandler(EH)
         ImageCache.clear // If you edit an image and then recompile, get the new image.

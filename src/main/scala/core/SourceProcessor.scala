@@ -29,7 +29,7 @@ import writesetter.{ editor, storage }
 class SourceProcessor(
   document: PDFDocument,
   processingUnit: ProcessingUnit,
-  inclusions: Inclusions,
+  extensions: Extensions,
   arguments: Arguments) {
 
   private var keepWhitespace = false
@@ -85,19 +85,19 @@ class SourceProcessor(
 
   private def includeTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    inclusions.addNewInclusion(parser.getNextString, processingUnit)
-    for ((message, unit) <- inclusions.errorMessages) { showErrorMessage(message, unit) }
-    /* If a 'main' was encountered in the inclusion, then we should throw it into the stream here.
+    extensions.addNewExtension(parser.getNextString, processingUnit)
+    for ((message, unit) <- extensions.errorMessages) { showErrorMessage(message, unit) }
+    /* If a 'main' was encountered in the extension, then we should throw it into the stream here.
 		 * Note that there may be more than one, since extension can use the include tag.
 		 */
-    for (mainTagName <- inclusions.mainTags) {
-      val tagLineNumber = inclusions.TagDefinitions(mainTagName).lineNumber
+    for (mainTagName <- extensions.mainTags) {
+      val tagLineNumber = extensions.TagDefinitions(mainTagName).lineNumber
       processingUnit.addMainTag(mainTagName, tagLineNumber)
       processingUnit.update("<" + mainTagName + ">")
       processSourceLine()
       processingUnit.popElement()
     }
-    inclusions.cleanUpAfterReadingInclusion
+    extensions.cleanUpAfterReadingExtension
   }
 
   private def encryptTag(parser: TagParser, se: SourceElement) {
@@ -111,8 +111,8 @@ class SourceProcessor(
   // Handle user defined tag
 
   private def handleUserTag(se: SourceElement) {
-    val tagLineNumber = inclusions.TagDefinitions(se.TagName).lineNumber
-    val defWithValues = inclusions.TagDefinitions(se.TagName).GetDefinitionWithValues(se)
+    val tagLineNumber = extensions.TagDefinitions(se.TagName).lineNumber
+    val defWithValues = extensions.TagDefinitions(se.TagName).GetDefinitionWithValues(se)
     processingUnit.addUserTag(se.TagName, tagLineNumber)
     for (line <- defWithValues) {
       processingUnit.update(line)
@@ -1050,7 +1050,7 @@ class SourceProcessor(
       case "loop"             => loopTag(element)
       case "whitespace"       => whitespaceTag(Parsers.whitespace, element)
       case _ => {
-        if (inclusions.UserDefinedTag(element.TagName)) {
+        if (extensions.UserDefinedTag(element.TagName)) {
           handleUserTag(element)
         } else {
           val suggestion = TagRegister.GetSuggestions(element.TagName)

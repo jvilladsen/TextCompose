@@ -21,7 +21,7 @@ package writesetter.core
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 
-object LatestInclusions {
+object LatestExtensions {
 
   // This object keeps track of the latest known extension files used by a given source.
   // It also keeps track of the latest known list of tag names defined in those extension files.
@@ -34,60 +34,60 @@ object LatestInclusions {
     val parameterDescriptions = d
   }
 
-  private val fullFileNameToInclusionList = new HashMap[String, ArrayBuffer[String]]
-  private val inclusionNameToTagList = new HashMap[String, ArrayBuffer[String]]
-  private val inclusionToTagParameterDescriptions = new HashMap[String, ArrayBuffer[Tag]]
+  private val fullFileNameToExtensionList = new HashMap[String, ArrayBuffer[String]]
+  private val extensionNameToTagList = new HashMap[String, ArrayBuffer[String]]
+  private val extensionToTagParameterDescriptions = new HashMap[String, ArrayBuffer[Tag]]
 
   private var currentFileName = ""
 
   def addFileName(fileName: String) {
     val newEmptyArray = new ArrayBuffer[String]
-    fullFileNameToInclusionList(fileName) = newEmptyArray
+    fullFileNameToExtensionList(fileName) = newEmptyArray
     currentFileName = fileName
   }
 
-  def addInclusion(inclusionName: String) {
-    fullFileNameToInclusionList(currentFileName).append(inclusionName)
+  def addExtension(extensionName: String) {
+    fullFileNameToExtensionList(currentFileName).append(extensionName)
     val newEmptyArray = new ArrayBuffer[String]
-    inclusionNameToTagList(inclusionName) = newEmptyArray
+    extensionNameToTagList(extensionName) = newEmptyArray
     val newEmptyTagArray = new ArrayBuffer[Tag]
-    inclusionToTagParameterDescriptions(inclusionName) = newEmptyTagArray
+    extensionToTagParameterDescriptions(extensionName) = newEmptyTagArray
   }
 
-  def addTag(inclusionName: String, tagName: String, td: TagDefinition) {
-    inclusionNameToTagList(inclusionName).append(tagName)
+  def addTag(extensionName: String, tagName: String, td: TagDefinition) {
+    extensionNameToTagList(extensionName).append(tagName)
 
     val t = new Tag(tagName, td.parameterDescriptions.toList)
-    inclusionToTagParameterDescriptions(inclusionName).append(t)
+    extensionToTagParameterDescriptions(extensionName).append(t)
   }
 
-  def getListOfTags(inclusionName: String): List[String] = {
-    if (inclusionNameToTagList.contains(inclusionName)) {
-      inclusionNameToTagList(inclusionName).toList
+  def getListOfTags(extensionName: String): List[String] = {
+    if (extensionNameToTagList.contains(extensionName)) {
+      extensionNameToTagList(extensionName).toList
     } else {
       List()
     }
   }
 
   def getListOfExtensions(fileName: String): List[String] = {
-    if (fullFileNameToInclusionList.contains(fileName)) {
-      fullFileNameToInclusionList(fileName).toList
+    if (fullFileNameToExtensionList.contains(fileName)) {
+      fullFileNameToExtensionList(fileName).toList
     } else {
       List()
     }
   }
 
-  def GetInclusionDefiningTag(fileName: String, tagName: String): String = {
-    if (fullFileNameToInclusionList.contains(fileName)) {
-      for (inclusion <- fullFileNameToInclusionList(fileName)) {
-        if (inclusionNameToTagList(inclusion).contains(tagName)) { return inclusion }
+  def GetExtensionDefiningTag(fileName: String, tagName: String): String = {
+    if (fullFileNameToExtensionList.contains(fileName)) {
+      for (extension <- fullFileNameToExtensionList(fileName)) {
+        if (extensionNameToTagList(extension).contains(tagName)) { return extension }
       }
     }
     ""
   }
 
-  def GetListOfParameterDescriptions(inclusion: String, tagName: String): List[String] = {
-    val index = inclusionNameToTagList(inclusion).indexOf(tagName)
-    inclusionToTagParameterDescriptions(inclusion)(index).parameterDescriptions
+  def GetListOfParameterDescriptions(extension: String, tagName: String): List[String] = {
+    val index = extensionNameToTagList(extension).indexOf(tagName)
+    extensionToTagParameterDescriptions(extension)(index).parameterDescriptions
   }
 }

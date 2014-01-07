@@ -398,8 +398,8 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(selection)
   }
 
-  private def userDefinedTag(inclusion: String, tagName: String) {
-    val parameterDescriptions = core.LatestInclusions.GetListOfParameterDescriptions(inclusion, tagName)
+  private def userDefinedTag(extension: String, tagName: String) {
+    val parameterDescriptions = core.LatestExtensions.GetListOfParameterDescriptions(extension, tagName)
     for (p <- parameterDescriptions) {
       fields.append(new TextType(p, true))
     }
@@ -508,9 +508,9 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "loop"             => loopTag()
       case "whitespace"       => whitespaceTag()
       case _ => {
-        val inclusion = core.LatestInclusions.GetInclusionDefiningTag(fileKey, tagName)
-        if (inclusion != "") {
-          userDefinedTag(inclusion, tagName)
+        val extension = core.LatestExtensions.GetExtensionDefiningTag(fileKey, tagName)
+        if (extension != "") {
+          userDefinedTag(extension, tagName)
         } else {
           knownTag = false
         }

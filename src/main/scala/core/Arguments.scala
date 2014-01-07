@@ -40,7 +40,7 @@ class Arguments(
 
   checkAndSplitSourceFileName()
   determinePDFFileName()
-  LatestInclusions.addFileName(providedSourceName)
+  LatestExtensions.addFileName(providedSourceName)
 
   private def checkAndSplitSourceFileName() {
     val fileHandle = new java.io.File(providedSourceName)

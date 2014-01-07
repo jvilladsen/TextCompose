@@ -20,7 +20,7 @@ package writesetter.core
 
 import scala.collection.mutable.Stack
 
-class ProcessingUnit(Incl: Inclusions) {
+class ProcessingUnit(extensions: Extensions) {
 
   object sourceType extends Enumeration {
     val root = Value
@@ -134,12 +134,12 @@ class ProcessingUnit(Incl: Inclusions) {
           case sourceType.root      => result += nameAndLine(e.name, e.getNumber)
           case sourceType.insertion => result += nameAndLine(e.name, e.getNumber)
           case sourceType.tag => {
-            val inclusionName = Incl.TagDefinitions(e.name).inclusionName
-            result += "tag '" + e.name + "' in extension '" + nameAndLine(inclusionName, e.getNumber) + "'"
+            val extensionName = extensions.TagDefinitions(e.name).extensionName
+            result += "tag '" + e.name + "' in extension '" + nameAndLine(extensionName, e.getNumber) + "'"
           }
           case sourceType.mainTag => {
-            val inclusionName = Incl.TagDefinitions(e.name).inclusionName
-            result += "main of extension '" + nameAndLine(inclusionName, e.getNumber) + "'"
+            val extensionName = extensions.TagDefinitions(e.name).extensionName
+            result += "main of extension '" + nameAndLine(extensionName, e.getNumber) + "'"
             index -= 1 // it appear twice on the stack, first as a mainTag then as tag.
           }
           case sourceType.inLineTag    => result += "in-line " + e.name
