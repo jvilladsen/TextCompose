@@ -235,7 +235,8 @@ class TextFile {
 
   def unregisterExtension() {
     if (storage.Configurations.isKnownExtensionFile(fullFileName)) {
-      var confirmed = DialogBox.warning("Make the file '" + fileName + "' unavailable for extension? It will not be deleted, just removed from the list of extensions.")
+      var confirmed = DialogBox.warning("Make the file '" + fileName +
+          "' unavailable for extension?\nIt will not be deleted, just removed from the list of extensions.")
       if (confirmed) {
         storage.Configurations.unregisterExtension(fullFileName)
       }
@@ -246,7 +247,8 @@ class TextFile {
 
   def unRegisterTemplate() {
     if (storage.Configurations.IsKnownTemplate(fullFileName)) {
-      var confirmed = DialogBox.warning("Make the file '" + fileName + "' unavailable as a template? It will not be deleted, just removed from the list of templates.")
+      var confirmed = DialogBox.warning("Make the file '" + fileName +
+          "' unavailable as a template?\nIt will not be deleted, just removed from the list of templates.")
       if (confirmed) {
         storage.Configurations.unRegisterTemplate(fullFileName)
       }
