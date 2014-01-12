@@ -27,6 +27,13 @@ object ResourceHandling {
   val baseDir = "/main/resources/"
   val licenseText = core.Environment.GetConfigFilePath("license.html")
 
+  private def getResourceStream(resourceName: String) = {
+    val fullName = baseDir + resourceName
+    val streamIn = getClass().getResourceAsStream(fullName)
+    if (streamIn == null) throw new Exception("Could not open resource '" + fullName + "'.")
+    streamIn
+  }
+
   private def getFullName(name: String): String = {
     core.Environment.GetConfigFilePath(name)
   }
@@ -39,9 +46,7 @@ object ResourceHandling {
     if (!storage.FileMethods.IsFile(targetFileName)) {
       warning()
 
-      val fullStreamName = baseDir + dir + "/" + name
-      val streamIn = getClass().getResourceAsStream(fullStreamName)
-      if (streamIn == null) throw new Exception("Could not open resource '" + fullStreamName + "'.")
+      val streamIn = getResourceStream(dir + "/" + name)
       val streamOut = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(targetFileName)))
       var b = 0
       var going = true
@@ -81,8 +86,7 @@ object ResourceHandling {
     /* The reason for the low-level implementation below is that we are
 		 * moving a "resource" (file inside a jar file) to a "regular" file.
 		 */
-    val streamIn = getClass().getResourceAsStream(baseDir + "documentation.txt")
-    if (streamIn == null) throw new Exception("Could not open resource 'documentation.txt'.")
+    val streamIn = getResourceStream("documentation.txt")
     var line = ""
     var b = 0
     var going = true
@@ -109,8 +113,7 @@ object ResourceHandling {
     /* The reason for the low-level implementation below is that we are
 		 * moving a "resource" (file inside a jar file) to a "regular" file.
 		 */
-    val streamIn = getClass().getResourceAsStream(baseDir + "license/" + fileName)
-    if (streamIn == null) throw new Exception("Could not open resource license text '" + fileName + "'.")
+    val streamIn = getResourceStream("license/" + fileName)
     var text = ""
     var b = 0
     var going = true
