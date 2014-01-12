@@ -40,7 +40,6 @@ object CompileOrGUI {
 			try {
 				calledWithArguments = true
 				val externalArgs = new core.ExternalArguments(arguments)
-				ResourceHandling.copyAllResources()
 				externalArgs.parseAndCompile()
 			} catch {
 				case e: Exception => println(e.getMessage)

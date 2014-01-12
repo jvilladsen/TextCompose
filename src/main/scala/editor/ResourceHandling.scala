@@ -38,54 +38,48 @@ object ResourceHandling {
     core.Environment.GetConfigFilePath(name)
   }
 
-  private def copyResource(dir: String, name: String, warning: () => Unit) {
+  private def copyResource(dir: String, name: String) {
     val targetFileName = getFullName(name)
-    /* The reason for the low-level implementation below is that we are
-		 * moving a "resource" (file inside a jar file) to a "regular" file.
-		 */
-    if (!storage.FileMethods.IsFile(targetFileName)) {
-      warning()
+    /* The reason for the low-level implementation below is that
+     * we are reading a "resource" (file inside a jar file).
+	 */
 
-      val streamIn = getResourceStream(dir + "/" + name)
-      val streamOut = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(targetFileName)))
-      var b = 0
-      var going = true
-      while (going) {
-        b = streamIn.read()
-        if (b != -1) { streamOut.writeByte(b) } else { going = false }
-      }
-      streamOut.close()
-      streamIn.close()
+    val streamIn = getResourceStream(dir + "/" + name)
+    val streamOut = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(targetFileName)))
+    var b = 0
+    var going = true
+    while (going) {
+      b = streamIn.read()
+      if (b != -1) { streamOut.writeByte(b) } else { going = false }
     }
+    streamOut.close()
+    streamIn.close()
   }
 
   def copyAllResources() {
-    var warningGiven = false
-    def warning() {
-      if (!warningGiven) {
-        val message = "Some dictionaries will be copied; this takes a little while.\n" +
-          "It only happens the first time you start the application or\n" +
-          "a new version with additional dictionaries."
-        DialogBox.info(message)
-        warningGiven = true
-      }
+    if (storage.Configurations.doUpdateResourcesNow) {
+      val message = "Some dictionaries will be copied; this takes a little while.\n" +
+        "It only happens the first time you start the application or\n" +
+        "a new version with updated or additional dictionaries."
+      DialogBox.info(message)
+
+      copyResource("dictionary", "english_uk.dict")
+      copyResource("dictionary", "english_us.dict")
+      copyResource("dictionary", "spanish.dict")
+      copyResource("dictionary", "portuguese.dict")
+      copyResource("dictionary", "russian.dict")
+      copyResource("dictionary", "french.dict")
+      copyResource("dictionary", "german.dict")
+      copyResource("dictionary", "danish.dict")
     }
-    copyResource("dictionary", "english_uk.dict", warning)
-    copyResource("dictionary", "english_us.dict", warning)
-    copyResource("dictionary", "spanish.dict", warning)
-    copyResource("dictionary", "portuguese.dict", warning)
-    copyResource("dictionary", "russian.dict", warning)
-    copyResource("dictionary", "french.dict", warning)
-    copyResource("dictionary", "german.dict", warning)
-    copyResource("dictionary", "danish.dict", warning)
   }
 
   val documentationLines = new ArrayBuffer[String]
 
   def readDocumentation() {
-    /* The reason for the low-level implementation below is that we are
-		 * moving a "resource" (file inside a jar file) to a "regular" file.
-		 */
+    /* The reason for the low-level implementation below is that
+     * we are reading a "resource" (file inside a jar file).
+	 */
     val streamIn = getResourceStream("documentation.txt")
     var line = ""
     var b = 0
@@ -110,9 +104,9 @@ object ResourceHandling {
   }
 
   private def getLicenseText(fileName: String): String = {
-    /* The reason for the low-level implementation below is that we are
-		 * moving a "resource" (file inside a jar file) to a "regular" file.
-		 */
+    /* The reason for the low-level implementation below is that
+     * we are reading a "resource" (file inside a jar file).
+	 */
     val streamIn = getResourceStream("license/" + fileName)
     var text = ""
     var b = 0
@@ -160,9 +154,9 @@ object ResourceHandling {
   }
 
   def initialize() {
-
-    updateLicenseInfo() // Don't do this every time.
-
+    if (storage.Configurations.doUpdateResourcesNow) {
+      updateLicenseInfo()
+    }
     // Dictionaries were found here: http://www.winedt.org/Dict/
     // "Built-in" dictionaries.
     storage.Dictionaries.update(List("English UK", getFullName("english_uk.dict"), "utf-8")) // default default

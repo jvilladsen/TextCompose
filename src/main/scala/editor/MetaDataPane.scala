@@ -25,7 +25,7 @@ class MetaDataPane {
 	private val errors = new CompilationErrors
 	
 	private var tabsPane = new TabbedPane {
-		border = Swing.EmptyBorder(1, -13, -15, -12)		// FIXME: ONLY IF MAC OS X!
+		border = Swing.EmptyBorder(1, -13, -15, -12)
 		background = Colors.tabsPane
 	}
 	val wrappedTabsPane = new BoxPanel(Orientation.Horizontal) {

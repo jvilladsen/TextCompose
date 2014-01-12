@@ -39,6 +39,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 	 * - Theme
 	 * - DefaultDictionary
 	 * - PreviewZoomPercentage
+	 * - ResourcesVersion (internal)
 	 */
 
   private var extensionToFileName = new HashMap[String, String]
@@ -53,6 +54,9 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   private var guiTheme = 0
   private var defaultDictionary = "English UK"
   private var previewZoomPercentage = 170
+  private val currentResourcesVersion = 1 // bump this up if changes to resources that are copied out to file system
+  private var storedResourcesVersion = 0
+  private var isHigherResourcesVersion = false
 
   private var errorsDuringInitialization = new ArrayBuffer[String]
 
@@ -114,6 +118,8 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
         defaultDictionary = configuration(1)
       } else if (configuration(0) == "PreviewZoomPercentage" && configuration.length == 2) {
         previewZoomPercentage = configuration(1).toInt
+      } else if (configuration(0) == "ResourcesVersion" && configuration.length == 2) {
+        storedResourcesVersion = configuration(1).toInt
       }
     }
     for (configuration <- toBeRemoved) {
@@ -121,12 +127,12 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     }
   }
 
-  def StoreDefaults {
-    
+  private def storeDefaults() {
+
     def updateFontLocation(dir: String) {
       if (FileMethods.IsDirectory(dir)) update(List("FontLocation", dir))
     }
-    
+
     if (core.Environment.isMacOSX) {
       updateFontLocation("/Library/Fonts")
       updateFontLocation(core.Environment.CurrentUserHome + "/Library/Fonts")
@@ -147,19 +153,30 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     update(List("GUITheme", "0"))
     update(List("DefaultDictionary", "English UK"))
     update(List("PreviewZoomPercentage", "170"))
+    update(List("ResourcesVersion", "0"))
     store()
+  }
+
+  private def compareResourcesVersions() {
+    isHigherResourcesVersion = currentResourcesVersion > storedResourcesVersion
+    if (isHigherResourcesVersion) {
+      update(List("ResourcesVersion", currentResourcesVersion.toString))
+      store()
+      storedResourcesVersion = currentResourcesVersion
+    }
   }
 
   def initialize {
     if (!initialized) {
       core.FontFileRegister.addBuildInFonts
-      if (!fileExists) { StoreDefaults }
+      if (!fileExists) { storeDefaults() }
       load()
       extractFromDataSet()
       initialized = true
       if (!errorsDuringInitialization.isEmpty) {
         store() // Store if there were any errors.
       }
+      compareResourcesVersions()
     }
   }
 
@@ -280,6 +297,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   def GetDefaultDictionary = defaultDictionary
   def getPreviewZoomPercentage = previewZoomPercentage
   def getTheme = guiTheme
+  def doUpdateResourcesNow = isHigherResourcesVersion
 
   def GetLatestDirectory(context: String): String = {
     if (latestDirectory.isDefinedAt(context)) {
