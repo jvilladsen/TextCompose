@@ -37,7 +37,7 @@ class ScrollText(
 	panel.add(new Label { icon = i }, "")
 	panel.setFont(storage.GUIFonts.getStandardFontName, 18)
 	panel.add(new Label { text = topText }, "")
-	panel.setFont(storage.GUIFonts.getStandardFontName, 14)
+	panel.setFont(storage.GUIFonts.getStandardFontName, 12)
 	panel.add(new Label { text = subText }, "")
 	
 	private val editorPane = new EditorPane {
