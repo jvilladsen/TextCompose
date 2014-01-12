@@ -18,6 +18,8 @@
 
 package writesetter.editor
 
+import concurrent.ExecutionContext.Implicits.global
+import concurrent._
 import writesetter.{core, storage}
 
 object CompileOrGUI {
@@ -46,6 +48,10 @@ object CompileOrGUI {
 			}
 		} else {
 			ResourceHandling.copyAllResources()
+			future {
+			  // Pretend to open the window now to make it faster later.
+			  new writesetter.modals.Preferences(true)
+			}
 			Application.main(arguments)
 		}
 	}

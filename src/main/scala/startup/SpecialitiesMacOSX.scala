@@ -25,7 +25,7 @@ object SpecialitiesMacOSX {
         def handlePreferences(e: AppEvent.PreferencesEvent) {
           SwingUtilities.invokeLater(new Runnable() {
             def run() {
-              new modals.Preferences
+              new modals.Preferences(false)
             }
           })
         }

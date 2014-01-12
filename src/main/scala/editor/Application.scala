@@ -193,7 +193,7 @@ object Application extends SimpleSwingApplication {
     if (!core.Environment.isMacOSX) {
       editMenu.contents += new Separator
       editMenu.contents += new MenuItem(new Action("Preferences") {
-        def apply() { new modals.Preferences }
+        def apply() { new modals.Preferences(false) }
       })
     }
 

@@ -25,7 +25,7 @@ import java.awt.Component
 import writesetter.core.PreviewType
 import writesetter.{ core, editor, storage }
 
-class Preferences extends Dialog {
+class Preferences(pretend: Boolean) extends Dialog {
 
   val listOfEncodings = core.CharacterSets.getValues(true)
   val listOfDictionaries = storage.Dictionaries.getListOfTitles
@@ -84,20 +84,20 @@ class Preferences extends Dialog {
         val editorFont = fontList(fontField.peer.getSelectedIndex)
         val dictionary = listOfDictionaries(defaultDictionary.peer.getSelectedIndex)
         val chosenTabSize = try {
-            tabSize.text.toInt
-          } catch {
-            case e: Exception =>
-              throw new IllegalArgumentException("The tab size must be a number.")
-          }
+          tabSize.text.toInt
+        } catch {
+          case e: Exception =>
+            throw new IllegalArgumentException("The tab size must be a number.")
+        }
         if (chosenTabSize < 1) {
           throw new IllegalArgumentException("The tab size must be at least 1.")
         }
         val chosenPreviewZoom = try {
-            previewZoom.text.toInt
-          } catch {
-            case e: Exception =>
-              throw new IllegalArgumentException("The preview zoom percentage must be a number.")
-          }
+          previewZoom.text.toInt
+        } catch {
+          case e: Exception =>
+            throw new IllegalArgumentException("The preview zoom percentage must be a number.")
+        }
         if (chosenPreviewZoom < 1) {
           throw new IllegalArgumentException("The preview zoom percentage must be at least 1.")
         }
@@ -153,5 +153,5 @@ class Preferences extends Dialog {
   maximumSize = new Dimension(550, 400)
   centerOnScreen
   pack
-  open
+  if (!pretend) open
 }
