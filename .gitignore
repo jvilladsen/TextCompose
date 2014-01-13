@@ -6,3 +6,5 @@ project/target/
 project/project/target/
 target/
 .settings/org.scala-ide.sdt.core.prefs
+src/main/resources/extension/.*
+src/main/resources/extension/*.pdf
