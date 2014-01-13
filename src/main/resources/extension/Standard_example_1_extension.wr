@@ -1,0 +1,107 @@
+<extension "Standard - Example 1">
+
+This is a "style" extension for the "Standard" structure extension.
+
+<include "Standard">
+<include "Typographical Replacements">
+
+
+<sub presentTitleAuthor "Title" "Author">
+	<margins 70 70 80 70>
+	<align text center>
+	<font Helvetica><size 30>^1
+	<paragraph-space 10% 30%><new paragraph>
+	<size 20>^2
+	<font Times><size 12>
+	<paragraph-space 40% 140%><new paragraph>
+	<paragraph-space 20% 20%>
+	<margins 60 60 70 70>
+	<align text full>
+	<height 130%>
+</sub>
+
+<sub presentLOC>
+	<bookmark "Contents">
+	<store><font Helvetica><size 20><align text center>Contents
+	<paragraph-space 100% 10%><new paragraph>
+	<font Times><size 12>
+	<border-width 0>
+	<cell-padding 5 LR>
+	<table 2 100% "110 100">
+	<show listOfContents>
+	</table>
+	<paragraph-space 10% 500%><new paragraph>
+	<restore>
+</sub>
+
+<sub presentPageNumber "Page Number" "Last Page Number">
+	<store><font Times><size 12><align text center><letter-spacing 0><scale-letter 100>
+	<show ^1> / <show ^2><position 0C -25B>
+	<restore>
+</sub>
+
+<sub presentChapter "Chapter Number" "Chapter Title" "Page Number">
+	<new paragraph>
+	<new page 100>
+	<store><font Helvetica><size 20><align text left>
+	<bookmark "^1. ^2" 1>
+	^1. ^2
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<align cell right><cell><ref "^1. ^2">^1. ^2
+		<align cell left><cell><store><face italic><char 8226> page ^3<restore></ref>
+	</add>
+</sub>
+
+<sub presentSection "Chapter Number" "Section Number" "Chapter Title" "Page Number">
+	<new paragraph>
+	<new page 60>
+	<store><font Helvetica><size 20><align text left><color text HSL 0 30 37>
+	<bookmark "^1.^2. ^3" 2>
+	^1.^2. ^3
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<align cell right><cell><ref "^1.^2. ^3">^1.^2. ^3
+		<align cell left><cell><store><face italic><char 8226> page ^4<restore></ref>
+	</add>
+</sub>
+
+<sub presentSubsection "Chapter Number" "Section Number" "Subsection Number" "Chapter Title" "Page Number">
+	<new paragraph>
+	<new page 40>
+	<store><font Helvetica><size 16><align text left>
+	<bookmark "^1.^2.^3. ^4" 3>
+	^1.^2.^3. ^4
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<align cell right><cell><ref "^1.^2.^3. ^4">^1.^2.^3. ^4
+		<align cell left><cell><store><face italic><char 8226> page ^5<restore></ref>
+	</add>
+</sub>
+
+<def bulletList>
+	<format-list 0 90% "<color text HSL 0 0 60><size 18><rise -3><char 8226>">
+	<list>
+</def>
+
+<def numberedList>
+	<format-list 0 150% "<font Helvetica><size -2>$1.">
+	<list>
+</def>
+
+<def checkList>
+	<format-list 0 110% "<color text HSL 150 70 33><font Zapfdingbats><char 51>">
+	<list>
+</def>
+
+Emphasize with:
+<def e>
+	<face +italic>
+</def>
+and end it with:
+<def /e>
+	<face -italic>
+</def>

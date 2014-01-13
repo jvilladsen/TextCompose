@@ -1,0 +1,50 @@
+<extension "Standard">
+
+This is a structure extension.
+
+<def title "Title" "Author" "Subject" "Key words (comma separated)">
+	<document title "^1">
+	<document author "^2">
+	<document subject "^3">
+	<document keywords "^4">
+	<presentTitleAuthor "^1" "^2">
+	<presentLOC>
+	<startPageNumbering>
+</def> 
+
+<def chapter "Title">
+	<add chapterNumber>1</add>
+	<set sectionNumber>0</set>
+	<set subsectionNumber>0</set>
+	<presentChapter "<show chapterNumber>" "^1" "<show pageNumber>">
+</def>
+
+<def section "Title">
+	<add sectionNumber>1</add>
+	<set subsectionNumber>0</set>
+	<presentSection "<show chapterNumber>" "<show sectionNumber>" "^1" "<show pageNumber>">
+</def>
+
+<def subsection "Title">
+	<add subsectionNumber>1</add>
+	<presentSubsection "<show chapterNumber>" "<show sectionNumber>" "<show subsectionNumber>" "^1" "<show pageNumber>">
+</def>
+
+<sub pageNumberInjection>
+	<presentPageNumber pageNumber lastPageNumber>
+	<set lastPageNumber><show pageNumber></set>
+	<add pageNumber>1</add>
+</sub>
+
+<sub startPageNumbering>
+	<inject "before page-break" "<pageNumberInjection>">
+</sub>
+
+<main>
+	<var pageNumber Int><set pageNumber>1</set>
+	<var lastPageNumber Int converge>
+	<var chapterNumber Int><set chapterNumber>0</set>
+	<var sectionNumber Int><set sectionNumber>0</set>
+	<var subsectionNumber Int><set subsectionNumber>0</set>
+	<var listOfContents Str converge>
+</main>
