@@ -493,10 +493,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     addPhrase()
   }
 
-  def CloseDocument {
+  def closeDocument() {
     CompilationMetaData.stopTimer()
     if (EmptyDocument) {
       writesetter.editor.DialogBox.info("The source files does not give rise to any document content.")
+      varRegister.save(Arg.VariablesFileName)
     } else {
       bookmarks.insertBookmarksInOutline(writer.getDirectContent(false).getRootOutline)
       iTextDoc.newPage // This looks wrong, but seems to work :-|

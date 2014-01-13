@@ -917,7 +917,7 @@ class SourceProcessor(
     checksAtClosing
     applyInjections("after", "all", 0)
     try {
-      document.CloseDocument
+      document.closeDocument()
     } catch {
       case e: Exception => showErrorMessage("Could not complete document: " + e.getMessage)
     }
