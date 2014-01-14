@@ -28,7 +28,7 @@ This is a "style" extension for the "Standard" structure extension.
 	<border-width 0>
 	<cell-padding 0 LR><cell-padding 1 B>
 	<align cell left>
-	<table 3 100% "6 11 100">
+	<table 4 100% "6 10 14 100">
 	<show listOfContents>
 	</table>
 	<paragraph-space 10% 500%><new paragraph>
@@ -51,7 +51,7 @@ This is a "style" extension for the "Standard" structure extension.
 	<restore>
 	<add listOfContents>
 		<store><ref "^1. ^2"><cell-padding 5 T><cell><font Helvetica><face +bold>^1
-		<cell 2C>^2   <face -bold><size -3>^3</ref><restore>
+		<cell 3C>^2   <face -bold><size -3>^3</ref><restore>
 	</add>
 </sub>
 
@@ -64,8 +64,8 @@ This is a "style" extension for the "Standard" structure extension.
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
-		<store><cell><ref "^1.^2. ^3"><cell-padding 1 T><cell><font Times><face +bold>^1.^2
-		<cell>^3   <font Helvetica><face -bold><size -3>^4</ref><restore>
+		<store><cell><ref "^1.^2. ^3"><cell-padding 1 T><cell><font Times>^1.^2
+		<cell 2C><face +bold>^3   <font Helvetica><face -bold><size -3>^4</ref><restore>
 	</add>
 </sub>
 
@@ -78,7 +78,7 @@ This is a "style" extension for the "Standard" structure extension.
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
-		<store><cell><ref "^1.^2.^3. ^4"><cell-padding 1 T><cell><font Times>^1.^2.^3
+		<store><cell 2C><ref "^1.^2.^3. ^4"><cell-padding 1 T><cell><font Times>^1.^2.^3
 		<cell>^4   <font Helvetica><size -3>^5</ref><restore>
 	</add>
 </sub>

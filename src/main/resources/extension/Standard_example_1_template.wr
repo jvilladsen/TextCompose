@@ -24,11 +24,12 @@ In eget porta dolor. Integer hendrerit tellus ipsum, ac malesuada leo auctor sit
 <section "Things to play with">
 <subsection "Numbered lists">
 <numberedList>
-<item>Style the list of content to express the hierarchy.
-<item>List of content might just have chapters but not sections and sub-sections.
+<item>Make some examles with other fonts.
+<item>Make a sample "curriculum vitae".
+<item>Make a sample letter.
 <item>Possibly a page header with document title in one side and chapter title in the other side.
 <item>Check out: http://themes.simplethemes.com/presstige/typography
-<item>You may have headers without numbers!
+<item>Make example where the section headers are not enumerated.
 </list>
 
 <subsection "Bullet lists">
