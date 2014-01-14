@@ -15,19 +15,20 @@ This is a "style" extension for the "Standard" structure extension.
 	<font Times><size 12>
 	<paragraph-space 40% 140%><new paragraph>
 	<paragraph-space 20% 20%>
-	<margins 60 60 70 70>
+	<margins 70 70 70 70>
 	<align text full>
 	<height 130%>
 </sub>
 
 <sub presentLOC>
 	<bookmark "Contents">
-	<store><font Helvetica><size 20><align text center>Contents
-	<paragraph-space 100% 10%><new paragraph>
+	<store><font Helvetica><size 20><align text left>Contents
+	<paragraph-space 100% 5%><new paragraph>
 	<font Times><size 12>
 	<border-width 0>
-	<cell-padding 5 LR>
-	<table 2 100% "110 100">
+	<cell-padding 0 LR><cell-padding 1 B>
+	<align cell left>
+	<table 3 100% "6 11 100">
 	<show listOfContents>
 	</table>
 	<paragraph-space 10% 500%><new paragraph>
@@ -45,40 +46,40 @@ This is a "style" extension for the "Standard" structure extension.
 	<new page 100>
 	<store><font Helvetica><size 20><align text left>
 	<bookmark "^1. ^2" 1>
-	^1. ^2
+	^1. <face +bold>^2<face -bold>
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
-		<align cell right><cell><ref "^1. ^2">^1. ^2
-		<align cell left><cell><store><face italic><char 8226> page ^3<restore></ref>
+		<store><ref "^1. ^2"><cell-padding 5 T><cell><font Helvetica><face +bold>^1
+		<cell 2C>^2   <face -bold><size -3>^3</ref><restore>
 	</add>
 </sub>
 
 <sub presentSection "Chapter Number" "Section Number" "Chapter Title" "Page Number">
 	<new paragraph>
 	<new page 60>
-	<store><font Helvetica><size 20><align text left><color text HSL 0 30 37>
+	<store><font Helvetica><size 18><align text left><color text HSL 0 30 37>
 	<bookmark "^1.^2. ^3" 2>
-	^1.^2. ^3
+	^1.^2. <face +bold>^3<face -bold>
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
-		<align cell right><cell><ref "^1.^2. ^3">^1.^2. ^3
-		<align cell left><cell><store><face italic><char 8226> page ^4<restore></ref>
+		<store><cell><ref "^1.^2. ^3"><cell-padding 1 T><cell><font Times><face +bold>^1.^2
+		<cell>^3   <font Helvetica><face -bold><size -3>^4</ref><restore>
 	</add>
 </sub>
 
 <sub presentSubsection "Chapter Number" "Section Number" "Subsection Number" "Chapter Title" "Page Number">
 	<new paragraph>
 	<new page 40>
-	<store><font Helvetica><size 16><align text left>
+	<store><font Helvetica><size 14><align text left>
 	<bookmark "^1.^2.^3. ^4" 3>
-	^1.^2.^3. ^4
+	^1.^2.^3. <face +bold>^4<face -bold>
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
-		<align cell right><cell><ref "^1.^2.^3. ^4">^1.^2.^3. ^4
-		<align cell left><cell><store><face italic><char 8226> page ^5<restore></ref>
+		<store><cell><ref "^1.^2.^3. ^4"><cell-padding 1 T><cell><font Times>^1.^2.^3
+		<cell>^4   <font Helvetica><size -3>^5</ref><restore>
 	</add>
 </sub>
 
