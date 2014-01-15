@@ -1,6 +1,6 @@
 <template "Standard - Example 1">
 <include "Standard - Example 1">
-<title "My title" "My name" "My subject" "First word, Second word">
+<title "My title here" "My name here" "My subject here" "My first word, Second word">
 
 <chapter "Introduction">
 Vivamus auctor sapien <i>elementum orci</i> porta vulputate. Sed dignissim felis a tellus pretium, eget adipiscing neque congue. In laoreet id orci non eleifend. Mauris at metus urna. Nunc porttitor, nunc sit amet placerat vehicula, sapien est mollis ipsum, eu dapibus nisl arcu non libero. Morbi ornare bibendum porttitor. Maecenas dolor sem, tincidunt ac porttitor sed, fringilla et orci. Etiam consectetur eros in congue ornare. Etiam sed euismod risus. Suspendisse euismod quis lectus congue consequat. 

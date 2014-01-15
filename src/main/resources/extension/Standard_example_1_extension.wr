@@ -1,7 +1,7 @@
 <extension "Standard - Example 1">
 
 This is a "style" extension for the "Standard" structure extension.
-Note how structure extensions contain tag definitions that refer
+Note how structure extensions contain tag definitions that refer to
 (contain) tags that are defined in style extensions.
 
 <include "Standard">
@@ -52,9 +52,9 @@ Note how structure extensions contain tag definitions that refer
 <sub presentChapter "Chapter Number" "Chapter Title" "Page Number">
 	<new paragraph>
 	<new page 100>
-	<store><head><size 20><align text left>
+	<store><head><size 22><align text left>
 	<bookmark "^1. ^2" 1>
-	^1. <face +bold>^2<face -bold>
+	^1. ^2
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
@@ -68,7 +68,7 @@ Note how structure extensions contain tag definitions that refer
 	<new page 60>
 	<store><head><size 18><align text left><color text HSL 0 30 37>
 	<bookmark "^1.^2. ^3" 2>
-	^1.^2. <face +bold>^3<face -bold>
+	^1.^2. ^3
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
@@ -80,9 +80,9 @@ Note how structure extensions contain tag definitions that refer
 <sub presentSubsection "Chapter Number" "Section Number" "Subsection Number" "Chapter Title" "Page Number">
 	<new paragraph>
 	<new page 40>
-	<store><head><size 14><align text left>
+	<store><head><size 12><align text left>
 	<bookmark "^1.^2.^3. ^4" 3>
-	^1.^2.^3. <face +bold>^4<face -bold>
+	<face +italic>^1.^2.^3. ^4<face -italic>
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
@@ -96,7 +96,7 @@ Note how structure extensions contain tag definitions that refer
 	<new page 100>
 	<store><head><size 20><align text left>
 	<bookmark "^1" 1>
-	<face +bold>^1<face -bold>
+	^1
 	<paragraph-space 50% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
