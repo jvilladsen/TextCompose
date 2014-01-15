@@ -1,0 +1,134 @@
+<extension "Standard - Example 2">
+
+This is a "style" extension for the "Standard" structure extension.
+Note how structure extensions contain tag definitions that refer to
+(contain) tags that are defined in style extensions.
+
+<include "Standard">
+<include "Typographical Replacements">
+
+<sub body>
+	<font Gentium>
+</sub>
+
+Other nice header fonts: Bolton
+<sub head>
+	<font "Qlassik Medium">
+</sub>
+
+<sub presentTitleAuthor "Title" "Author">
+	<margins 70 70 80 70>
+	<align text center>
+	<head><size 30>^1
+	<paragraph-space 10% 30%><new paragraph>
+	<size 20>^2
+	<body><size 12>
+	<paragraph-space 40% 140%><new paragraph>
+	<paragraph-space 20% 20%>
+	<margins 70 70 70 70>
+	<align text full>
+	<height 130%>
+</sub>
+
+<sub presentLOC>
+	<bookmark "Contents">
+	<store><head><size 20><align text left>Contents
+	<paragraph-space 100% 5%><new paragraph>
+	<body><size 12>
+	<border-width 0>
+	<cell-padding 0 LR><cell-padding 1 B>
+	<align cell left>
+	<table 4 100% "6 10 14 100">
+	<show listOfContents>
+	</table>
+	<paragraph-space 10% 500%><new paragraph>
+	<restore>
+</sub>
+
+<sub presentPageNumber "Page Number" "Last Page Number">
+	<store><body><size 12><align text center><letter-spacing 0><scale-letter 100>
+	<show ^1> / <show ^2><position 0C -25B>
+	<restore>
+</sub>
+
+<sub presentChapter "Chapter Number" "Chapter Title" "Page Number">
+	<new page>
+	<store><head><size 22><align text left>
+	<bookmark "^1. ^2" 1>
+	^1. ^2
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<store><ref "^1. ^2"><cell-padding 5 T><cell><head><face +bold>^1
+		<cell 3C>^2   <face -bold><size -3>^3</ref><restore>
+	</add>
+</sub>
+
+<sub presentSection "Chapter Number" "Section Number" "Chapter Title" "Page Number">
+	<new paragraph>
+	<new page 60>
+	<store><head><size 18><align text left><color text HSL 0 30 37>
+	<bookmark "^1.^2. ^3" 2>
+	^1.^2. ^3
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<store><cell><ref "^1.^2. ^3"><cell-padding 1 T><cell><body>^1.^2
+		<cell 2C>^3   <head><face -bold><size -3>^4</ref><restore>
+	</add>
+</sub>
+
+<sub presentSubsection "Chapter Number" "Section Number" "Subsection Number" "Chapter Title" "Page Number">
+	<new paragraph>
+	<new page 40>
+	<store><head><size 14><align text left>
+	<bookmark "^1.^2.^3. ^4" 3>
+	^1.^2.^3. ^4
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+</sub>
+
+<sub presentAppendix "Chapter Title" "Page Number">
+	<new page>
+	<store><head><size 20><align text left>
+	<bookmark "^1" 1>
+	^1
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<store><ref "^1"><cell-padding 5 T><cell>
+		<cell 3C><head><face +bold>^1   <face -bold><size -3>^2</ref><restore>
+	</add>
+</sub>
+
+<def bulletList>
+	<format-list 0 90% "<color text HSL 0 0 60><size 18><rise -3><char 8226>">
+	<list>
+</def>
+
+<def numberedList>
+	<format-list 0 150% "<head><size -2>$1.">
+	<list>
+</def>
+
+<def checkList>
+	<format-list 0 110% "<color text HSL 150 70 33><font Zapfdingbats><char 51>">
+	<list>
+</def>
+
+Emphasize with italic and bold:
+<def i>
+	<face +italic>
+</def>
+and end it with:
+<def /i>
+	<face -italic>
+</def>
+
+<def b>
+	<face +bold>
+</def>
+and end it with:
+<def /b>
+	<face -bold>
+</def>
