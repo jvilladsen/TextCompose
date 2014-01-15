@@ -112,11 +112,19 @@ This is a "style" extension for the "Standard" structure extension.
 	<list>
 </def>
 
-Emphasize with:
-<def e>
+Emphasize with italic and bold:
+<def i>
 	<face +italic>
 </def>
 and end it with:
-<def /e>
+<def /i>
 	<face -italic>
+</def>
+
+<def b>
+	<face +bold>
+</def>
+and end it with:
+<def /b>
+	<face -bold>
 </def>
