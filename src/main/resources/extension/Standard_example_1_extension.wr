@@ -83,6 +83,20 @@ This is a "style" extension for the "Standard" structure extension.
 	</add>
 </sub>
 
+<sub presentAppendix "Chapter Title" "Page Number">
+	<new paragraph>
+	<new page 100>
+	<store><font Helvetica><size 20><align text left>
+	<bookmark "^1" 1>
+	<face +bold>^1<face -bold>
+	<paragraph-space 50% 10%><new paragraph>
+	<restore>
+	<add listOfContents>
+		<store><ref "^1"><cell-padding 5 T><cell>
+		<cell 3C><font Helvetica><face +bold>^1   <face -bold><size -3>^2</ref><restore>
+	</add>
+</sub>
+
 <def bulletList>
 	<format-list 0 90% "<color text HSL 0 0 60><size 18><rise -3><char 8226>">
 	<list>
