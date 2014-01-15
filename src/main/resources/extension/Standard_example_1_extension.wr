@@ -51,11 +51,11 @@ Note how structure extensions contain tag definitions that refer to
 
 <sub presentChapter "Chapter Number" "Chapter Title" "Page Number">
 	<new paragraph>
-	<new page 100>
+	<new page 150>
 	<store><head><size 22><align text left>
 	<bookmark "^1. ^2" 1>
 	^1. ^2
-	<paragraph-space 50% 10%><new paragraph>
+	<paragraph-space 70% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
 		<store><ref "^1. ^2"><cell-padding 5 T><cell><head><face +bold>^1
@@ -93,11 +93,11 @@ Note how structure extensions contain tag definitions that refer to
 
 <sub presentAppendix "Chapter Title" "Page Number">
 	<new paragraph>
-	<new page 100>
+	<new page 150>
 	<store><head><size 20><align text left>
 	<bookmark "^1" 1>
 	^1
-	<paragraph-space 50% 10%><new paragraph>
+	<paragraph-space 70% 10%><new paragraph>
 	<restore>
 	<add listOfContents>
 		<store><ref "^1"><cell-padding 5 T><cell>
