@@ -38,7 +38,7 @@ object DialogBox {
     val d = new modals.ScrollText(
       900, // width
       "System Error: " + message,
-      writesetter.core.Environment.OperatingSystemName, // sub text
+      writesetter.core.Environment.operatingSystemName, // sub text
       stacktrace,
       "", // html file name
       editor.Images.systemErrorIcon)

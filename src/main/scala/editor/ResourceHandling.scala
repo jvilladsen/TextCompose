@@ -25,7 +25,7 @@ import writesetter.{ core, storage }
 object ResourceHandling {
 
   val baseDir = "/main/resources/"
-  val licenseText = core.Environment.GetConfigFilePath("license.html")
+  val licenseText = core.Environment.getConfigFilePath("license.html")
 
   private def getResourceStream(resourceName: String) = {
     val fullName = baseDir + resourceName
@@ -35,7 +35,7 @@ object ResourceHandling {
   }
 
   private def getFullName(name: String): String = {
-    core.Environment.GetConfigFilePath(name)
+    core.Environment.getConfigFilePath(name)
   }
 
   private def copyResource(dir: String, name: String) {

@@ -22,25 +22,25 @@ import java.io.File
 
 object Environment {
   // Get some information about the OS and current user
-  val OperatingSystemName = System.getProperty("os.name")
-  val FileSeparator = System.getProperty("file.separator")
-  val CurrentUserHome = System.getProperty("user.home")
+  val operatingSystemName = System.getProperty("os.name")
+  val fileSeparator = System.getProperty("file.separator")
+  private val userHomeDirectory = System.getProperty("user.home")
 
-  val isMacOSX = OperatingSystemName.toUpperCase() == "MAC OS X"
-  val isLinux = OperatingSystemName.toUpperCase() == "LINUX"
-  val isWindows = OperatingSystemName.toUpperCase().startsWith("WINDOWS")
+  val isMacOSX = operatingSystemName.toUpperCase() == "MAC OS X"
+  val isLinux = operatingSystemName.toUpperCase() == "LINUX"
+  val isWindows = operatingSystemName.toUpperCase().startsWith("WINDOWS")
 
-  val ConfigurationsDirectory =
+  private val configurationsDirectory =
     if (isWindows) {
-      CurrentUserHome + FileSeparator + "AppData\\Writesetter"
+      userHomeDirectory + fileSeparator + "AppData\\Writesetter"
     } else {
-      CurrentUserHome + FileSeparator + ".Writesetter"
+      userHomeDirectory + fileSeparator + ".Writesetter"
     }
 
-  (new File(ConfigurationsDirectory)).mkdir()
+  (new File(configurationsDirectory)).mkdir()
 
   def PathIsAbsolute(path: String): Boolean = {
-    if (FileSeparator == "/") {
+    if (fileSeparator == "/") {
       // Linux and OS X - root
       path(0) == '/'
     } else {
@@ -49,5 +49,6 @@ object Environment {
     }
   }
 
-  def GetConfigFilePath(fileName: String): String = ConfigurationsDirectory + FileSeparator + fileName
+  def getUserHome = userHomeDirectory
+  def getConfigFilePath(fileName: String): String = configurationsDirectory + fileSeparator + fileName
 }

@@ -33,7 +33,7 @@ object DesktopInteraction {
         case e: Exception => DialogBox.stackTrace(e.getMessage, e)
       }
     } else {
-      val osName = core.Environment.OperatingSystemName
+      val osName = core.Environment.operatingSystemName
       
       val command =
         if (core.Environment.isMacOSX) {

@@ -51,7 +51,7 @@ class Arguments(
       if (fileHandle.canRead) {
         SourceFileName = fileHandle.getName
         if (SourceFileName ne providedSourceName) {
-          SourceFileDirectory = fileHandle.getParent + Environment.FileSeparator
+          SourceFileDirectory = fileHandle.getParent + Environment.fileSeparator
         }
         sourceFullFileName = fileHandle.getAbsolutePath()
 

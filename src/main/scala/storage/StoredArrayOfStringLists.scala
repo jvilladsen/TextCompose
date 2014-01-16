@@ -32,7 +32,7 @@ abstract class StoredArrayOfStringLists(fileName: String) {
 	 */
   val dataSet = new ArrayBuffer[List[String]]
 
-  val fullFileName = core.Environment.GetConfigFilePath(fileName)
+  val fullFileName = core.Environment.getConfigFilePath(fileName)
 
   val fileEncoding = "UTF-8"
 

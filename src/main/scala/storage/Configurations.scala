@@ -135,11 +135,11 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 
     if (core.Environment.isMacOSX) {
       updateFontLocation("/Library/Fonts")
-      updateFontLocation(core.Environment.CurrentUserHome + "/Library/Fonts")
+      updateFontLocation(core.Environment.getUserHome + "/Library/Fonts")
     } else if (core.Environment.isLinux) {
       updateFontLocation("/usr/share/fonts")
       updateFontLocation("/usr/local/share/fonts")
-      updateFontLocation(core.Environment.CurrentUserHome + "/.fonts")
+      updateFontLocation(core.Environment.getUserHome + "/.fonts")
     } else if (core.Environment.isWindows) {
       updateFontLocation("C:\\Windows\\Fonts")
     }
@@ -303,7 +303,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     if (latestDirectory.isDefinedAt(context)) {
       latestDirectory(context)
     } else {
-      core.Environment.CurrentUserHome
+      core.Environment.getUserHome
     }
   }
 }

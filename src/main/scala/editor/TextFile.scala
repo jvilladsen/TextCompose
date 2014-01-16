@@ -41,7 +41,7 @@ class TextFile {
     if (fullFileName != "") {
       fullFileName
     } else {
-      core.Environment.GetConfigFilePath("untitled " + untitledIndex.toString + ".wr")
+      core.Environment.getConfigFilePath("untitled " + untitledIndex.toString + ".wr")
     }
   }
 
@@ -125,7 +125,7 @@ class TextFile {
     fileIsReadOnly = !fileHandle.canWrite
     updateTimeStamp(fileHandle.lastModified)
     fileName = fileHandle.getName
-    fileDirectory = fileHandle.getParent + core.Environment.FileSeparator
+    fileDirectory = fileHandle.getParent + core.Environment.fileSeparator
     updatePropertiesPane()
   }
 
@@ -199,7 +199,7 @@ class TextFile {
       if (!storage.FileMethods.IsFile(fullFileName)) {
         throw new Exception("There is no file '" + fullFileName + "'.")
       }
-      val osName = core.Environment.OperatingSystemName
+      val osName = core.Environment.operatingSystemName
       val command =
         if (core.Environment.isMacOSX) {
           Array[String]("open", "-R", fullFileName)
