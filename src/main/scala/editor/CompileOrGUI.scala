@@ -47,7 +47,8 @@ object CompileOrGUI {
 				case e: Exception => println(e.getMessage)
 			}
 		} else {
-			ResourceHandling.copyAllResources()
+			ResourceHandling.copyDictionaries()
+			ResourceHandling.copyDocuments()
 			future {
 			  // Pretend to open the window now to make it faster later.
 			  new writesetter.modals.Preferences(true)

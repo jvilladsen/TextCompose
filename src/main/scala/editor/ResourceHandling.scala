@@ -38,14 +38,13 @@ object ResourceHandling {
     core.Environment.getConfigFilePath(name)
   }
 
-  private def copyResource(dir: String, name: String) {
-    val targetFileName = getFullName(name)
-    /* The reason for the low-level implementation below is that
+  private def copyResource(dir: String, name: String, targetName: String) {
+    /* 
+     * The reason for the low-level implementation below is that
      * we are reading a "resource" (file inside a jar file).
 	 */
-
     val streamIn = getResourceStream(dir + "/" + name)
-    val streamOut = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(targetFileName)))
+    val streamOut = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(targetName)))
     var b = 0
     var going = true
     while (going) {
@@ -56,22 +55,52 @@ object ResourceHandling {
     streamIn.close()
   }
 
-  def copyAllResources() {
+  def copyDictionaries() {
     if (storage.Configurations.doUpdateResourcesNow) {
+
       val message = "Some dictionaries will be copied; this takes a little while.\n" +
         "It only happens the first time you start the application or\n" +
         "a new version with updated or additional dictionaries."
       DialogBox.info(message)
 
-      copyResource("dictionary", "english_uk.dict")
-      copyResource("dictionary", "english_us.dict")
-      copyResource("dictionary", "spanish.dict")
-      copyResource("dictionary", "portuguese.dict")
-      copyResource("dictionary", "russian.dict")
-      copyResource("dictionary", "french.dict")
-      copyResource("dictionary", "german.dict")
-      copyResource("dictionary", "danish.dict")
+      def copy(name: String) {
+        copyResource("dictionary", name, getFullName(name))
+      }
+
+      copy("english_uk.dict")
+      copy("english_us.dict")
+      copy("spanish.dict")
+      copy("portuguese.dict")
+      copy("russian.dict")
+      copy("french.dict")
+      copy("german.dict")
+      copy("danish.dict")
     }
+  }
+
+  def copyDocuments() {
+    def copy(name: String) {
+      copyResource("extension", name, core.Environment.getDocumentFilePath(name))
+    }
+    def addExtension(fileName: String, extensionName: String) {
+      if (!storage.Configurations.isKnownExtensionName(extensionName)) {
+        val fullFileName = core.Environment.getDocumentFilePath(fileName)
+        copyResource("extension", fileName, fullFileName)
+        storage.Configurations.registerNewExtension(extensionName, fullFileName)
+      }
+    }
+    def addTemplate(fileName: String, templateName: String) {
+      if (!storage.Configurations.IsKnownTemplateName(templateName)) {
+        val fullFileName = core.Environment.getDocumentFilePath(fileName)
+        copyResource("extension", fileName, fullFileName)
+        storage.Configurations.registerNewTemplate(templateName, fullFileName)
+      }
+    }
+    addExtension("Standard_extension.wr", "Standard")
+    addExtension("Standard_example_1_extension.wr", "Standard - Example 1")
+    addExtension("Standard_example_2_extension.wr", "Standard - Example 2")
+    addTemplate("Standard_example_1_template.wr", "Standard - Example 1")
+    addTemplate("Standard_example_2_template.wr", "Standard - Example 2")
   }
 
   val documentationLines = new ArrayBuffer[String]

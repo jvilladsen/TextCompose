@@ -52,7 +52,7 @@ object Environment {
       path(1) == ':'
     }
   }
-  
+
   def addDir(directoryName: String, fileName: String) = directoryName + fileSeparator + fileName
 
   def getUserHome = userHomeDirectory
