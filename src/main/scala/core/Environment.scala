@@ -37,7 +37,11 @@ object Environment {
       userHomeDirectory + fileSeparator + ".Writesetter"
     }
 
+  private val documentsDirectory =
+    userHomeDirectory + fileSeparator + "Writesetter"
+
   (new File(configurationsDirectory)).mkdir()
+  (new File(documentsDirectory)).mkdir()
 
   def PathIsAbsolute(path: String): Boolean = {
     if (fileSeparator == "/") {
@@ -48,7 +52,12 @@ object Environment {
       path(1) == ':'
     }
   }
+  
+  def addDir(directoryName: String, fileName: String) = directoryName + fileSeparator + fileName
 
   def getUserHome = userHomeDirectory
-  def getConfigFilePath(fileName: String): String = configurationsDirectory + fileSeparator + fileName
+
+  def getConfigFilePath(fileName: String): String = addDir(configurationsDirectory, fileName)
+
+  def getDocumentFilePath(fileName: String): String = addDir(documentsDirectory, fileName)
 }
