@@ -44,7 +44,7 @@ Note how structure extensions contain tag definitions that refer to
 </sub>
 
 <sub presentPageNumber "Page Number" "Last Page Number">
-	<store><body><size 12><align text center><letter-spacing 0><scale-letter 100>
+	<store><reset><body><size 12><align text center>
 	<show ^1> / <show ^2><position 0C -25B>
 	<restore>
 </sub>

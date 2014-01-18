@@ -131,7 +131,7 @@ class TagTree {
   builtInTags += "DRAW" -> "line-width line-cap line-dash move-to line-to draw blend opacity color"
   builtInTags += "INSERT" -> "insert char image Roman bookmark label ref /ref"
   builtInTags += "GRAPHICS" -> "blend opacity image draw"
-  builtInTags += "STATE" -> "store restore"
+  builtInTags += "STATE" -> "store restore reset"
   builtInTags += "VARIABLE" -> "var set /set add /add show"
   builtInTags += "EXTENSION" -> "include extension def sub main template"
   builtInTags += "ADVANCED" -> "inject replace loop"

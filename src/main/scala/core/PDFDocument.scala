@@ -891,4 +891,9 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     iTextDoc.setPageSize(stateStack.top.actualOrientedPageRect)
     iTextDoc.setMargins(stateStack.top.marginLeft, stateStack.top.marginRight, stateStack.top.marginTop, stateStack.top.marginBottom)
   }
+  
+  def resetState() {
+    stateStack.pop()
+    stateStack.push(new State)
+  }
 }

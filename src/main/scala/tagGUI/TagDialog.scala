@@ -485,6 +485,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       // STATE
       case "store"            => None
       case "restore"          => None
+      case "reset" 	          => None
       // VARIABLE
       case "var"              => varTag()
       case "set"              => tagWithOneTextField("Variable")

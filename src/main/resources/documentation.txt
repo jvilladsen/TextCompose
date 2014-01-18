@@ -467,8 +467,32 @@ The second parameter is that number to present as a Roman number.
 
 ### store
 
+Store the current "state".
+
+Here, "state" refers to all settings, such as the current choice of font, font size, text color etc.
+The tag stores the state on a "stack" so that you can return it it later using the 'restore' tag.
+This can be useful if you which to make some temporary change and then return to whatever the
+settings were before that change (without having to know or think about what they were).
+
 
 ### restore
+
+Restore the latest state that was stored.
+
+The 'restore' tag restores the state (settings) that were stored with the tag 'state',
+and also removes those settings from the stack of states.
+
+
+### reset
+
+Reset the current state.
+
+Change the "state" (all settings, such as choice of font) to the "base" settings, these are
+the "built-in" defaults for font, font size etc. This can be useful when you inject code
+that should be independent of the current state, such as insertion of a page number or page
+header. The 'reset' tag does not add or remove from the stack of states, but updates the
+current state. You will typically first 'store', 'reset', then do what you have to do, and
+end with 'restore'.
 
 
 ### var

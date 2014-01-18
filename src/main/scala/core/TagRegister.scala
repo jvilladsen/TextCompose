@@ -91,6 +91,7 @@ object TagRegister {
     TagNames += "whitespace"
     TagNames += "store"
     TagNames += "restore"
+    TagNames += "reset"
     TagNames += "var"
     TagNames += "set"
     TagNames += "add"

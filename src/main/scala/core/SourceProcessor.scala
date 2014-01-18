@@ -138,9 +138,9 @@ class SourceProcessor(
         showingErrorMessage = true
         processingUnit.addErrorMessage(message + location)
         val textForWritesetter = messageForWritesetter + location
-        processingUnit.update("<store><new paragraph><font Helvetica><face normal><underline off>" +
+        processingUnit.update("<store><reset><new paragraph><font Helvetica>" +
           "<highlight RGB 245 240 144 3 3 5 4><highlight on><size 11><height 125%>" +
-          "<align text left><color text RGB 0 0 0>" + textForWritesetter + "<new paragraph><restore>")
+          "<align text left>" + textForWritesetter + "<new paragraph><restore>")
         processSourceLine()
         processingUnit.popElement()
         showingErrorMessage = false
@@ -1027,6 +1027,7 @@ class SourceProcessor(
       // STATE
       case "store"            => document.storeStateToStack()
       case "restore"          => document.restoreStateFromStack()
+      case "reset"            => document.resetState()
       // VARIABLE
       case "var"              => varTag(Parsers.variable, element)
       case "set"              => setTag(Parsers.set, element)
