@@ -42,26 +42,73 @@ class SourceProcessor(
 
   private def varTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    document.varRegister.declareVariable(
-      parser.getNextString,
-      parser.getNextOption,
-      parser.getNextFlag)
+    parser.getSyntax match {
+      case "Str/Int" => {
+        document.varRegister.declareVariable(
+          parser.getNextString,
+          "", // keyTypeName
+          parser.getNextOption,
+          parser.getNextFlag)
+      }
+      case "Map" => {
+        document.varRegister.declareVariable(
+          parser.getNextString,
+          parser.getNextOption,
+          parser.getNextOption,
+          parser.getNextFlag)
+      }
+    }
   }
 
   private def setTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    document.varRegister.startCopying(parser.getNextString, false)
+    parser.getSyntax match {
+      case "Str/Int" => {
+        document.varRegister.startCopying(
+          parser.getNextString,
+          "", // key
+          false)
+      }
+      case "Map" => {
+        document.varRegister.startCopying(
+          parser.getNextString,
+          parser.getNextString,
+          false)
+      }
+    }
   }
 
   private def addTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    document.varRegister.startCopying(parser.getNextString, true)
+    parser.getSyntax match {
+      case "Str/Int" => {
+        document.varRegister.startCopying(
+          parser.getNextString,
+          "", // key
+          true)
+      }
+      case "Map" => {
+        document.varRegister.startCopying(
+          parser.getNextString,
+          parser.getNextString,
+          true)
+      }
+    }
   }
 
   private def showTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val variableName = parser.getNextString
-    val value = document.varRegister.get(variableName)
+    val value =
+      parser.getSyntax match {
+        case "Str/Int" => {
+          document.varRegister.get(variableName, "")
+        }
+        case "Map" => {
+          document.varRegister.get(variableName, parser.getNextString)
+        }
+      }
+
     processingUnit.addVariable(variableName)
     processingUnit.update(value)
     val originalKeepWhitespace = keepWhitespace
@@ -944,7 +991,8 @@ class SourceProcessor(
             throw new TagError("Showing variable inside 'set' or 'add' to that same variable " +
               "is not allowed for a variable that is supposed to converge.")
           }
-          document.varRegister.copy(document.varRegister.get(varName))
+          val key = if (element.NumberOfParameters > 1) element.Parameters(1) else ""
+          document.varRegister.copy(document.varRegister.get(varName, key))
           copyThisElement = false
         }
       }
@@ -1077,7 +1125,7 @@ class SourceProcessor(
       } catch {
         case e: ParseError =>
           showErrorMessage(e.errorMessage, processingUnit); false
-        case e: TagError   => showErrorMessage(e.errorMessage, processingUnit); false
+        case e: TagError => showErrorMessage(e.errorMessage, processingUnit); false
       }
 
     if (wellFormedLine) {

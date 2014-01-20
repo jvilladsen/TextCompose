@@ -29,10 +29,10 @@ class TagParser(
   def this(tagName: String) = this(tagName, "", _ => true, "")
 
   /*
-	 * Some tags accept different kinds of parameter sets.
-	 * For example, you can specify page size as A4 (or Letter)
-	 * or in terms of width and height in points.
-	 */
+   * Some tags accept different kinds of parameter sets.
+   * For example, you can specify page size as A4 (or Letter)
+   * or in terms of width and height in points.
+   */
   class Syntax(val name: String, val condition: SourceElement => Boolean) {
     val formalParameters = new ArrayBuffer[FormalParameter]
   }
@@ -41,9 +41,9 @@ class TagParser(
   syntaxAlternatives += new Syntax(name, condition)
 
   /* 
-	 * When applying the parser, we start out by finding the first matching
-	 * set of formal parameters.
-	 */
+   * When applying the parser, we start out by finding the first matching
+   * set of formal parameters.
+   */
   private def getFormalParameters(se: SourceElement): ArrayBuffer[FormalParameter] = {
     var index = 0
     val length = syntaxAlternatives.length
@@ -63,23 +63,23 @@ class TagParser(
   }
 
   /* Questions:
-	 * 1. add control of the height parameter in 'underline' tag to the 'height' tag.
-	 * 2. new 'width' tag to control width parameter in 'underline' tag, image frame and cell border.
-	 * 3. new 'pad' tag to control padding in highlight and table cells.
-	 * 4. BIGGER: start looking that the POTENTIAL below.
-	 * 5. add direction flags to color tag - on condition that scope is border.
-	 * 6. brush up the inject tag
-	 * 7. brush up the replace tag
-	 * 8. brush up position tag
-	 */
+   * 1. add control of the height parameter in 'underline' tag to the 'height' tag.
+   * 2. new 'width' tag to control width parameter in 'underline' tag, image frame and cell border.
+   * 3. new 'pad' tag to control padding in highlight and table cells.
+   * 4. BIGGER: start looking that the POTENTIAL below.
+   * 5. add direction flags to color tag - on condition that scope is border.
+   * 6. brush up the inject tag
+   * 7. brush up the replace tag
+   * 8. brush up position tag
+   */
 
   /* POTENTIAL:
-	 * The primary motivation is to generalize all the repetitive code in SourceProcessor.
-	 * However, this work can potentially be used to solve more tasks:
-	 * 1. Building the tag dialog, based on the syntax stored in the TagParser objects.
-	 * 2. Parsing the tag for setting tag dialog widget values. Would allow earlier error report.
-	 * 3. Forming string for source file from the tag dialog widget values.
-	 */
+   * The primary motivation is to generalize all the repetitive code in SourceProcessor.
+   * However, this work can potentially be used to solve more tasks:
+   * 1. Building the tag dialog, based on the syntax stored in the TagParser objects.
+   * 2. Parsing the tag for setting tag dialog widget values. Would allow earlier error report.
+   * 3. Forming string for source file from the tag dialog widget values.
+   */
 
   var formalParameters: ArrayBuffer[FormalParameter] = syntaxAlternatives(0).formalParameters
   val actualParameters = new ArrayBuffer[ActualParameter]
@@ -249,7 +249,7 @@ class TagParser(
     actualParameters(indexActual) match {
       case p: ActualString =>
         indexActual += 1; p.s
-      case _               => throw new Exception("Asking parser for string from " + tagName + " but fails.")
+      case _ => throw new Exception("Asking parser for string from " + tagName + " but fails.")
     }
 
   def isNextInt: Boolean =
@@ -265,7 +265,7 @@ class TagParser(
     actualParameters(indexActual) match {
       case p: ActualInteger =>
         indexActual += 1; p.i
-      case _                => throw new Exception("Asking parser for integer from " + tagName + " but fails.")
+      case _ => throw new Exception("Asking parser for integer from " + tagName + " but fails.")
     }
 
   def isNextFloat: Boolean =
@@ -281,7 +281,7 @@ class TagParser(
     actualParameters(indexActual) match {
       case p: ActualFloat =>
         indexActual += 1; p.f
-      case _              => throw new Exception("Asking parser for float from " + tagName + " but fails.")
+      case _ => throw new Exception("Asking parser for float from " + tagName + " but fails.")
     }
 
   def isNextDecNum: Boolean =
@@ -297,7 +297,7 @@ class TagParser(
     actualParameters(indexActual) match {
       case p: ActualDecNum =>
         indexActual += 1; p.dn
-      case _               => throw new Exception("Asking parser for decorated number from " + tagName + " but fails.")
+      case _ => throw new Exception("Asking parser for decorated number from " + tagName + " but fails.")
     }
 
   def isNextOption: Boolean =
@@ -313,7 +313,7 @@ class TagParser(
     actualParameters(indexActual) match {
       case p: ActualOption =>
         indexActual += 1; p.option
-      case _               => throw new Exception("Asking parser for option from " + tagName + " but fails.")
+      case _ => throw new Exception("Asking parser for option from " + tagName + " but fails.")
     }
 
   def getNextFlag(flag: String): Boolean =
@@ -330,7 +330,7 @@ class TagParser(
       actualParameters(indexActual) match {
         case ActualFlag(f) =>
           indexActual += 1; true
-        case _             => false
+        case _ => false
       }
     } else {
       false
@@ -340,7 +340,7 @@ class TagParser(
       actualParameters(indexActual) match {
         case p: ActualFlags =>
           indexActual += 1; p.flags
-        case _              => ""
+        case _ => ""
       }
     } else {
       ""

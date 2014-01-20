@@ -117,19 +117,57 @@ object Parsers {
   view.addOptions("page mode", true, List("none", "outline", "thumbnails",
     "full screen", "optional content", "attachments"))
 
-  val variable = new TagParser("var")
+  val variable = new TagParser(
+      "var",
+      "Str/Int",
+      se => se.NumberOfParameters <= 2 || se.NumberOfParameters > 2 && se.Parameters(2) == "converge",
+      "Variable name followed by Str or Int, optionally followed by Str or Int (for maps), optionally followed by 'converge'")
   variable.addString("name", true)
   variable.addOptions("type", true, List("Str", "Int"))
   variable.addFlag("converge")
+  variable.addSyntax(
+      "Map",
+      se => se.NumberOfParameters > 2 && se.Parameters(2) != "converge")
+  variable.addString("name", true)
+  variable.addOptions("key type", true, List("Str", "Int"))
+  variable.addOptions("value type", true, List("Str", "Int"))
+  variable.addFlag("converge")
 
-  val set = new TagParser("set")
+  val set = new TagParser(
+      "set",
+      "Str/Int",
+      se => se.NumberOfParameters == 1,
+      "Variable name - followed by key in the case of Map variables")
   set.addString("name", true)
+  set.addSyntax(
+      "Map",
+      se => se.NumberOfParameters == 2)
+  set.addString("name", true)
+  set.addString("key", true)
 
-  val add = new TagParser("add")
+  val add = new TagParser(
+      "add",
+      "Str/Int",
+      se => se.NumberOfParameters == 1,
+      "Variable name - followed by key in the case of Map variables")
   add.addString("name", true)
-
-  val show = new TagParser("show")
+  add.addSyntax(
+      "Map",
+      se => se.NumberOfParameters == 2)
+  add.addString("name", true)
+  add.addString("key", true)
+  
+  val show = new TagParser(
+      "show",
+      "Str/Int",
+      se => se.NumberOfParameters == 1,
+      "Variable name - followed by key in the case of Map variables")
   show.addString("name", true)
+  show.addSyntax(
+      "Map",
+      se => se.NumberOfParameters == 2)
+  show.addString("name", true)
+  show.addString("key", true)
 
   val image = new TagParser("image")
   image.addString("image file name", true)

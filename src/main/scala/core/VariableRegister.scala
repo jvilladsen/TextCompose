@@ -24,93 +24,64 @@ import java.io.File
 
 class VariableRegister {
 
-  class Variable(name: String) {
-    private var valueString = ""
-    private var valueInt = 0
-    private var hasBeenDeclared = false
-    private var kind = ""
-    private var convergeRequired = false
-    private var previousValueString = ""
-    private var previousValueInt = 0
-
-    def declare(kind: String, convergeRequired: Boolean) {
-      hasBeenDeclared = true
-      if (kind != "Int" && kind != "Str") throw new TagError("Unknown type '" + kind + "'. Try 'Int' or 'Str'.")
-      this.kind = kind
-      this.convergeRequired = convergeRequired
-    }
-
-    def setPreviousValue(value: String) {
-      previousValueString = value
-      try { previousValueInt = value.toInt } catch { case e: Exception => None }
-    }
-
-    def isDeclared = this.hasBeenDeclared
-
-    def isConvergeRequired = this.convergeRequired
-
-    def hasType(kind: String) = this.kind == kind
-
-    def hasConverged: Boolean =
-      !convergeRequired ||
-        (kind == "Str" && valueString == previousValueString) ||
-        (kind == "Int" && valueInt == previousValueInt)
-
-    def set(value: String) {
-      if (kind == "Int") {
-        try {
-          valueInt = value.toInt
-        } catch {
-          case e: Exception => {
-            throw new TagError("Cannot set the value '" +
-              value + "' to variable of type 'Int'.")
-          }
-        }
-      } else if (kind == "Str") {
-        valueString = value
-      }
-    }
-
-    def add(value: String) {
-      if (kind == "Int") {
-        try {
-          valueInt += value.toInt
-        } catch {
-          case e: Exception => {
-            throw new TagError("Cannot add the value '" +
-              value + "' to variable of type 'Int'.")
-          }
-        }
-      } else if (kind == "Str") {
-        valueString += value
-      }
-    }
-
-    def get(respectConverge: Boolean): String = {
-      if (convergeRequired && respectConverge) {
-        if (kind == "Int") previousValueInt.toString else previousValueString
-      } else {
-        if (kind == "Int") valueInt.toString else valueString
-      }
-    }
-  }
+  private val variables = new HashMap[String, Variable]
 
   private var copyingStarted = false
   private var copyingDepthCounter = 0
   private var copyingVariableName = ""
+  private var copyingKeyName = ""
   private var copyingForAdd = false
   private var copiedValue = ""
 
-  private var variables = new HashMap[String, Variable]
+  def toBaseType(kind: String) = kind match {
+    case "Str" => BaseType.Str
+    case "Int" => BaseType.Int
+    case _     => throw new TagError("Unknown base type '" + kind + "'. Try 'Int' or 'Str'.")
+  }
 
-  def declareVariable(name: String, kind: String, converge: Boolean) {
-    if (!variables.contains(name)) {
-      variables(name) = new Variable(name)
+  def declareVariable(name: String, keyTypeName: String, valueTypeName: String, converge: Boolean) {
+
+    val keyType = if (keyTypeName == "") BaseType.NA else toBaseType(keyTypeName)
+    val valueType = toBaseType(valueTypeName)
+
+    def unchangedType: Boolean = variables(name) match {
+      case v: ValueVariable => v.valType == valueType
+      case v: MapVariable   => v.valType == valueType && v.keyType == keyType
     }
-    if (variables(name).isDeclared) {
-      if (!variables(name).hasType(kind)) throw new TagError("Attempt to change type of variable '" + name + "'")
+    val addNewVariable =
+      if (variables.contains(name)) {
+        if (unchangedType) {
+          false
+        } else {
+          if (variables(name).isDeclared) {
+            throw new TagError("Attempt to change type of variable '" + name + "'")
+          } else {
+            // It was added to carry a "prior" value but of another type.
+            variables -= name
+            true
+          }
+        }
+      } else {
+        true
+      }
+    if (addNewVariable) {
+      variables(name) = if (keyType == BaseType.NA) {
+        ValueVariable(name, valueType, "")
+      } else {
+        MapVariable(name, keyType, valueType)
+      }
+    }
+    variables(name).declare(converge)
+  }
+
+  def tryGetType(name: String) = {
+    if (variables.contains(name)) {
+      variables(name) match {
+        case v: ValueVariable => "val"
+        case v: MapVariable   => "map"
+      }
     } else {
-      variables(name).declare(kind, converge)
+      "NA"
     }
   }
 
@@ -119,11 +90,12 @@ class VariableRegister {
     copiedValue = ""
   }
 
-  def startCopying(name: String, add: Boolean) {
+  def startCopying(name: String, key: String, add: Boolean) {
     if (!variables.contains(name)) throw new TagError("Unknown variable '" + name + "'")
     copyingStarted = true
     copyingDepthCounter = 1
     copyingVariableName = name
+    copyingKeyName = key
     copyingForAdd = add
   }
 
@@ -133,7 +105,8 @@ class VariableRegister {
 
   def isCopying = copyingStarted
 
-  def isCopyingToConvergeVariable(name: String) = copyingStarted && name == copyingVariableName && variables(name).isConvergeRequired
+  def isCopyingToConvergeVariable(name: String) =
+    copyingStarted && name == copyingVariableName && variables(name).mustConverge
 
   def increaseDepth = { copyingDepthCounter += 1 }
 
@@ -144,19 +117,17 @@ class VariableRegister {
   def getCurrentlyAdding = copyingForAdd
   def getCurrentVariable = copyingVariableName
 
-  private def setPreviousValue(name: String, previousValue: String) {
-    if (!variables.contains(name)) {
-      variables(name) = new Variable(name)
-    }
-    variables(name).setPreviousValue(previousValue)
-  }
-
   def updateVariable {
     if (variables.contains(copyingVariableName)) {
-      if (copyingForAdd) {
-        variables(copyingVariableName).add(copiedValue)
-      } else {
-        variables(copyingVariableName).set(copiedValue)
+      variables(copyingVariableName) match {
+        case v: ValueVariable => {
+          if (copyingForAdd) v.add(copiedValue)
+          else v.set(copiedValue)
+        }
+        case v: MapVariable => {
+          if (copyingForAdd) v.add(copyingKeyName, copiedValue)
+          else v.set(copyingKeyName, copiedValue)
+        }
       }
       stopCopying()
     } else {
@@ -164,9 +135,12 @@ class VariableRegister {
     }
   }
 
-  def get(name: String): String = {
+  def get(name: String, key: String): String = {
     if (variables.contains(name) && variables(name).isDeclared) {
-      return variables(name).get(true)
+      variables(name) match {
+        case v: ValueVariable => v.show
+        case v: MapVariable   => v.show(key)
+      }
     } else {
       throw new TagError("Unknown variable '" + name + "'")
     }
@@ -175,12 +149,21 @@ class VariableRegister {
   def allHasConverged = variables.keys.forall(n => variables(n).hasConverged)
 
   def save(fileName: String) {
-    if (variables.exists(pair => pair._2.isConvergeRequired)) {
+    if (variables.exists(pair => pair._2.mustConverge)) {
       try {
         val outFile = new java.io.FileWriter(fileName)
         for (pair <- variables) {
-          if (pair._2.isConvergeRequired) {
-            outFile.write(pair._1 + "\t" + pair._2.get(false) + "\n")
+          if (pair._2.mustConverge) {
+            pair._2 match {
+              case v: ValueVariable => {
+                outFile.write(v.profile + "\t" + v.get + "\n")
+              }
+              case v: MapVariable => {
+                for (kv <- v.get) {
+                  outFile.write(v.profile + "\t" + kv._1 + "\t" + kv._2 + "\n")
+                }
+              }
+            }
           }
         }
         outFile.close
@@ -192,14 +175,62 @@ class VariableRegister {
     }
   }
 
-  private def loadLine(line: String) {
-    val i = line.indexOf("\t")
-    val name = line.substring(0, i)
-    val value = line.substring(i + 1, line.length)
-    setPreviousValue(name, value)
-  }
-
   def load(fileName: String) {
+
+    def setPriorValue(
+      name: String,
+      keyTypeName: String,
+      valueTypeName: String,
+      priorKey: String,
+      priorValue: String) {
+
+      val keyType = if (keyTypeName == "") BaseType.NA else toBaseType(keyTypeName)
+      val valueType = toBaseType(valueTypeName)
+
+      if (variables.contains(name)) {
+        variables(name) match {
+          case v: ValueVariable => v.setPrior(priorValue)
+          case v: MapVariable   => v.setPrior(priorKey, priorValue)
+        }
+      } else {
+        if (keyType == BaseType.NA) {
+          val vv = ValueVariable(name, valueType, "")
+          vv.setPrior(priorValue)
+          variables(name) = vv
+        } else {
+          val mv = MapVariable(name, keyType, valueType)
+          mv.setPrior(priorKey, priorValue)
+          variables(name) = mv
+        }
+      }
+    }
+
+    def loadLine(line: String) {
+
+      var index = -1
+      def getNext(): String = {
+        val priorIndex = index
+        index = line.indexOf("\t", priorIndex + 1)
+        line.substring(priorIndex + 1, index)
+      }
+      def getLast: String = {
+        line.substring(index + 1, line.length)
+      }
+
+      val name = getNext()
+      if (getNext() == "val") {
+        val valType = getNext()
+        val value = getLast
+        setPriorValue(name, "", valType, "", value)
+      } else {
+        val keyType = getNext()
+        val valType = getNext()
+        val key = getNext()
+        val value = getLast
+        setPriorValue(name, keyType, valType, key, value)
+      }
+    }
+
     try {
       var src = Source fromFile (fileName)
       src.getLines.foreach(line => loadLine(line))
@@ -207,5 +238,4 @@ class VariableRegister {
       case e: Exception => None
     }
   }
-
 }

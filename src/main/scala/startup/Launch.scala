@@ -19,6 +19,7 @@
 package writesetter.startup
 
 import javax.swing.UIManager
+import java.util.Calendar
 
 object Launch {
 
@@ -35,5 +36,20 @@ object Launch {
     }
 
     writesetter.editor.CompileOrGUI.switcher(args)
+  }
+}
+
+object Time {
+  private def getTime = Calendar.getInstance().getTimeInMillis()
+
+  private val initialTime = getTime
+  private var latestTime = initialTime
+
+  def show(location: String) {
+    val currentTime = getTime
+    val delta = (currentTime - latestTime).toString
+    val accumulation = (currentTime - initialTime).toString
+    println(delta + "\t" + accumulation + "\t" + location)
+    latestTime = currentTime
   }
 }

@@ -54,7 +54,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fakeAction.enabled = !fakeAction.enabled // toggle to trigger a re-layout of TagPane (hack)
   }
 
-  var updateOnSwitchingComboBox = new java.awt.event.ActionListener() {
+  private val updateOnSwitchingComboBox = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {
       if (fields.length > 0) {
         switchingSelectedValue = fields(0).GetUnwrapped

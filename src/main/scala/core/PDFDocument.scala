@@ -25,18 +25,18 @@ import scala.math.{ sin, cos, Pi }
 
 class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
-  private var iTextDoc = new Document
+  private val iTextDoc = new Document
 
-  var writer = new DocumentWriter(iTextDoc, Arg)
+  val writer = new DocumentWriter(iTextDoc, Arg)
 
   private var EmptyDocument = true
 
-  var varRegister = new VariableRegister
+  val varRegister = new VariableRegister
   varRegister.load(Arg.VariablesFileName)
-  var injectionRegister = new InjectionRegister
-  var replacementRegister = new ReplacementRegister
+  val injectionRegister = new InjectionRegister
+  val replacementRegister = new ReplacementRegister
 
-  private var stateStack = new Stack[State]
+  private val stateStack = new Stack[State]
   stateStack.push(new State)
 
   def getCurrentState = stateStack.top
@@ -61,7 +61,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
   private var notYetOpened = true
 
-  var bookmarks = new Bookmarks
+  val bookmarks = new Bookmarks
 
   private var inItemFormatting = false
   private var itemFormatChunk = new Chunk

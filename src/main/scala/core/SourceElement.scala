@@ -46,31 +46,37 @@ class SourceElement {
     for (i <- Parameters.indices) {
       val par = Parameters(i)
       var result = ""
-      var inShowTag = false
+      var insideTag = false
       var sinceStart = ""
       for (c <- par) {
-        if (inShowTag) {
+        if (insideTag) {
           if (c == '>') {
             var parts = sinceStart.split(' ')
-            if (parts.length == 2 && parts(0) == "show") {
-              result += varReg.get(parts(1))
+            if (parts.length >= 2 && parts(0) == "show") {
+              val variableName = parts(1)
+              val variableType = varReg.tryGetType(variableName)
+              if (variableType == "val") {
+                result += varReg.get(parts(1), "")
+              } else if (variableType == "map") {
+                result += varReg.get(parts(1), parts(2))
+              }
             } else {
               result += '<' + sinceStart + '>'
             }
-            inShowTag = false
+            insideTag = false
           } else {
             sinceStart += c
           }
         } else {
           if (c == '<') {
-            inShowTag = true
+            insideTag = true
             sinceStart = ""
           } else {
             result += c
           }
         }
       } // loop over characters in par
-      if (inShowTag) {
+      if (insideTag) {
         result += '<' + sinceStart
       }
       Parameters(i) = result
