@@ -146,6 +146,18 @@ class VariableRegister {
     }
   }
 
+  def getSorted(name: String, byValue: Boolean) = {
+    if (variables.contains(name) && variables(name).isDeclared) {
+      variables(name) match {
+        case v: ValueVariable => throw new TagError("Variable '" + name +
+          "' is not a map and can therefore not be used in the 'loop' tag")
+        case v: MapVariable => v.getSorted(byValue)
+      }
+    } else {
+      throw new TagError("Unknown variable '" + name + "'")
+    }
+  }
+
   def allHasConverged = variables.keys.forall(n => variables(n).hasConverged)
 
   def save(fileName: String) {

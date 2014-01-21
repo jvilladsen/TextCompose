@@ -233,6 +233,20 @@ object Parsers {
   replace.addFlag("i")
   replace.addFlag("t")
 
+  val loop = new TagParser(
+      "loop",
+      "range",
+      se => se.NumberOfParameters >= 4,
+      "either three numbers (from to step) and body, or map variable name followed by \"sort by\" 'key' or 'value' and body")
+  loop.addInt("from", true)
+  loop.addInt("to", true)
+  loop.addInt("step", true)
+  loop.addString("body", true)
+  loop.addSyntax("map", se => se.NumberOfParameters < 4)
+  loop.addString("variable", true)
+  loop.addOptions("sort", true,List("key", "value"))
+  loop.addString("body", true)
+  
   val include = new TagParser("include")
   include.addString("name of extension", true)
 

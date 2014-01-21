@@ -837,53 +837,80 @@ class SourceProcessor(
   }
 
   // FIXME: There must be something we can factor out here:
-  private def loopTag(se: SourceElement) {
-    se.hasNumberOfParameters(4, "The loop tag takes four parameters: first number, last number, step size and an in-line tag with one parameter.")
-    var start = 0
-    var stop = 0
-    var delta = 0
-    var inLineTagSource = se.Parameters(3)
+  private def loopTag(parser: TagParser, se: SourceElement) {
 
-    try {
-      start = se.Parameters(0).toInt
-      stop = se.Parameters(1).toInt
-      delta = se.Parameters(2).toInt
-    } catch {
-      case e: Exception => throw new TagError("The first three parameters for the loop tag must be numbers (integers).")
-    }
-    if (delta == 0) throw new TagError("The third parameter for the loop tag must be non-zero. It is the step size.")
-    if (start < stop && delta < 0) throw new TagError("The third parameter for the loop tag must be positive " +
-      "for this to finish (going from " + start.toString + " to " + stop.toString + ").")
-    if (start > stop && delta > 0) throw new TagError("The third parameter for the loop tag must be negative " +
-      "for this to finish (going from " + start.toString + " to " + stop.toString + ").")
+    def inlineTagHandler(
+      inlineSource: String,
+      parameterName: scala.collection.immutable.List[String],
+      parameterValue: scala.collection.immutable.List[String]) {
 
-    var inLineSE = new SourceElement // Used as a way to feed a parameter into ^1
-    inLineSE.SetTag("loop in-line tag") // In place of "def" as in <def ...
-    inLineSE.SetParameter("loop in-line tag") // In place of the name of the user-defined tag
-    inLineSE.SetParameter("loop counter") // The first parameter of the user-defined tag
+      val actualParameters = new SourceElement
+      for (v <- parameterValue) actualParameters.SetParameter(v)
 
-    var inLineTD = new TagDefinition(inLineSE, "loop in-line tag", 0, false)
-    try {
-      inLineTD.ParseLine(inLineTagSource)
-    } catch {
-      case e: Exception => throw new TagError("Problem parsing the content of the loop tag: " + e.getMessage + ".")
-    }
-
-    var n = start
-    while (n <= stop && delta > 0 || n >= stop && delta < 0) {
-      var actualParameters = new SourceElement
-      actualParameters.SetParameter(n.toString)
-      var defWithValues = inLineTD.GetDefinitionWithValues(actualParameters)
-
-      processingUnit.addInLineTag(inLineSE.TagName)
-      for (line <- defWithValues) { // stack with one element, since this is an in-line tag definition.
-        processingUnit.update(line)
-        document.noPendingPadding
-        processSourceLine()
+      val inLineSE = new SourceElement // Used as a way to feed a parameter into ^1
+      inLineSE.SetTag("loop in-line tag") // In place of "def" as in <def ...
+      inLineSE.SetParameter("loop in-line tag") // In place of the name of the user-defined tag
+      for (p <- parameterName) inLineSE.SetParameter(p)
+      val inLineTD = new TagDefinition(inLineSE, "loop in-line tag", 0, false)
+      try {
+        inLineTD.ParseLine(inlineSource)
+      } catch {
+        case e: Exception => throw new TagError("Problem parsing the content of the loop tag (" + inlineSource + "): " + e.getMessage + ".")
       }
-      processingUnit.popElement()
 
-      n += delta
+      def processInLineTagWithParameters() {
+        val defWithValues = inLineTD.GetDefinitionWithValues(actualParameters)
+
+        processingUnit.addInLineTag(inLineSE.TagName)
+        for (line <- defWithValues) { // stack with one element, since this is an in-line tag definition.
+          processingUnit.update(line)
+          document.noPendingPadding
+          processSourceLine()
+        }
+        processingUnit.popElement()
+      }
+
+      processInLineTagWithParameters()
+    }
+
+    parser(se)
+    parser.getSyntax match {
+      case "range" => {
+        val start = parser.getNextInt
+        val stop = parser.getNextInt
+        val delta = parser.getNextInt
+
+        if (delta == 0) throw new TagError("The third parameter for the loop tag with a range must be non-zero. It is the step size.")
+        if (start < stop && delta < 0) throw new TagError("The third parameter for the loop tag with a range must be positive " +
+          "for this to finish (going from " + start.toString + " to " + stop.toString + ").")
+        if (start > stop && delta > 0) throw new TagError("The third parameter for the loop tag with a range must be negative " +
+          "for this to finish (going from " + start.toString + " to " + stop.toString + ").")
+
+        val loopBody = parser.getNextString.replace("$1", "^1")
+
+        for (n <- start to stop by delta) {
+
+          inlineTagHandler(
+            loopBody,
+            scala.collection.immutable.List("counter in loop over range"),
+            scala.collection.immutable.List(n.toString))
+        }
+      }
+      case "map" => {
+        val variableName = parser.getNextString
+        val sortByValue = parser.getNextOption == "value"
+
+        val loopBody = parser.getNextString.replace("$1", "^1").replace("$2", "^2")
+
+        val mapContent = document.varRegister.getSorted(variableName, sortByValue)
+        for (pair <- mapContent) {
+
+          inlineTagHandler(
+            loopBody,
+            scala.collection.immutable.List("key in loop over map", "value in loop over map"),
+            scala.collection.immutable.List(pair._1, pair._2))
+        }
+      }
     }
   }
 
@@ -1096,7 +1123,7 @@ class SourceProcessor(
       // ADVANCED
       case "inject"           => injectionTag(element)
       case "replace"          => replaceTag(Parsers.replace, element)
-      case "loop"             => loopTag(element)
+      case "loop"             => loopTag(Parsers.loop, element)
       case "whitespace"       => whitespaceTag(Parsers.whitespace, element)
       case _ => {
         if (extensions.UserDefinedTag(element.TagName)) {

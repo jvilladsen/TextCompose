@@ -386,11 +386,21 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new BooleanType("t", "Even apply to tags"))
   }
 
-  private def loopTag() {
-    fields.append(new NumberType(tagName, "From", true))
-    fields.append(new NumberType(tagName, "To", true))
-    fields.append(new NumberType(tagName, "Step", true))
-    fields.append(new TextType("Body (^1 gives counter)", true))
+  private def loopTag(parameters: ArrayBuffer[String]) {
+    val loopType = new ComboBoxType("Type", List("range", "map"), true)
+    loopType.SetLastValueSwitches
+    loopType.field.peer.addActionListener(updateOnSwitchingComboBox)
+    fields.append(loopType)
+    if (parameters.length > 0 && parameters(0) == "range") {
+      fields.append(new NumberType(tagName, "From", true))
+      fields.append(new NumberType(tagName, "To", true))
+      fields.append(new NumberType(tagName, "Step", true))
+      fields.append(new TextType("Body ($1 counter)", true))
+    } else {
+      fields.append(new TextType("Variable", false))
+      fields.append(new ComboBoxType("Sort by", List("key", "value"), true))
+      fields.append(new TextType("Body ($1 key, $2 value)", true))
+    }
   }
 
   private def whitespaceTag() {
@@ -485,7 +495,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       // STATE
       case "store"            => None
       case "restore"          => None
-      case "reset" 	          => None
+      case "reset"            => None
       // VARIABLE
       case "var"              => varTag()
       case "set"              => tagWithOneTextField("Variable")
@@ -506,7 +516,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       // ADVANCED
       case "inject"           => injectTag()
       case "replace"          => replaceTag()
-      case "loop"             => loopTag()
+      case "loop"             => loopTag(parameters)
       case "whitespace"       => whitespaceTag()
       case _ => {
         val extension = core.LatestExtensions.GetExtensionDefiningTag(fileKey, tagName)
