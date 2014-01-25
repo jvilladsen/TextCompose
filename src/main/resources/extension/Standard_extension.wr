@@ -32,6 +32,7 @@ This is a structure extension.
 
 After all chapters (and their subordinate sections and sub-sections) comes appendices.
 They are not enumerated, but otherwise appear as chapter headers in the text and list of content.
+
 <def appendix "Title">
 	<presentAppendix "^1" "<show pageNumber>">
 </def>

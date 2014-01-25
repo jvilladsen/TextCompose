@@ -1,0 +1,41 @@
+<extension "References">
+
+This is a structure extension for adding references (bibliography) to your text.
+
+<def reference "Reference">
+	<ref "^1"><presentReference ^1></ref>
+</def>
+
+<def book "Reference" "Author(s)" "Title" "Publisher" "Year">
+	<set referenceToContent "^1">^2. <face +italic>^3. <face -italic>^4. ^5.</set>
+	<set referenceToSortValue "^1">^2 ^5 ^3</set>
+</def>
+
+<sub presentContent "Reference">
+	<add referenceNumber>1</add>
+	<set referenceToNumber "^1"><show referenceNumber></set>
+	<label ^1>
+	<cell><presentReference "^1">
+	<cell><show referenceToContent ^1>
+</sub>
+
+<def bibliography "Title">
+	<appendix "^1">
+	<border-width 0>
+	<cell-padding 0 LR><cell-padding 1 B>
+	<align cell left>
+	<table 2 100% "1 8">
+	<loop referenceToSortValue value "<presentContent $1>">
+	</table>
+</def>
+
+Still need to do several things here:
+1. more types of references than "book" such as journal publications, conference proceedings and what not.
+2. separate style from structure.
+
+<main>
+	<var referenceToContent Str Str>
+	<var referenceToSortValue Str Str>
+	<var referenceNumber Int><set referenceNumber>0</set>
+	<var referenceToNumber Str Int converge>
+</main>

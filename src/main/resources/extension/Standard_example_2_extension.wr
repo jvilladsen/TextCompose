@@ -5,6 +5,7 @@ Note how structure extensions contain tag definitions that refer to
 (contain) tags that are defined in style extensions.
 
 <include "Standard">
+<include "References">
 <include "Typographical Replacements">
 
 <sub body>
@@ -99,6 +100,11 @@ Other nice header fonts: Bolton
 		<store><ref "^1"><cell-padding 5 T><cell>
 		<cell 3C><head><face +bold>^1   <face -bold><size -3>^2</ref><restore>
 	</add>
+</sub>
+
+This tag is used in the References extension:
+<sub presentReference "Reference">
+	[^1]
 </sub>
 
 <def bulletList>
