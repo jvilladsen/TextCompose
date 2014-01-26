@@ -9,7 +9,7 @@ Note how structure extensions contain tag definitions that refer to
 <include "Typographical Replacements">
 
 <sub body>
-	<font Gentium>
+	<font Gentium><size 12>
 </sub>
 
 Other nice header fonts: Bolton
@@ -102,7 +102,7 @@ Other nice header fonts: Bolton
 	</add>
 </sub>
 
-This tag is used in the References extension:
+The following tag is used in the References extension:
 <sub presentReference "Reference">
 	[^1]
 </sub>

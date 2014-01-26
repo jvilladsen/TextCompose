@@ -9,7 +9,7 @@ Note how structure extensions contain tag definitions that refer to
 <include "Typographical Replacements">
 
 <sub body>
-	<font Times>
+	<font Times><size 12>
 </sub>
 
 <sub head>
@@ -107,7 +107,7 @@ Note how structure extensions contain tag definitions that refer to
 	</add>
 </sub>
 
-This tag is used in the References extension:
+The following tag is used in the References extension:
 <sub presentReference "Reference">
 	[<show referenceToNumber "^1">]
 </sub>

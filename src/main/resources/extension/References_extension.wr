@@ -21,6 +21,7 @@ This is a structure extension for adding references (bibliography) to your text.
 
 <def bibliography "Title">
 	<appendix "^1">
+	<body>
 	<border-width 0>
 	<cell-padding 0 LR><cell-padding 1 B>
 	<align cell left>
