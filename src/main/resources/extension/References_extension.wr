@@ -19,13 +19,13 @@ This is a structure extension for adding references (bibliography) to your text.
 	<cell><show referenceToContent ^1>
 </sub>
 
-<def bibliography "Title">
+<def bibliography "Title" "Relative indentation">
 	<appendix "^1">
 	<body>
 	<border-width 0>
 	<cell-padding 0 LR><cell-padding 1 B>
 	<align cell left>
-	<table 2 100% "1 8">
+	<table 2 100% "^2 100">
 	<loop referenceToSortValue value "<presentContent $1>">
 	</table>
 </def>

@@ -5,6 +5,8 @@
 <chapter "Introduction">
 Vivamus auctor sapien <i>elementum orci</i> porta vulputate. Sed dignissim felis a tellus pretium, eget adipiscing neque congue. In laoreet id orci non eleifend. Mauris at metus urna. Nunc porttitor, nunc sit amet placerat vehicula, sapien est mollis ipsum, eu dapibus nisl arcu non libero. Morbi ornare bibendum porttitor. Maecenas dolor sem, tincidunt ac porttitor sed, fringilla et orci. Etiam consectetur eros in congue ornare. Etiam sed euismod risus. Suspendisse euismod quis lectus congue consequat. 
 
+Here is a reference <reference Arit>. See how it gets a link (in PDF viewers) to the bibliography.
+
 <chapter "Lorem Ipsum">
 <section "Pellentesque Habitant">
 Pellentesque habitant morbi <b>tristique</b> senectus et netus et malesuada fames ac turpis egestas. Sed accumsan, nisi in commodo volutpat, mi sapien ornare libero, eget imperdiet quam nibh sit amet mi. Sed blandit libero justo, sit amet dapibus velit lacinia ut.
@@ -48,3 +50,7 @@ In eget porta dolor. Integer hendrerit tellus ipsum, ac malesuada leo auctor sit
 
 <appendix "Appendix A: Glossary">
 Abc
+
+<book "Arit" "Aristotle" "The Art of Rhetoric" "Penguin Classics" "1992">
+
+<bibliography "References" 12>

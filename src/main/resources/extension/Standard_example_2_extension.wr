@@ -9,7 +9,7 @@ Note how structure extensions contain tag definitions that refer to
 <include "Typographical Replacements">
 
 <sub body>
-	<font Gentium><size 12>
+	<font Gentium><face normal><size 12>
 </sub>
 
 Other nice header fonts: Bolton

@@ -9,11 +9,11 @@ Note how structure extensions contain tag definitions that refer to
 <include "Typographical Replacements">
 
 <sub body>
-	<font Times><size 12>
+	<font Times><face normal><size 12>
 </sub>
 
 <sub head>
-	<font Helvetica>
+	<font Helvetica><face normal>
 </sub>
 
 <sub presentTitleAuthor "Title" "Author">
