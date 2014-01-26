@@ -18,8 +18,7 @@
 
 package writesetter.core
 
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ HashMap, HashSet, ArrayBuffer }
 
 object LatestExtensions {
 
@@ -34,20 +33,19 @@ object LatestExtensions {
     val parameterDescriptions = d
   }
 
-  private val fullFileNameToExtensionList = new HashMap[String, ArrayBuffer[String]]
+  private val fullFileNameToExtensionSet = new HashMap[String, HashSet[String]]
   private val extensionNameToTagList = new HashMap[String, ArrayBuffer[String]]
   private val extensionToTagParameterDescriptions = new HashMap[String, ArrayBuffer[Tag]]
 
   private var currentFileName = ""
 
   def addFileName(fileName: String) {
-    val newEmptyArray = new ArrayBuffer[String]
-    fullFileNameToExtensionList(fileName) = newEmptyArray
+    fullFileNameToExtensionSet(fileName) = new HashSet[String]
     currentFileName = fileName
   }
 
   def addExtension(extensionName: String) {
-    fullFileNameToExtensionList(currentFileName).append(extensionName)
+    fullFileNameToExtensionSet(currentFileName).add(extensionName)
     val newEmptyArray = new ArrayBuffer[String]
     extensionNameToTagList(extensionName) = newEmptyArray
     val newEmptyTagArray = new ArrayBuffer[Tag]
@@ -70,16 +68,16 @@ object LatestExtensions {
   }
 
   def getListOfExtensions(fileName: String): List[String] = {
-    if (fullFileNameToExtensionList.contains(fileName)) {
-      fullFileNameToExtensionList(fileName).toList
+    if (fullFileNameToExtensionSet.contains(fileName)) {
+      fullFileNameToExtensionSet(fileName).toList
     } else {
       List()
     }
   }
 
   def GetExtensionDefiningTag(fileName: String, tagName: String): String = {
-    if (fullFileNameToExtensionList.contains(fileName)) {
-      for (extension <- fullFileNameToExtensionList(fileName)) {
+    if (fullFileNameToExtensionSet.contains(fileName)) {
+      for (extension <- fullFileNameToExtensionSet(fileName)) {
         if (extensionNameToTagList(extension).contains(tagName)) { return extension }
       }
     }
