@@ -53,8 +53,8 @@ class State extends Cloneable {
   var underlineCap = "Butt"
 
   var bckgColorUse = false // background
-  var bckgColor = "RGB 255 255 128"
-  var bckgColorPadding = "0, 0, 0, 0"
+  var bckgColor = "RGB 255 240 0"
+  var bckgColorPadding = "2, 2, 2, 1.5"
 
   var imgScaleWidth = new DecoratedNumber("100%", "image scale width")
   var imgScaleHeight = new DecoratedNumber("100%", "image scale height")
@@ -130,8 +130,8 @@ class State extends Cloneable {
   var actualUnderlineCap = 0
   updateActualUnderline()
 
-  var actualBckgColor = new BaseColor(255, 255, 128)
-  var actualBckgColorPadding = new Padding(0, 0, 0, 0)
+  var actualBckgColor = new BaseColor(255, 240, 0)
+  var actualBckgColorPadding = new Padding(2, 2, 2, 1.5f)
 
   var actualImgBdrColor = new BaseColor(0, 70, 245)
 
