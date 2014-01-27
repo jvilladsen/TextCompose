@@ -38,111 +38,108 @@ class SourceElementStack(matchPositionForTag: Boolean) {
   // The base parser
 
   def ParseLine(line: String) {
-    var InsideTag = false
-    var InsideTagName = false
-    var InsideQuote = false
-    var TagSegmentComplete = false
-    var Text = ""
-    var EmptyQuote = false
-    var SElm = new SourceElement
-    var Escaping = false
+    var isInsideTag = false
+    var isInsideTagName = false
+    var isInsideQuote = false
+    var isEndOfParameter = false
+    var accumulator = ""
+    var wasEmptyQuote = false
+    var sourceElement = new SourceElement
+    var escaping = false
 
     var position = 0
     var lookForTagAtPosition = matchPositionForTag
     var latestTagStartPosition = 0
 
     for (C <- line.iterator) {
-      if (C == '<' && !Escaping && !InsideQuote) {
-        if (InsideTag) {
-          throw new ParseError("You must end tag '" + SElm.TagName + "' before starting another.")
+      if (C == '<' && !escaping && !isInsideQuote) {
+        if (isInsideTag) {
+          throw new ParseError("You must end tag '" + sourceElement.TagName + "' before starting another.")
         } else {
-          if (Text != "") {
-            SElm.SetText(Text)
-            LineElements.append(SElm)
-            SElm = new SourceElement
-            Text = ""
+          if (accumulator != "") {
+            sourceElement.SetText(accumulator)
+            LineElements.append(sourceElement)
+            sourceElement = new SourceElement
+            accumulator = ""
           }
         }
         latestTagStartPosition = position
-        InsideTag = true
-        InsideTagName = true
-      } else if (C == '>' && !Escaping && !InsideQuote) {
-        if (InsideTag) {
-          if (InsideTagName) {
-            if (Text == "") {
+        isInsideTag = true
+        isInsideTagName = true
+      } else if (C == '>' && !escaping && !isInsideQuote) {
+        if (isInsideTag) {
+          if (isInsideTagName) {
+            if (accumulator == "") {
               throw new ParseError("Empty tag.")
             } else {
-              SElm.SetTag(Text)
+              sourceElement.SetTag(accumulator)
             }
-          } else if (Text != "") {
-            SElm.SetParameter(Text)
+          } else if (accumulator != "") {
+            sourceElement.SetParameter(accumulator)
           }
           if (lookForTagAtPosition && latestTagStartPosition < positionForMatching && positionForMatching <= position + 1) {
             TagFoundAtPosition = true
-            TagAtPosition = SElm
+            TagAtPosition = sourceElement
             TagFoundStartsAt = latestTagStartPosition - positionForMatching
             TagFoundEndsAt = position - positionForMatching
             lookForTagAtPosition = false
           }
-          LineElements.append(SElm)
-          SElm = new SourceElement
-          InsideTag = false
-          InsideTagName = false
-          Text = ""
+          LineElements.append(sourceElement)
+          sourceElement = new SourceElement
+          isInsideTag = false
+          isInsideTagName = false
+          accumulator = ""
           PureWhitespace = false
         } else {
           throw new ParseError("Tag end-symbol '>' without previous start-symbol '<'. If you need '>' in the document write '\\>'.")
         }
       } else {
-        if (InsideTag) {
-          if ((InsideQuote && C == '"' && !Escaping) || (!InsideQuote && (C == ' ' || C == '\t'))) {
-            EmptyQuote = InsideQuote && Text == ""
-            InsideQuote = false
-            TagSegmentComplete = true
-          } else {
-            TagSegmentComplete = false
+        if (isInsideTag) {
+          if ((isInsideQuote && C == '"' && !escaping) || (!isInsideQuote && (C == ' ' || C == '\t'))) {
+            wasEmptyQuote = isInsideQuote && accumulator == ""
+            isInsideQuote = false
+            isEndOfParameter = true
           }
         }
-        if (TagSegmentComplete) {
-          TagSegmentComplete = false
-          if (InsideTagName && Text != "") {
-            SElm.SetTag(Text)
-            InsideTagName = false
-          } else if (Text != "" || EmptyQuote) {
-            SElm.SetParameter(Text)
-            EmptyQuote = false
+        if (isEndOfParameter) {
+          isEndOfParameter = false
+          if (isInsideTagName && accumulator != "") {
+            sourceElement.SetTag(accumulator)
+            isInsideTagName = false
+          } else if (accumulator != "" || wasEmptyQuote) {
+            sourceElement.SetParameter(accumulator)
+            wasEmptyQuote = false
           }
-          Text = ""
-        } else if (C == '"' && !Escaping && InsideTag && !InsideTagName) {
-          InsideQuote = true
-        } else if (C == '\\' && !Escaping) {
-          Escaping = true
+          accumulator = ""
+        } else if (C == '"' && !escaping && isInsideTag && !isInsideTagName) {
+          isInsideQuote = true
+        } else if (C == '\\' && !escaping) {
+          escaping = true
         } else {
-          if (Escaping) {
-            Escaping = false
-            if (!(C == '<' || C == '>' || (InsideQuote && C == '"') || C == '\\')) {
-              Text += '\\'
+          if (escaping) {
+            escaping = false
+            if (!(C == '<' || C == '>' || (isInsideQuote && C == '"') || C == '\\')) {
+              accumulator += '\\'
             }
           }
           if (C != '\n') {
-            Text += C
+            accumulator += C
             PureWhitespace = PureWhitespace && (C == ' ' || C == '\t')
           }
         }
       }
       position += 1
     } // end of for loop over characters
-    if (InsideTag) {
-      val tagInset = if (SElm.TagName == "") " " else " (before " + SElm.TagName + ") "
+    if (isInsideTag) {
+      val tagInset = if (sourceElement.TagName == "") " " else " (before " + sourceElement.TagName + ") "
       throw new ParseError("Unfinished tag: '<'" + tagInset + "should be followed by '>' with tag name " +
         "and parameters in-between. Example: <size 25>. If you need '<' in the document write '\\<'.")
     } else {
-      if (Escaping) Text += '\\'
-      if (Text != "") {
-        SElm.SetText(Text)
-        LineElements.append(SElm)
+      if (escaping) accumulator += '\\'
+      if (accumulator != "") {
+        sourceElement.SetText(accumulator)
+        LineElements.append(sourceElement)
       }
     }
-    // LineElements.foreach(e => println(e.ToString)) // <---- DEBUG
   }
 }
