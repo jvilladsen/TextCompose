@@ -80,13 +80,14 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     var isEndOfParameter = false
     var wasEmptyQuote = false
     var escaping = false
-    var position = 0
     var lookForTagAtPosition = matchPositionForTag
     var latestTagStartPosition = 0
     val builder = new Builder()
 
-    for (C <- line.iterator) {
-      if (C == '<' && !escaping && !isInsideQuote) {
+    for (position <- 0 until line.length()) {
+      val char = line.charAt(position)
+      
+      if (char == '<' && !escaping && !isInsideQuote) {
         if (isInsideTag) {
           throw new ParseError("You must end tag '" + builder.getTagName + "' before starting another.")
         } else {
@@ -95,7 +96,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         latestTagStartPosition = position
         isInsideTag = true
         isInsideTagName = true
-      } else if (C == '>' && !escaping && !isInsideQuote) {
+      } else if (char == '>' && !escaping && !isInsideQuote) {
         if (isInsideTag) {
           if (isInsideTagName) {
             if (builder.isEmpty) {
@@ -121,7 +122,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         }
       } else {
         if (isInsideTag) {
-          if ((isInsideQuote && C == '"' && !escaping) || (!isInsideQuote && (C == ' ' || C == '\t'))) {
+          if ((isInsideQuote && char == '"' && !escaping) || (!isInsideQuote && (char == ' ' || char == '\t'))) {
             wasEmptyQuote = isInsideQuote && builder.isEmpty
             isInsideQuote = false
             isEndOfParameter = true
@@ -136,23 +137,22 @@ class SourceElementStack(matchPositionForTag: Boolean) {
             builder.setParameter()
             wasEmptyQuote = false
           }
-        } else if (C == '"' && !escaping && isInsideTag && !isInsideTagName) {
+        } else if (char == '"' && !escaping && isInsideTag && !isInsideTagName) {
           isInsideQuote = true
-        } else if (C == '\\' && !escaping) {
+        } else if (char == '\\' && !escaping) {
           escaping = true
         } else {
           if (escaping) {
             escaping = false
-            if (!(C == '<' || C == '>' || (isInsideQuote && C == '"') || C == '\\')) {
+            if (!(char == '<' || char == '>' || (isInsideQuote && char == '"') || char == '\\')) {
               builder.addChar('\\')
             }
           }
-          if (C != '\n') {
-            builder.addChar(C)
+          if (char != '\n') {
+            builder.addChar(char)
           }
         }
       }
-      position += 1
     } // end of for loop over characters
     if (isInsideTag) {
       val tagInset = if (builder.getTagName == "") " " else " (before " + builder.getTagName + ") "
