@@ -35,18 +35,17 @@ object Spelling {
     val reader = new InputStreamReader(file, encoding)
     val dictionaryMap = new SpellDictionaryHashMap(reader)
     /* Note that Jazzy supports the use of a phonetics file in addition to the dictionary.
-		 * This is currently not utilized here.
-		 */
+	 * This is currently not utilized here.
+	 */
     new SpellChecker(dictionaryMap)
   }
 
   def updateDictionary(d: String) {
     if (dictionaryName != d) {
       dictionaryName = d
-      /* The spellChecker can take up a lot of memory, so it is
-			 * important to deallocate it before building a new one,
-			 * in case the user does spell checking in multiple languages.
-			 */
+      /* The spellChecker can take up a lot of memory, so it is important to deallocate 
+       * it before building a new one, in case the user does spell checking in multiple languages.
+       */
       spellChecker = null
       spellChecker = getSpellChecker
     }
@@ -70,14 +69,3 @@ object Spelling {
 
   def getSuggestion(word: String) = spellChecker.getSuggestions(word, 5)
 }
-
-/* 1. Menu point (under Edit) for starting spell checker.
- * 2. Options: (1) check entire file, (2) check from current position, (3) check selection.
- * 3. Spell checker dialog which shows one incorrect word at a time and suggestions.
- * 		Buttons for Ignore, Ignore All, Add, Replace, Skip to next.
- * 		How to Replace when there are more suggestions? (combo-box)
- * 4. Find and support other languages than English. Phonetic stuff? Fails with DA because of Danish characters.
- * 5. Configuration to ignore certain words such as upper-cased words and words with numbers.
- * 6. Run the spell checker also on the string sent to parser when looking for a tag to display in tag pane?
- * 		Yes, that could be a very nice option.
- */

@@ -1157,7 +1157,7 @@ class SourceProcessor(
 
     if (wellFormedLine) {
       var lineHasTextOrPureSpace = false
-      if (ElmStack.PureWhitespace) {
+      if (ElmStack.isPureWhiteSpace) {
         if (!keepWhitespace) {
           try {
             document.addParagraph()
