@@ -84,6 +84,9 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     val length = line.length()
 
     def isSpaceCharacter(c: Char): Boolean = (c == ' ' || c == '\t')
+    
+    def isSpaceAtPosition(position: Int): Boolean =
+      position < length && isSpaceCharacter(line.charAt(position))
 
     def isEndQuote(position: Int): Boolean = {
       /*
@@ -142,7 +145,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     for (position <- 0 until length) {
       val char = line.charAt(position)
 
-      if (char == '<' && !escaping && !isInsideQuote) {
+      if (char == '<' && !escaping && !isInsideQuote && !isSpaceAtPosition(position + 1)) {
         /*
          * The beginning of a tag.
          */
@@ -199,6 +202,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
            */
           escaping = true
         } else {
+          val wereEscaping = escaping
           if (escaping) {
             /*
              * We escaped and then ended up here, which was the purpose.
@@ -215,7 +219,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
            * Add you regular character to the builder. It can become part of tag name,
            * tag parameter or actual content - depending on the state. 
            */
-          if (char != '\n') builder.addChar(char, isInsideQuote)
+          if (char != '\n') builder.addChar(char, isInsideQuote && !wereEscaping)
         }
       }
     } // end of for loop over characters
