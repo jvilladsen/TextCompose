@@ -98,7 +98,7 @@ object ResourceHandling {
     }
     // Structure extensions
     addExtension("Standard_extension.wr", "Standard")
-    addExtension("References_extension.wr", "Standard")
+    addExtension("References_extension.wr", "References")
     // Style extensions
     addExtension("Standard_example_1_extension.wr", "Standard - Example 1")
     addExtension("Standard_example_2_extension.wr", "Standard - Example 2")
