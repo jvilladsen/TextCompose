@@ -83,13 +83,50 @@ class SourceElementStack(matchPositionForTag: Boolean) {
 
     val length = line.length()
 
+    def isSpaceCharacter(c: Char): Boolean = (c == ' ' || c == '\t')
+
     def isEndQuote(position: Int): Boolean = {
+      /*
+       * Looking ahead to see if the quote sign really does signal end of quote-enclosed parameter.
+       * This, by convention, happens if either:
+       *   1  the quote is followed by some whitespace and a new quote sign,
+       *   2  the quote is followed by tag-end symbol (allowing space in between), or
+       *   3  the quote is followed by anything but tag-start symbol and quote until the next tag-end symbol.
+       */
       if (position == length) {
         true
       } else {
-        var i = position
-        while (i < length && (line.charAt(i) == ' ' || line.charAt(i) == '\t')) i += 1
-        line.charAt(i) == '"' && i > position || line.charAt(i) == '>'
+        if (!isSpaceCharacter(line.charAt(position)) && line.charAt(position) != '>') {
+          false
+        } else {
+          var result = false
+          var soFarAllIsSpace = true
+          var ahead = position
+          var searching = true
+          while (searching && ahead < length) {
+            val char = line.charAt(ahead)
+            ahead += 1
+            if (char == '"') {
+              /*
+               * Some space and now a quote sign.
+               */
+              searching = false
+              result = soFarAllIsSpace
+            } else if (char == '>') {
+              /*
+               * No quote signs or begin-tag symbols until here, and now we found end-tag symbol.
+               */
+              searching = false
+              result = true
+            } else if (char == '<') {
+              searching = false
+              result = false
+            } else {
+              soFarAllIsSpace = soFarAllIsSpace && isSpaceCharacter(char)
+            }
+          } // end while
+          result
+        }
       }
     }
 
@@ -137,7 +174,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
       } else {
         if (isInsideTag &&
             ((isInsideQuote && char == '"' && !escaping && isEndQuote(position + 1) && builder.isBalanced) ||
-             (!isInsideQuote && (char == ' ' || char == '\t')))) {
+             (!isInsideQuote && isSpaceCharacter(char)))) {
           /*
            * Inside a tag and either end of tag name or end of parameter.
            */
