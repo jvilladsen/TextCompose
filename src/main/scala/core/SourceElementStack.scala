@@ -96,7 +96,6 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     var isInsideTag = false
     var isInsideTagName = false
     var isInsideQuote = false
-    var isEndOfParameter = false
     var wasEmptyQuote = false
     var escaping = false
     var lookForTagAtPosition = matchPositionForTag
@@ -107,12 +106,18 @@ class SourceElementStack(matchPositionForTag: Boolean) {
       val char = line.charAt(position)
 
       if (char == '<' && !escaping && !isInsideQuote) {
+        /*
+         * The beginning of a tag.
+         */
         if (isInsideTag) throw new ParseError("You must end tag '" + builder.getTagName + "' before starting another.")
         if (!builder.isEmpty) builder.setText()
         latestTagStartPosition = position
         isInsideTag = true
         isInsideTagName = true
       } else if (char == '>' && !escaping && isInsideTag && !isInsideQuote) {
+        /*
+         * The end of a tag.
+         */
         if (isInsideTagName) {
           if (builder.isEmpty) throw new ParseError("Empty tag.")
           builder.setTag()
@@ -130,16 +135,15 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         isInsideTag = false
         isInsideTagName = false
       } else {
-        if (isInsideTag) {
-          if ((isInsideQuote && char == '"' && !escaping && isEndQuote(position + 1) && builder.isBalanced) ||
-            (!isInsideQuote && (char == ' ' || char == '\t'))) {
-            wasEmptyQuote = isInsideQuote && builder.isEmpty
-            isInsideQuote = false
-            isEndOfParameter = true
-          }
-        }
-        if (isEndOfParameter) {
-          isEndOfParameter = false
+        if (isInsideTag &&
+            ((isInsideQuote && char == '"' && !escaping && isEndQuote(position + 1) && builder.isBalanced) ||
+             (!isInsideQuote && (char == ' ' || char == '\t')))) {
+          /*
+           * Inside a tag and either end of tag name or end of parameter.
+           */
+          wasEmptyQuote = isInsideQuote && builder.isEmpty
+          isInsideQuote = false
+          
           if (isInsideTagName && !builder.isEmpty) {
             builder.setTag()
             isInsideTagName = false
@@ -148,16 +152,32 @@ class SourceElementStack(matchPositionForTag: Boolean) {
             wasEmptyQuote = false
           }
         } else if (char == '"' && !escaping && isInsideTag && !isInsideTagName && !isInsideQuote) {
+          /*
+           * Inside a tag and entering a parameter in quotes.
+           */
           isInsideQuote = true
         } else if (char == '\\' && !escaping) {
+          /*
+           * Turn on "escaping".
+           */
           escaping = true
         } else {
           if (escaping) {
+            /*
+             * We escaped and then ended up here, which was the purpose.
+             */
             escaping = false
             if (!(char == '<' || char == '>' || (isInsideQuote && char == '"') || char == '\\')) {
+              /*
+               * It looked like an escape, but turned out to be just a back-slash.
+               */
               builder.addChar('\\', isInsideQuote)
             }
           }
+          /*
+           * Add you regular character to the builder. It can become part of tag name,
+           * tag parameter or actual content - depending on the state. 
+           */
           if (char != '\n') builder.addChar(char, isInsideQuote)
         }
       }
