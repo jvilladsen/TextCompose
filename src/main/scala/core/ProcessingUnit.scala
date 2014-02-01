@@ -34,7 +34,7 @@ class ProcessingUnit(extensions: Extensions) {
   }
 
   private class Element(s: sourceType.Value, n: String, ln: Long) {
-    val source = s // root, file, tag, mainTag, inLineTag, injection, variable, error
+    val source = s
     val name = n // name of file, tag, inLineTag, injection, variable
 
     private var lineNumber = ln
@@ -114,8 +114,8 @@ class ProcessingUnit(extensions: Extensions) {
   def getReplacementPolicy: String =
     elements.top.source match {
       case sourceType.root | sourceType.insertion => "yes"
-      case sourceType.tag                         => "tag"
-      case _                                      => "no"
+      case sourceType.tag | sourceType.mainTag | sourceType.inLineTag | sourceType.variable => "tag"
+      case _ => "no"
     }
 
   def getSourceLocation: String = {
