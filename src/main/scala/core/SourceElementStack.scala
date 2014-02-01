@@ -36,14 +36,17 @@ class SourceElementStack(matchPositionForTag: Boolean) {
   def setPositionForMatching(p: Int) { positionForMatching = p }
 
   class Builder() {
-    private var accumulator = ""
     private var sourceElement = new SourceElement
-    
+    private var accumulator = ""
+    private var symbolBalance = 0
+
     def isEmpty = accumulator == ""
+    def isBalanced = symbolBalance == 0
     def getTagName = sourceElement.TagName
-    def addChar(c: Char) {
+    def addChar(c: Char, updateBalance: Boolean) {
       pureWhitespace = pureWhitespace && (c == ' ' || c == '\t')
       accumulator += c
+      if (updateBalance) symbolBalance += (if (c == '<') 1 else if (c == '>') -1 else 0)
     }
     private def flush() {
       LineElements.append(sourceElement)
@@ -52,15 +55,18 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     def setText() {
       sourceElement.SetText(accumulator)
       accumulator = ""
+      symbolBalance = 0
       flush()
     }
     def setTag() {
       sourceElement.SetTag(accumulator)
       accumulator = ""
+      symbolBalance = 0
     }
     def setParameter() {
       sourceElement.SetParameter(accumulator)
       accumulator = ""
+      symbolBalance = 0
     }
     def endTag() {
       pureWhitespace = false
@@ -68,12 +74,25 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     }
     def getCurrentElement = sourceElement
   }
-  
+
   def isPureWhiteSpace: Boolean = pureWhitespace
-  
+
   // The base parser
 
   def ParseLine(line: String) {
+
+    val length = line.length()
+
+    def isEndQuote(position: Int): Boolean = {
+      if (position == length) {
+        true
+      } else {
+        var i = position
+        while (i < length && (line.charAt(i) == ' ' || line.charAt(i) == '\t')) i += 1
+        line.charAt(i) == '"' && i > position || line.charAt(i) == '>'
+      }
+    }
+
     var isInsideTag = false
     var isInsideTagName = false
     var isInsideQuote = false
@@ -84,45 +103,36 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     var latestTagStartPosition = 0
     val builder = new Builder()
 
-    for (position <- 0 until line.length()) {
+    for (position <- 0 until length) {
       val char = line.charAt(position)
-      
+
       if (char == '<' && !escaping && !isInsideQuote) {
-        if (isInsideTag) {
-          throw new ParseError("You must end tag '" + builder.getTagName + "' before starting another.")
-        } else {
-          if (!builder.isEmpty) builder.setText()
-        }
+        if (isInsideTag) throw new ParseError("You must end tag '" + builder.getTagName + "' before starting another.")
+        if (!builder.isEmpty) builder.setText()
         latestTagStartPosition = position
         isInsideTag = true
         isInsideTagName = true
-      } else if (char == '>' && !escaping && !isInsideQuote) {
-        if (isInsideTag) {
-          if (isInsideTagName) {
-            if (builder.isEmpty) {
-              throw new ParseError("Empty tag.")
-            } else {
-              builder.setTag()
-            }
-          } else if (!builder.isEmpty) {
-            builder.setParameter()
-          }
-          if (lookForTagAtPosition && latestTagStartPosition < positionForMatching && positionForMatching <= position + 1) {
-            TagFoundAtPosition = true
-            TagAtPosition = builder.getCurrentElement
-            TagFoundStartsAt = latestTagStartPosition - positionForMatching
-            TagFoundEndsAt = position - positionForMatching
-            lookForTagAtPosition = false
-          }
-          builder.endTag()
-          isInsideTag = false
-          isInsideTagName = false
-        } else {
-          throw new ParseError("Tag end-symbol '>' without previous start-symbol '<'. If you need '>' in the document write '\\>'.")
+      } else if (char == '>' && !escaping && isInsideTag && !isInsideQuote) {
+        if (isInsideTagName) {
+          if (builder.isEmpty) throw new ParseError("Empty tag.")
+          builder.setTag()
+        } else if (!builder.isEmpty) {
+          builder.setParameter()
         }
+        if (lookForTagAtPosition && latestTagStartPosition < positionForMatching && positionForMatching <= position + 1) {
+          TagFoundAtPosition = true
+          TagAtPosition = builder.getCurrentElement
+          TagFoundStartsAt = latestTagStartPosition - positionForMatching
+          TagFoundEndsAt = position - positionForMatching
+          lookForTagAtPosition = false
+        }
+        builder.endTag()
+        isInsideTag = false
+        isInsideTagName = false
       } else {
         if (isInsideTag) {
-          if ((isInsideQuote && char == '"' && !escaping) || (!isInsideQuote && (char == ' ' || char == '\t'))) {
+          if ((isInsideQuote && char == '"' && !escaping && isEndQuote(position + 1) && builder.isBalanced) ||
+            (!isInsideQuote && (char == ' ' || char == '\t'))) {
             wasEmptyQuote = isInsideQuote && builder.isEmpty
             isInsideQuote = false
             isEndOfParameter = true
@@ -137,7 +147,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
             builder.setParameter()
             wasEmptyQuote = false
           }
-        } else if (char == '"' && !escaping && isInsideTag && !isInsideTagName) {
+        } else if (char == '"' && !escaping && isInsideTag && !isInsideTagName && !isInsideQuote) {
           isInsideQuote = true
         } else if (char == '\\' && !escaping) {
           escaping = true
@@ -145,12 +155,10 @@ class SourceElementStack(matchPositionForTag: Boolean) {
           if (escaping) {
             escaping = false
             if (!(char == '<' || char == '>' || (isInsideQuote && char == '"') || char == '\\')) {
-              builder.addChar('\\')
+              builder.addChar('\\', isInsideQuote)
             }
           }
-          if (char != '\n') {
-            builder.addChar(char)
-          }
+          if (char != '\n') builder.addChar(char, isInsideQuote)
         }
       }
     } // end of for loop over characters
@@ -159,7 +167,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
       throw new ParseError("Unfinished tag: '<'" + tagInset + "should be followed by '>' with tag name " +
         "and parameters in-between. Example: <size 25>. If you need '<' in the document write '\\<'.")
     } else {
-      if (escaping) builder.addChar('\\')
+      if (escaping) builder.addChar('\\', isInsideQuote)
       if (!builder.isEmpty) builder.setText()
     }
   }
