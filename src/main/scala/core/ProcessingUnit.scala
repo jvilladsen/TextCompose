@@ -111,12 +111,12 @@ class ProcessingUnit(extensions: Extensions) {
 
   def getLine: String = elements.top.getLine
 
-  def getReplacementPolicy: String = {
-    val source = elements.top.source
-    if (source == sourceType.root || source == sourceType.insertion) "yes"
-    else if (source == "tag") "tag"
-    else "no"
-  }
+  def getReplacementPolicy: String =
+    elements.top.source match {
+      case sourceType.root | sourceType.insertion => "yes"
+      case sourceType.tag                         => "tag"
+      case _                                      => "no"
+    }
 
   def getSourceLocation: String = {
 

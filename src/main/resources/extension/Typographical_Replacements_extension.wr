@@ -1,12 +1,12 @@
 <extension "Typographical Replacements">
 
 <main>
-<replace text 1 quote1 "\^\"" "“">
-<replace text 1 quote2 "(\s+)\"" "$1“">
-<replace text 2 quote3 "\"" "”">
-<replace text 1 quote4 "\^'" "‘">
-<replace text 1 quote5 "(\s+)'" "$1‘">
-<replace text 2 quote6 "'" "’">
-<replace source 3 dash2 "\s*--\s*" " <char 8211> ">
-<replace source 2 dash3 "---" "<char 8212>">
+<replace text 1 quote1 "\^\"" "“" t>
+<replace text 1 quote2 "(\s+)\"" "$1“" t>
+<replace text 2 quote3 "\"" "”" t>
+<replace text 1 quote4 "\^'" "‘" t>
+<replace text 1 quote5 "(\s+)'" "$1‘" t>
+<replace text 2 quote6 "'" "’" t>
+<replace source 3 dash2 "\s*--\s*" " <char 8211> " t>
+<replace source 2 dash3 "---" "<char 8212>" t>
 </main>
