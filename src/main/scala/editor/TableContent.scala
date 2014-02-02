@@ -199,7 +199,7 @@ class TableContent(
       case KeyPressed(`table`, Escape, _, _) => { escapeAction.apply() }
     }
   }
-  def getSelection = table.selection.rows.map(sortedTableData(_)(0))
+  def getSelection(c: Int) = table.selection.rows.map(sortedTableData(_)(c))
 
   def updateColors() {
     table.background = back

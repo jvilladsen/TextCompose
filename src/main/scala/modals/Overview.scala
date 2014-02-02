@@ -70,7 +70,7 @@ class Overview extends Dialog {
 	private val openAction = new Action("Open") {
 		enabled = true
 		def apply() {
-			fileSelection = tableContent.getSelection
+			fileSelection = tableContent.getSelection(0)
 			val sizeOfSelection = fileSelection.size
 			if (sizeOfSelection > 7) {
 				confirmed = editor.DialogBox.warning("Open " + sizeOfSelection.toString + " files?")

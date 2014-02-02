@@ -72,6 +72,28 @@ object Application extends SimpleSwingApplication {
     }
   }
 
+  val viewFontsAction = new Action("View Fonts") {
+    enabled = true
+
+    def apply {
+      val fonts = new modals.Fonts(false)
+      for (f <- fonts.getSelection) {
+        val dialog = new modals.FontInfoDialog(f)
+      }
+    }
+  }
+
+  val viewFontIssuesAction = new Action("View Issues") {
+    enabled = true
+
+    def apply {
+      val fonts = new modals.Fonts(true)
+      for (f <- fonts.getSelection) {
+        val dialog = new modals.FontInfoDialog(f)
+      }
+    }
+  }
+
   def openNamedFile(name: String) {
     try {
       workspaceTabs.openNamedFile(name)
@@ -214,8 +236,11 @@ object Application extends SimpleSwingApplication {
 
     // Fonts menu
     val fontsMenu = new Menu("Fonts")
+    fontsMenu.contents += getMenuItem(viewFontsAction, KeyEvent.VK_E, false)
+    fontsMenu.contents += getMenuItem(viewFontIssuesAction, KeyEvent.VK_E, true)
+    fontsMenu.contents += new Separator
     fontsMenu.contents += new MenuItem(Action("Refresh List of Fonts") {
-      storage.StoredFontAnalysis.recalculate()
+    	storage.StoredFontAnalysis.recalculate()
     })
 
     // View menu
