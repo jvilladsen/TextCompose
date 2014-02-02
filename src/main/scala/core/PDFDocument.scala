@@ -152,7 +152,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       iTextDoc.open
       notYetOpened = false
       try {
-        setCreator("Writesetter \u00A9 2013 J S Villadsen")
+        setCreator("Writesetter")
       } catch {
         case e: Exception => throw new TagError(e.getMessage)
       }

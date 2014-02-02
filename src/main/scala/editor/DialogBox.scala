@@ -89,7 +89,7 @@ object DialogBox {
     val d = new modals.ScrollText(
       700, // width
       appTitle + " " + writesetter.startup.Launch.appVersion,
-      "Copyright \u00A9 2013 J S Villadsen",
+      "Copyright \u00A9 2013 Jesper S. Villadsen",
       "", // plain text
       ResourceHandling.licenseText,
       editor.Images.writeSetterIcon)
