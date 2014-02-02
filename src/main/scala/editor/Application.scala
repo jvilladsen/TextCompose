@@ -188,8 +188,23 @@ object Application extends SimpleSwingApplication {
     editMenu.contents += getMenuItem(workspaceTabs.findAction, KeyEvent.VK_F, false)
     editMenu.contents += getMenuItem(workspaceTabs.findNextAction, KeyEvent.VK_K, false)
     editMenu.contents += getMenuItem(workspaceTabs.findPreviousAction, KeyEvent.VK_K, true)
+    editMenu.contents += new Separator
+    // Spelling in Edit menu
+    val languageMenu = new Menu("Language") {
+      for (d <- storage.Dictionaries.getListOfTitles) {
+        contents += new MenuItem(workspaceTabs.languageChoiceAction(d))
+      }
+    }
+    editMenu.contents += languageMenu
+    editMenu.contents += new Separator
+    editMenu.contents += getMenuItem(workspaceTabs.checkSpellingAction, KeyEvent.VK_L, false)
+    editMenu.contents += getMenuItem(workspaceTabs.spellingDialogAction, KeyEvent.VK_M, false)
 
-    // On OS X the settings menu is part of the app menu item. On Gnome, KDE, Windows it's under Help.
+    /* 
+     * On OS X the settings menu is part of the application menu item.
+     * On Gnome, KDE, Windows it's under Help.
+     */
+    
     if (!core.Environment.isMacOSX) {
       editMenu.contents += new Separator
       editMenu.contents += new MenuItem(new Action("Preferences") {
@@ -197,17 +212,11 @@ object Application extends SimpleSwingApplication {
       })
     }
 
-    // Spelling menu
-    val spellingMenu = new Menu("Spelling")
-    val languageMenu = new Menu("Language") { // internally: dictionary
-      for (d <- storage.Dictionaries.getListOfTitles) {
-        contents += new MenuItem(workspaceTabs.languageChoiceAction(d))
-      }
-    }
-    spellingMenu.contents += languageMenu
-    spellingMenu.contents += new Separator
-    spellingMenu.contents += getMenuItem(workspaceTabs.checkSpellingAction, KeyEvent.VK_L, false)
-    spellingMenu.contents += getMenuItem(workspaceTabs.spellingDialogAction, KeyEvent.VK_M, false)
+    // Fonts menu
+    val fontsMenu = new Menu("Fonts")
+    fontsMenu.contents += new MenuItem(Action("Refresh List of Fonts") {
+      storage.StoredFontAnalysis.recalculate()
+    })
 
     // View menu
     val viewMenu = new Menu("View")
@@ -295,7 +304,7 @@ object Application extends SimpleSwingApplication {
     menuBar = new MenuBar
     menuBar.contents += fileMenu
     menuBar.contents += editMenu
-    menuBar.contents += spellingMenu
+    menuBar.contents += fontsMenu
     menuBar.contents += viewMenu
     menuBar.contents += pdfMenu
     menuBar.contents += extensionsMenu

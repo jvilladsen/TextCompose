@@ -18,6 +18,7 @@
 
 package writesetter.editor
 
+import scala.collection.mutable.Stack
 import swing.Dialog._
 import swing.Component
 import java.io.{ StringWriter, PrintWriter }
@@ -91,6 +92,21 @@ object DialogBox {
       "Copyright \u00A9 2013 J S Villadsen",
       "", // plain text
       ResourceHandling.licenseText,
+      editor.Images.writeSetterIcon)
+  }
+  
+  def newFonts(count: Int, fonts: Stack[String], recalculation: Boolean) {
+    val subText = if (recalculation) {
+      "No preview available until after restart of " + appTitle + "."
+    } else {
+      ""
+    }
+    val d = new modals.ScrollText(
+      400, // width
+      "Found " + count.toString + " new fonts",
+      subText,
+      fonts.sorted.mkString("\n"),
+      "", // htmlFileName
       editor.Images.writeSetterIcon)
   }
 }

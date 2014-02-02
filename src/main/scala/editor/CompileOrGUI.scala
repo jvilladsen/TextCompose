@@ -32,11 +32,11 @@ object CompileOrGUI {
 	
 	def switcher(arguments: Array[String]) {
 		
-		storage.Configurations.initialize
-		storage.FontCharacters.initialize
-		storage.StoredFontAnalysis.initialize
-		storage.SourcesMetaData.initialize
-		storage.Dictionaries.initialize
+		storage.Configurations.initialize()
+		storage.FontCharacters.initialize()
+		storage.StoredFontAnalysis.initialize()
+		storage.SourcesMetaData.initialize()
+		storage.Dictionaries.initialize()
 		
 		if (arguments.length > 0) {
 			try {

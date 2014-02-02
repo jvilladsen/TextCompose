@@ -166,7 +166,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     }
   }
 
-  def initialize {
+  def initialize() {
     if (!initialized) {
       core.FontFileRegister.addBuildInFonts
       if (!fileExists) { storeDefaults() }

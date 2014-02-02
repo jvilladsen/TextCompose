@@ -18,8 +18,7 @@
 
 package writesetter.storage
 
-import scala.collection.mutable.Stack
-import scala.collection.mutable.HashMap
+import scala.collection.mutable.{ Stack, HashMap }
 import writesetter.{ core, editor }
 
 object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
@@ -55,7 +54,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
   override def getKeyLength(configuration: List[String]) = 1
 
-  private def addAllNewFonts() {
+  private def addAllNewFonts(recalculation: Boolean) {
 
     def countNewFonts: Int = {
       var numberOfNewFonts = 0
@@ -122,7 +121,8 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     }
 
     val numberOfFonts = countNewFonts
-    var counter = 0
+    var count = 0
+    var newFonts = new Stack[String]
 
     // Get font properties for all fonts not yet analyzed and store the result.
     for (fontName <- core.FontFileRegister.getListOfFullNames) {
@@ -130,15 +130,18 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
         update(getFontProperties(fontName))
         updateCharacterStorage(fontName)
-        counter += 1
+        count += 1
+        newFonts.push(fontName)
       }
     }
-    if (counter > 0) {
-      editor.DialogBox.info(counter.toString + " new fonts found")
+    if (count > 0) {
+      editor.DialogBox.newFonts(count, newFonts, recalculation)
+    } else if (recalculation) {
+      editor.DialogBox.info("No new fonts were found.")
     }
   }
 
-  def updateStorage() {
+  private def updateStorage(recalculation: Boolean) {
 
     def updateMapsFromDataSet() {
       for (configuration <- dataSet) {
@@ -153,15 +156,15 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
       }
     }
-    
-    addAllNewFonts()
+
+    addAllNewFonts(recalculation)
     store()
     FontCharacters.store() // Built up in parallel.
     GUIFonts.calculate()
     updateMapsFromDataSet()
   }
 
-  def initialize {
+  def initialize() {
 
     def prune {
       for (configuration <- dataSet) {
@@ -172,26 +175,19 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
       }
     }
 
-    if (!initialized) {
-      if (fileExists) {
-        load()
-        prune
-      } else {
-        editor.DialogBox.info("Since it is the first time you run Writesetter on this installation,\n" +
-          "your fonts will be analyzed. This can take a minute.")
-      }
-      updateStorage()
-      initialized = true
+    if (fileExists) {
+      load()
+      prune
+    } else {
+      editor.DialogBox.info("Since it is the first time you run Writesetter on this installation,\n" +
+        "your fonts will be analyzed. This can take a minute.")
     }
+    updateStorage(false)
   }
 
-  def recalculate(clearStorage: Boolean) {
-    if (clearStorage) clear()
-
-    fontTitleToFileName.clear()
-    fontTitleToJavaFont.clear()
-
-    updateStorage()
+  def recalculate() {
+    core.FontFileRegister.recalculate()
+    updateStorage(true)
   }
 
   def GetListOfInstallableFonts: List[String] = {

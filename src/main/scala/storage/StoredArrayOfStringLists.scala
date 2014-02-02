@@ -28,8 +28,8 @@ import writesetter.{ core, editor }
 abstract class StoredArrayOfStringLists(fileName: String) {
 
   /*
-	 * Data set that is kept in sync with the file - with Load and Store methods.
-	 */
+   * Data set that is kept in sync with the file - with Load and Store methods.
+   */
   val dataSet = new ArrayBuffer[List[String]]
 
   val fullFileName = core.Environment.getConfigFilePath(fileName)
@@ -40,15 +40,15 @@ abstract class StoredArrayOfStringLists(fileName: String) {
 
   var minimumFieldCount = 0
   /* This field (if nonzero) is used for extending lists when reading from file.
-	 * Reassign if necessary to ensure lower bound on number of fields.
-	 * The reason is that trailing tabs are not stored to the file.
-	 * If the data set contains a list with trailing empty string,
-	 * then they do not get written to the file.
-	 */
+   * Reassign if necessary to ensure lower bound on number of fields.
+   * The reason is that trailing tabs are not stored to the file.
+   * If the data set contains a list with trailing empty string,
+   * then they do not get written to the file.
+   */
 
   /*
-	 * Does typically not exist first time - so good idea to handle that case, before loading.
-	 */
+   * Does typically not exist first time, so handle that case before loading.
+   */
   def fileExists: Boolean = FileMethods.IsFile(fullFileName)
 
   def load() = {

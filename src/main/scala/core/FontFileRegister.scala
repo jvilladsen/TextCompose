@@ -68,6 +68,17 @@ object FontFileRegister {
     }
   }
 
+  private def clear() {
+    directories.clear()
+    fontFileNameToFullName.clear()
+  }
+  
+  def recalculate() {
+    val fontDirectories = directories.toList // toList so it won't get cleared.
+    clear()
+    for (d <- fontDirectories) addDirectory(d)
+  }
+  
   def isBuiltIn(fontFileName: String): Boolean = builtInFonts.contains(fontFileName)
 
   def exists(fontFileName: String): Boolean = fontFileNameToFullName.contains(fontFileName)

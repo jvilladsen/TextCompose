@@ -30,7 +30,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
   override def getKeyLength(configuration: List[String]) = 2
 
-  def initialize {
+  def initialize() {
     if (!initialized) {
       if (fileExists) load()
       initialized = true

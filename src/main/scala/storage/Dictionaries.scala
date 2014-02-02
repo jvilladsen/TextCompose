@@ -39,7 +39,7 @@ object Dictionaries extends StoredArrayOfStringLists("Dictionaries.txt") {
 		}
 	}
 	
-	def initialize {
+	def initialize() {
 		if (!initialized) {
 			if (fileExists) load()	// could eventually include user-added dictionaries
 			writesetter.editor.ResourceHandling.initialize() // built-in dictionaries
