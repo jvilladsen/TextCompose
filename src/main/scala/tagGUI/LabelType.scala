@@ -30,7 +30,7 @@ class LabelType(labelText: String, labelType: String) {
     case _       => 20
   }
 
-  val color = if (labelType == "UnknownTag") editor.Colors.warning else editor.Colors.standard
+  val color = if (labelType == "Error") editor.Colors.warning else editor.Colors.standard
 
   val label = new Label {
     text = labelText

@@ -68,19 +68,19 @@ object CaretPosition {
 				
 				determineCurrentLine()
 				parseCurrentLine()
-				tagPane.updateFromEditor(fileEditor.file.getFileKey,
-										 isInsideTag,
-										 foundTagStartingAt,
-										 foundTagEndingAt,
-										 ElmStack.TagAtPosition)
-				
+				if (wellFormedLine) {
+					tagPane.updateFromEditor(fileEditor.file.getFileKey,
+											 isInsideTag,
+											 foundTagStartingAt,
+											 foundTagEndingAt,
+											 ElmStack.TagAtPosition)
+				} else {
+				  tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
+				}
 				delayIsSpawned = false
 			}
 		}
 	}
-	
-	// COULD THIS BE USEFUL: var currentDate = java.util.Calendar.getInstance().getTime()
-	// A new tag for getting current time and date?
 	
 	private def determineCurrentLine() {
 		
@@ -119,7 +119,6 @@ object CaretPosition {
 		positionOnLine = beforeCurrentPosition.length
 		// FIXME: The above is not correct in general, because of the 500 character limit on both directions from current position.
 	}
-	
 	
 	private def parseCurrentLine() {
 		wellFormedLine = true

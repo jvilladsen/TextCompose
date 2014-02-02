@@ -132,7 +132,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         }
       }
     }
-
+    
     var isInsideTag = false
     var isInsideTagName = false
     var isInsideQuote = false
@@ -142,6 +142,16 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     var latestTagStartPosition = 0
     val builder = new Builder()
 
+    def incompleteTag(startingNew: Boolean) {
+      val tagInset = if (builder.getTagName == "") "" else " '" + builder.getTagName + "'"
+      val beforeInset = if (startingNew) " before beginning a new tag. " else ". "
+      val found = builder.getCurrentElement.ToString
+      val foundInset = if (found == "") "" else " Looks like: " + found + "."
+      throw new ParseError("You must complete the tag"+ tagInset + " with a '>'" + beforeInset +
+          "Alternatively, if it should not start a tag, insert space after the '<', " +
+          "or \"escape\" it by writing '\\<'." + foundInset)
+    }
+
     for (position <- 0 until length) {
       val char = line.charAt(position)
 
@@ -149,7 +159,9 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         /*
          * The beginning of a tag.
          */
-        if (isInsideTag) throw new ParseError("You must end tag '" + builder.getTagName + "' before starting another.")
+        if (isInsideTag) {
+          incompleteTag(true)
+        }
         if (!builder.isEmpty) builder.setText()
         latestTagStartPosition = position
         isInsideTag = true
@@ -224,9 +236,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
       }
     } // end of for loop over characters
     if (isInsideTag) {
-      val tagInset = if (builder.getTagName == "") " " else " (before " + builder.getTagName + ") "
-      throw new ParseError("Unfinished tag: '<'" + tagInset + "should be followed by '>' with tag name " +
-        "and parameters in-between. Example: <size 25>. If you need '<' in the document write '\\<'.")
+      incompleteTag(false)
     } else {
       if (escaping) builder.addChar('\\', isInsideQuote)
       if (!builder.isEmpty) builder.setText()

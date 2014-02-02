@@ -22,5 +22,5 @@ class ParseError(message: String) extends Exception(message) {
 
   // Exceptions thrown in SourceElementStack and caught in SourceProcessor
 
-  def errorMessage = "Parse error: " + getMessage
+  def errorMessage = "Syntax error: " + getMessage
 }

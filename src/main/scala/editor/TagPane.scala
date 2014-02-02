@@ -63,6 +63,18 @@ class TagPane {
 
     refreshLayout(tag.TagName, tag.Parameters)
   }
+  
+  def updateWithParserErrorFromEditor(message: String) {
+    clearLayout
+    
+    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, "")
+    dialog.layoutParserError(message)
+    addContent(dialog.panel)
+    
+    panel.revalidate()
+    panel.repaint()
+    triggeredFromTagTree = false
+  }
 
   private def refreshLayout(tagName: String, parameters: ArrayBuffer[String]) {
     clearLayout

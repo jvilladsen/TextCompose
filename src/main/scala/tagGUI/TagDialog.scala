@@ -531,7 +531,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       addAllToPanel(okAction)
     } else {
       panel.contents.clear()
-      val tagLabel = new LabelType("Unknown tag", "UnknownTag")
+      val tagLabel = new LabelType("Unknown tag", "Error")
       AddToPanel(tagLabel.label, false)
       val suggestions = core.TagRegister.GetSuggestions(tagName)
       val sugLabel = new LabelType(suggestions, "Small")
@@ -539,6 +539,18 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
   }
 
+  def layoutParserError(message: String) {
+    panel.contents.clear()
+    val errorLabel = new LabelType("Syntax error", "Error")
+    AddToPanel(errorLabel.label, false)
+    val errorMessage = new EditorPane {
+      text = message
+      background = editor.Colors.supportPane
+      editable = false
+    }
+    AddToPanel(errorMessage, false)
+  }
+  
   override def AddActionOnEnter(action: Action) { // does not work or have any effect.
     panel.listenTo(panel.keys)
     panel.reactions += {
