@@ -22,6 +22,7 @@ import scala.collection.mutable.Stack
 import scala.collection.mutable.HashMap
 import scala.io._
 import scala.util.matching.Regex
+import writesetter.storage
 
 object FontFileRegister {
 
@@ -32,8 +33,6 @@ object FontFileRegister {
   val builtInFonts = scala.collection.immutable.List("Courier", "Helvetica", "Times", "Symbol", "Zapfdingbats")
 
   def addBuildInFonts { for (f <- builtInFonts) fontFileNameToFullName(f) = "" }
-
-  val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
 
   def addDirectory(directory: String) {
 
@@ -46,15 +45,7 @@ object FontFileRegister {
         if (file.isDirectory()) {
           traverseDirectory(file.getAbsolutePath)
         } else {
-          val fontFileName =
-            fileName match {
-              case fileNameWithExtension(beforeExtensionPoint, afterExtensionPoint) => {
-                beforeExtensionPoint
-              }
-              case _ => {
-                fileName
-              }
-            }
+          val fontFileName = storage.FileMethods.splitFileNameAtLastPeriod(fileName)._1
           if (!fontFileNameToFullName.contains(fontFileName)) {
             fontFileNameToFullName(fontFileName) = file.getAbsolutePath
           }

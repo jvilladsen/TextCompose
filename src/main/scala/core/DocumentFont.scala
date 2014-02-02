@@ -20,10 +20,12 @@ package writesetter.core
 
 import com.itextpdf.text._
 import com.itextpdf.text.pdf.BaseFont
+import writesetter.storage
 
 class DocumentFont(fn: String, ffn: String, bi: Boolean, embed: Boolean, enc: String) {
 	val fileName = fn
 	val fullFileName = ffn
+	val extensionName = storage.FileMethods.splitFileNameAtLastPeriod(fn)._2.toLowerCase
 	val builtIn = bi
 	val embedded = embed
 	val encoding = if (enc == "") BaseFont.CP1252 else enc
@@ -59,7 +61,6 @@ class DocumentFont(fn: String, ffn: String, bi: Boolean, embed: Boolean, enc: St
 	}
 	
 	private def getFirstValue(a: String, b: String) = if (a != "") a else b
-	
 	
 	private def updateNameEntriesForFont {
 		
@@ -101,6 +102,7 @@ class DocumentFont(fn: String, ffn: String, bi: Boolean, embed: Boolean, enc: St
 	}
 	
 	def register(caching: Boolean) {
+	  def registerFont() {
 		try {
 			FontFactory.register(fullFileName)
 			baseFont = BaseFont.createFont(fullFileName, encoding, embedded, caching, null, null)
@@ -111,6 +113,8 @@ class DocumentFont(fn: String, ffn: String, bi: Boolean, embed: Boolean, enc: St
 			}
 		}
 		registered = true
+	  }
+	  registerFont()
 	}
 	
 	def updateAttributes() {

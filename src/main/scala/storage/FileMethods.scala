@@ -27,6 +27,7 @@ package writesetter.storage
  * 
  * What can/should I do that? Does that involve some Scala update as well?
  */
+import scala.util.matching.Regex
 
 object FileMethods {
 
@@ -48,5 +49,13 @@ object FileMethods {
 	def GetDirectory(fullFileName: String): String = {
 		val fileHandle = new java.io.File(fullFileName)
 		fileHandle.getParent
+	}
+	
+	def splitFileNameAtLastPeriod(fileName: String) = {
+      val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
+      fileName match {
+        case fileNameWithExtension(before, after) => (before, after)
+        case _ => (fileName, "")
+      }
 	}
 }

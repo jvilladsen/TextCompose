@@ -19,8 +19,7 @@
 package writesetter.core
 
 import java.io.File
-import scala.util.matching.Regex
-import writesetter.editor
+import writesetter.{ editor, storage }
 
 class Arguments(
   internal: Boolean,
@@ -65,17 +64,8 @@ class Arguments(
   }
 
   private def determinePDFFileName() {
-    val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
-    SourceFileName match {
-      case fileNameWithExtension(beforeExtensionPoint, afterExtensionPoint) => {
-        PDFDefaultTitle = beforeExtensionPoint
-        PDFFileName = SourceFileDirectory + beforeExtensionPoint + ".pdf"
-      }
-      case _ => {
-        PDFDefaultTitle = SourceFileName
-        PDFFileName = SourceFileDirectory + SourceFileName + ".pdf"
-      }
-    }
+    PDFDefaultTitle = storage.FileMethods.splitFileNameAtLastPeriod(SourceFileName)._1
+    PDFFileName = SourceFileDirectory + PDFDefaultTitle + ".pdf"
   }
 
   def pathToReachablePath(givenPath: String): String = {
