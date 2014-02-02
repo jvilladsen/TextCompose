@@ -31,10 +31,11 @@ import java.awt.event.{ MouseEvent, MouseAdapter, MouseListener, KeyEvent, Input
 import java.awt.Toolkit
 import java.awt.Component
 
+import java.beans.{ PropertyChangeEvent, PropertyChangeListener }
+
 import java.io.File
 import scala.io.Source
-
-import java.beans.{ PropertyChangeEvent, PropertyChangeListener }
+import scala.language.existentials
 
 import writesetter.{ core, modals, storage }
 
