@@ -50,7 +50,7 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 	
 	override def getKeyLength(configuration: List[String]) = 1
 	
-	def initialize {
+	def initialize() {
 		if (!initialized) {
 			if (fileExists) load()
 			initialized = true
@@ -125,12 +125,12 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 		store()
 	}
 	
-	def renameFileData(originalFileName: String, newFileName: String) {
+	def renameFileData(originalFileName: String, newFullFileName: String, newFileName: String) {
 		val i = getIndexOf(List(originalFileName))
 		if (i == -1) {
 			editor.DialogBox.systemError("Unknown file " + originalFileName)
 		} else {
-			dataSet(i) = newFileName :: dataSet(i).tail 
+			dataSet(i) = newFullFileName :: newFileName :: dataSet(i).tail.tail
 		}
 		store()
 	}

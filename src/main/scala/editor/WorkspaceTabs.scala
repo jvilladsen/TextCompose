@@ -164,7 +164,7 @@ class WorkspaceTabs {
   def openNamedFile(name: String) { addTab(true, false, name, "") }
 
   private def removeTab(index: Int) {
-    if (textFileEditor(index).SaveOrDiscardDirtyFile) {
+    if (textFileEditor(index).saveOrDiscardDirtyFile()) {
 
       numberOfTabs -= 1
       if (textFileEditor(index).saveAction.enabled) {
@@ -211,7 +211,7 @@ class WorkspaceTabs {
     var continue = true
     while (index > 0 && continue) {
       index -= 1
-      continue = textFileEditor(index).SaveOrDiscardDirtyFile
+      continue = textFileEditor(index).saveOrDiscardDirtyFile()
     }
     continue
   }
@@ -395,11 +395,9 @@ class WorkspaceTabs {
     tabsPane.peer.setTitleAt(index, title)
   }
 
-  private def updateMetaDataOnSave(file: TextFile) {
-    if (file.fullFileName != "") {
-      storage.SourcesMetaData.updateFileData(file.fullFileName, file.fileName, file.encoding, file.dictionary)
-      historyMenuFakeAction.enabled = !historyMenuFakeAction.enabled // toggle to trigger an update of history menu (hack)
-    }
+  private def refreshHistoryMenu() {
+    // Toggle to trigger an update of history menu (hack)
+    historyMenuFakeAction.enabled = !historyMenuFakeAction.enabled
   }
 
   private def saveTab(saveAs: Boolean, moveOrRename: Boolean, forcedEncoding: String) {
@@ -413,7 +411,7 @@ class WorkspaceTabs {
     }
     if (completed) {
       UpdateTabTitle(index, editor.file.fileName)
-      updateMetaDataOnSave(editor.file)
+      refreshHistoryMenu()
     }
     updateActionFlags
   }
@@ -425,7 +423,7 @@ class WorkspaceTabs {
       val editor = textFileEditor(index)
       editor.saveOrSaveAs("")
       UpdateTabTitle(index, editor.file.fileName)
-      updateMetaDataOnSave(editor.file)
+      refreshHistoryMenu()
     }
     updateActionFlags
   }
@@ -441,7 +439,7 @@ class WorkspaceTabs {
         if (storage.Configurations.GetSaveBeforeCompile) {
           saveTab(false, false, "")
         } else {
-          completed = editor.SaveOrDiscardDirtyFile
+          completed = editor.saveOrDiscardDirtyFile()
         }
       }
       if (completed) {

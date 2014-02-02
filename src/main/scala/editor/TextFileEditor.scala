@@ -44,13 +44,20 @@ class TextFileEditor(fontSize: Int) {
     editor.readTextFromFile(file.fullFileName, file.fileIsReadOnly, file.encoding)
   }
 
-  private def saveFile(saveEvenIfNotDirty: Boolean): Boolean = {
+  private def saveFile(
+      saveEvenIfNotDirty: Boolean,
+      updateSourcesMetaData: Boolean): Boolean = {
+    
     var completed = true
     if (!file.fileIsReadOnly && (saveEvenIfNotDirty || editor.fileIsDirty)) {
       completed = file.checkFileStamp
       if (completed) {
         editor.writeTextToFile(file.fullFileName, true, file.encoding)
         file.updateTimeStampAfterSave()
+        file.updateFromFullName()
+        if (updateSourcesMetaData) {
+          storage.SourcesMetaData.updateFileData(file.fullFileName, file.fileName, file.encoding, file.dictionary)
+        }
       }
     }
     completed
@@ -61,15 +68,13 @@ class TextFileEditor(fontSize: Int) {
     val originalFileName = file.fullFileName
 
     if (file.chooseFileForSaving(forcedEncoding, moveOrRename)) {
-      completed = saveFile(true)
-      if (completed) {
-        file.updateFromFullName()
-
-        if (moveOrRename && originalFileName != file.fullFileName) {
-          val originalFile = new File(originalFileName)
-          originalFile.delete()
-          storage.SourcesMetaData.renameFileData(originalFileName, file.fullFileName)
-        }
+      
+      completed = saveFile(true, !moveOrRename)
+      
+      if (completed && moveOrRename && originalFileName != file.fullFileName) {
+        val originalFile = new File(originalFileName)
+        originalFile.delete()
+        storage.SourcesMetaData.renameFileData(originalFileName, file.fullFileName, file.fileName)
       }
     }
     completed
@@ -77,13 +82,13 @@ class TextFileEditor(fontSize: Int) {
 
   def saveOrSaveAs(forcedEncoding: String): Boolean = {
     if (file.fullFileName != "") {
-      saveFile(false) // only save if dirty
+      saveFile(false, true) // only save if dirty, do update sources meta data
     } else {
       saveFileAs(forcedEncoding, false)
     }
   }
 
-  def SaveOrDiscardDirtyFile: Boolean = {
+  def saveOrDiscardDirtyFile(): Boolean = {
     var completed = true
     if (editor.fileIsDirty) {
       val message = "Do you want to save the changes to '" + file.fileName + "'?"
@@ -105,7 +110,7 @@ class TextFileEditor(fontSize: Int) {
   }
 
   def Refresh {
-    if (SaveOrDiscardDirtyFile) {
+    if (saveOrDiscardDirtyFile()) {
       editor.readTextFromFile(file.fullFileName, file.fileIsReadOnly, file.encoding)
     }
   }
