@@ -20,21 +20,20 @@ package writesetter.storage
 
 import java.awt._
 import javax.swing.UIManager
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.Stack
+import scala.collection.mutable.{ HashMap, Stack }
 import scala.util.matching.Regex
 
 object GUIFonts {
 
   /* Map from "keyed name" to the Java font filled up with all available fonts.
-	 * This is not directly fonts for the PDF but for the GUI.
-	 * The point with the key is to homogenize the font titles in order to
-	 * match it against the iText fonts for the PDF (DocumentFont class).
-	 */
-  private var keyedNameToFont = new HashMap[String, Font]
+   * This is not directly fonts for the PDF but for the GUI.
+   * The point with the key is to homogenize the font titles in order to
+   * match it against the iText fonts for the PDF (DocumentFont class).
+   */
+  private val keyedNameToFont = new HashMap[String, Font]
 
   // Direct map using original name - just used in Preferences dialog.
-  private var plainNameToFont = new HashMap[String, Font]
+  private val plainNameToFont = new HashMap[String, Font]
 
   // Remove underscore and non-word characters from a string and make upper case.
   private def makeKeyedName(n: String): String = {
@@ -58,7 +57,10 @@ object GUIFonts {
   }
 
   // Get font with one of these name variations, if possible
-  def getFontWithMatchingName(fontName: String, fontTitle: String, fontFileName: String): (Boolean, Font) = {
+  def getFontWithMatchingName(
+      fontName: String,
+      fontTitle: String,
+      fontFileName: String): (Boolean, Font) = {
 
     def getFontFromMap(name: String): (Boolean, Font) = {
       val key = makeKeyedName(name)
@@ -70,7 +72,10 @@ object GUIFonts {
       val key = makeKeyedName(name)
       val keyLength = key.length
       if (keyLength > 0) {
-        def hasKeyAsSubstring(a: String): Boolean = a.length >= keyLength && key == a.substring(0, keyLength)
+        
+        def hasKeyAsSubstring(a: String): Boolean =
+          a.length >= keyLength && key == a.substring(0, keyLength)
+          
         val hits = keyedNameToFont.filter(f => hasKeyAsSubstring(f._1))
         if (hits.size == 1) result = (true, hits.head._2)
       }

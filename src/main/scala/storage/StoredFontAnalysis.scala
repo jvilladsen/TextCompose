@@ -47,8 +47,8 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 	 * encodings
 	 */
 
-  private var fontTitleToFileName = new HashMap[String, String] // Only for fonts that can be installed.
-  private var fontTitleToJavaFont = new HashMap[String, java.awt.Font]
+  private val fontTitleToFileName = new HashMap[String, String] // Only for fonts that can be installed.
+  private val fontTitleToJavaFont = new HashMap[String, java.awt.Font]
 
   minimumFieldCount = 21
 
