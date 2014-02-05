@@ -23,10 +23,10 @@ import writesetter.core
 object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
   /* FORMAT:
-	 * font file name	primary key 
-	 * encoding			primary key
-	 * characters
-	 */
+   * font file name	primary key 
+   * encoding			primary key
+   * characters
+   */
 
   override def getKeyLength(configuration: List[String]) = 2
 

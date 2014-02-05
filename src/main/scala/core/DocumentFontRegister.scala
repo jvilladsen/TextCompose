@@ -25,11 +25,11 @@ import writesetter.storage
 object DocumentFontRegister {
 
   /*
-	 * Holds a map to the fonts (iText fonts wrapped in class DocumentFont) that are used
-	 * during creation of a PDF document. One often switches back and forth between the
-	 * same few fonts in a document, but we need not register & create an iText base font
-	 * more than once - the first time it is encountered in the source for the document.
-	 */
+   * Holds a map to the fonts (iText fonts wrapped in class DocumentFont) that are used
+   * during creation of a PDF document. One often switches back and forth between the
+   * same few fonts in a document, but we need not register & create an iText base font
+   * more than once - the first time it is encountered in the source for the document.
+   */
 
   private var fontKeyToFont = new HashMap[String, DocumentFont]
   private var latestFontEncoding = new HashMap[String, String] // Key is fontFileName
@@ -62,8 +62,8 @@ object DocumentFontRegister {
       val key = getKey(fontFileName, encoding)
       if (fontKeyToFont.contains(key)) {
         /* For the (perhaps) unusual case where you switch back to a previously
-				 * used encodings on the same font after some other encoding.
-				 */
+		 * used encodings on the same font after some other encoding.
+		 */
         latestFontEncoding(fontFileName) = encoding
       } else {
         if (FontFileRegister.exists(fontFileName)) {
@@ -89,7 +89,7 @@ object DocumentFontRegister {
       val message = "Unknown font '" + fontTitle + "'." +
         " This font is either not installed, or the font-file is placed in another folder/directory" +
         " than the ones listed in the settings of Writesetter. If the font has just be installed," +
-        " it may help to restart Writesetter."
+        " try the 'Update' item in the 'Fonts' menu."
       throw new TagError(message)
     }
   }
