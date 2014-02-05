@@ -25,7 +25,7 @@ object Compiler {
       var compile = true
       while (compile) {
 
-        DocumentFontRegister.initialize
+        DocumentFontRegister.initialize()
         val extensions = new Extensions
         val processingUnit = new ProcessingUnit(extensions)
         processingUnit.setCaretPosition(arguments.caretPostionForPreview)

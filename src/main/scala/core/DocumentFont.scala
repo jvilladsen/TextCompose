@@ -22,16 +22,17 @@ import com.itextpdf.text._
 import com.itextpdf.text.pdf.BaseFont
 import writesetter.storage
 
-class DocumentFont(fn: String, ffn: String, bi: Boolean, embed: Boolean, enc: String) {
-	val fileName = fn
-	val fullFileName = ffn
-	val extensionName = storage.FileMethods.splitFileNameAtLastPeriod(fn)._2.toLowerCase
-	val builtIn = bi
-	val embedded = embed
+class DocumentFont(
+    val fileName: String,
+    val fullFileName: String,
+    val builtIn: Boolean,
+    val embedded: Boolean,
+    enc: String) {
+  
 	val encoding = if (enc == "") BaseFont.CP1252 else enc
 	
 	// Registration, defaults
-	var registered = bi
+	var registered = builtIn
 	var valid = true
 	var errorMessage = ""
 	var baseFont: BaseFont = null

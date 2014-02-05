@@ -27,26 +27,26 @@ object DocumentFontRegister {
   /*
    * Holds a map to the fonts (iText fonts wrapped in class DocumentFont) that are used
    * during creation of a PDF document. One often switches back and forth between the
-   * same few fonts in a document, but we need not register & create an iText base font
-   * more than once - the first time it is encountered in the source for the document.
+   * same few fonts in a document, but we need not register and create an iText base font
+   * more than one - the first time it is encountered in the source for the document.
    */
 
-  private var fontKeyToFont = new HashMap[String, DocumentFont]
-  private var latestFontEncoding = new HashMap[String, String] // Key is fontFileName
+  private val fontKeyToFont = new HashMap[String, DocumentFont]
+  private val latestFontEncoding = new HashMap[String, String] // Key is fontFileName
 
   private def getKey(fontFileName: String, encoding: String) = fontFileName + "@" + encoding
   private def getLatestKey(fontFileName: String) = getKey(fontFileName, latestFontEncoding(fontFileName))
 
-  def initialize {
-    fontKeyToFont.clear
-    latestFontEncoding.clear
+  def initialize() {
+    fontKeyToFont.clear()
+    latestFontEncoding.clear()
     for (n <- FontFileRegister.builtInFonts) {
       fontKeyToFont(getKey(n, "")) = new DocumentFont(n, n, true, true, "")
       latestFontEncoding(n) = ""
     }
   }
 
-  initialize
+  initialize()
 
   def addFont(fontTitle: String, encoding: String, embed: Boolean) {
 
