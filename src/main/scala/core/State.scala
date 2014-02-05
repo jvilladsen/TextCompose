@@ -174,19 +174,26 @@ class State extends Cloneable {
   private def updateActualFont() {
     try {
       val fontFileName = writesetter.storage.StoredFontAnalysis.getFileName(fontTitle)
+      
       if (FontFileRegister.isBuiltIn(fontFileName)) {
-        actualFont = FontFactory.getFont(fontFileName, fontSize, actualFontFace, actualFontColor)
+
+        actualFont = FontFactory.getFont(
+          fontFileName,
+          fontSize,
+          actualFontFace,
+          actualFontColor)
+          
+      } else if (DocumentFontRegister.isValid(fontFileName)) {
+
+        actualFont = new com.itextpdf.text.Font(
+          DocumentFontRegister.getBaseFont(fontFileName),
+          fontSize,
+          actualFontFace,
+          actualFontColor)
+        
       } else {
-        if (DocumentFontRegister.isValid(fontFileName)) {
-          actualFont = new com.itextpdf.text.Font(
-            DocumentFontRegister.getBaseFont(fontFileName),
-            fontSize,
-            actualFontFace,
-            actualFontColor)
-        } else {
-          throw new TagError("Font '" + fontTitle + "' not successfully registered. " +
-            DocumentFontRegister.getMessage(fontFileName))
-        }
+        throw new TagError("Font '" + fontTitle + "' not successfully registered. " +
+          DocumentFontRegister.getMessage(fontFileName))
       }
     } catch {
       case e: Exception => throw new TagError("Could not apply font '" + fontTitle + "': " + e.getMessage + ".")
