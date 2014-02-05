@@ -51,7 +51,13 @@ object DocumentFontRegister {
   def addFont(fontTitle: String, encoding: String, embed: Boolean) {
 
     def getRegisteredFont(fontFileName: String, embed: Boolean, encoding: String) = {
-      val font = new DocumentFont(fontFileName, FontFileRegister.getFullName(fontFileName), false, embed, encoding)
+      
+      val font = new DocumentFont(
+          fontFileName,
+          FontFileRegister.getFullName(fontFileName),
+          false,
+          embed,
+          encoding)
       font.register(true) // With caching in com.itextpdf.text.pdf.BaseFont.
       font.updateAttributes() // This call may not be necessary?
       font

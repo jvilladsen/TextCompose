@@ -40,7 +40,13 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
   def addNewFont(fontName: String, encoding: String): Boolean = {
 
     def getCharacters(encoding: String) = {
-      val font = new core.DocumentFont(fontName, core.FontFileRegister.getFullName(fontName), false, false, encoding)
+      
+      val font = new core.DocumentFont(
+          fontName,
+          core.FontFileRegister.getFullName(fontName),
+          false,
+          false,
+          encoding)
       font.register(false) // without caching
       font.getListOfCharacters
     }

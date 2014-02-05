@@ -67,6 +67,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     def getFontProperties(fontName: String) = {
 
       def registerFont(embed: Boolean) = {
+        
         val font = new core.DocumentFont(
           fontName,
           core.FontFileRegister.getFullName(fontName),
