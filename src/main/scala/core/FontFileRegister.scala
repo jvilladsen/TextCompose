@@ -18,8 +18,8 @@
 
 package writesetter.core
 
-import scala.collection.mutable.Stack
-import scala.collection.mutable.HashMap
+import scala.collection.mutable.{ Stack, HashMap }
+import scala.collection.immutable.List
 import scala.io._
 import scala.util.matching.Regex
 import writesetter.storage
@@ -30,9 +30,10 @@ object FontFileRegister {
 
   // key is file name (excluding extension)
   private val fontFileNameToFullName = new HashMap[String, String]
-  val builtInFonts = scala.collection.immutable.List("Courier", "Helvetica", "Times", "Symbol", "Zapfdingbats")
 
-  def addBuildInFonts { for (f <- builtInFonts) fontFileNameToFullName(f) = "" }
+  val builtInFonts = List("Courier", "Helvetica", "Times", "Symbol", "Zapfdingbats")
+
+  def addBuildInFonts() { for (f <- builtInFonts) fontFileNameToFullName(f) = "" }
 
   def addDirectory(directory: String) {
 
@@ -59,17 +60,18 @@ object FontFileRegister {
     }
   }
 
-  private def clear() {
-    directories.clear()
-    fontFileNameToFullName.clear()
-  }
-  
   def recalculate() {
-    val fontDirectories = directories.toList // toList so it won't get cleared.
+
+    def clear() {
+      directories.clear()
+      fontFileNameToFullName.clear()
+    }
+    
+    val fontDirectories = directories.toList // toList to copy before clear.
     clear()
     for (d <- fontDirectories) addDirectory(d)
   }
-  
+
   def isBuiltIn(fontFileName: String): Boolean = builtInFonts.contains(fontFileName)
 
   def exists(fontFileName: String): Boolean = fontFileNameToFullName.contains(fontFileName)

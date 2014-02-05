@@ -90,7 +90,7 @@ object ResourceHandling {
       }
     }
     def addTemplate(fileName: String, templateName: String) {
-      if (!storage.Configurations.IsKnownTemplateName(templateName)) {
+      if (!storage.Configurations.isKnownTemplateName(templateName)) {
         val fullFileName = core.Environment.getDocumentFilePath(fileName)
         copyResource("extension", fileName, fullFileName)
         storage.Configurations.registerNewTemplate(templateName, fullFileName)

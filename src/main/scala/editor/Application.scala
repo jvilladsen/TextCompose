@@ -450,6 +450,6 @@ object Application extends SimpleSwingApplication {
 		 */
     maximize
 
-    storage.Configurations.ShowErrorsDuringInitialization
+    storage.Configurations.showErrorsDuringInitialization()
   }
 }

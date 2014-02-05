@@ -26,21 +26,21 @@ import writesetter.{ core, editor }
 object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 
   /*
-	 * Values in first field:
-	 * - FontLocation
-	 * - Extension
-	 * - TabSize
-	 * - SaveBeforeCompile
-	 * - WriteErrorMessagesToDocument
-	 * - ViewAfterCompile
-	 * - LatestDirectory
-	 * - CharacterEncoding
-	 * - EditorFontName
-	 * - Theme
-	 * - DefaultDictionary
-	 * - PreviewZoomPercentage
-	 * - ResourcesVersion (internal)
-	 */
+   * Values in first field:
+   * - FontLocation
+   * - Extension
+   * - TabSize
+   * - SaveBeforeCompile
+   * - WriteErrorMessagesToDocument
+   * - ViewAfterCompile
+   * - LatestDirectory
+   * - CharacterEncoding
+   * - EditorFontName
+   * - Theme
+   * - DefaultDictionary
+   * - PreviewZoomPercentage
+   * - ResourcesVersion (internal)
+   */
 
   private var extensionToFileName = new HashMap[String, String]
   private var templateToFileName = new HashMap[String, String]
@@ -168,7 +168,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 
   def initialize() {
     if (!initialized) {
-      core.FontFileRegister.addBuildInFonts
+      core.FontFileRegister.addBuildInFonts()
       if (!fileExists) { storeDefaults() }
       load()
       extractFromDataSet()
@@ -180,7 +180,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     }
   }
 
-  def ShowErrorsDuringInitialization {
+  def showErrorsDuringInitialization() {
     for (message <- errorsDuringInitialization) {
       editor.DialogBox.error(message)
     }
@@ -282,7 +282,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 
   def getListOfExtensions: List[String] = extensionToFileName.keys.toList.sortWith((a, b) => a < b)
 
-  def IsKnownTemplateName(template: String): Boolean = templateToFileName.isDefinedAt(template)
+  def isKnownTemplateName(template: String): Boolean = templateToFileName.isDefinedAt(template)
 
   def GetTemplateFileName(template: String): String = templateToFileName(template)
 

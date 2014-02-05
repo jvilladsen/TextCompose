@@ -74,7 +74,7 @@ object FileRegistration {
           val message = "Of all names, the name 'none' is not permitted for a template."
           editor.DialogBox.error(message)
           continue = false
-        } else if (storage.Configurations.IsKnownTemplateName(name)
+        } else if (storage.Configurations.isKnownTemplateName(name)
           && storage.Configurations.GetTemplateFileName(name) != fullFileName) {
           val message = "There is already an template named '" + name + "', registered from\n'" +
             storage.Configurations.GetTemplateFileName(name) + "'.\n\n" +
