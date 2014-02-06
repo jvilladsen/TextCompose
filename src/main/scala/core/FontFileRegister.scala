@@ -22,6 +22,7 @@ import scala.collection.mutable.{ Stack, HashMap }
 import scala.collection.immutable.List
 import scala.io._
 import scala.util.matching.Regex
+import com.itextpdf.text.pdf.BaseFont
 import writesetter.storage
 
 object FontFileRegister {
@@ -31,13 +32,17 @@ object FontFileRegister {
   /*
    * Short font Id:
    *   Font file name excluding extension.
+   *   In the case of True Type Collection, it is instead the name
+   *   of each font in the collection.
    *   
    * Long font Id: 
    *   Absolute font file name including extension.
    *   Used for registering the font at the iText font factory
    *   and for creating the iText base font.
+   *   In the case of True Type Collection, it is post-fixed a comma
+   *   and each index in the collection.
    */
-  
+
   private val fontIdShortToLong = new HashMap[String, String]
 
   val builtInFonts = List("Courier", "Helvetica", "Times", "Symbol", "Zapfdingbats")
@@ -46,25 +51,46 @@ object FontFileRegister {
 
   def addDirectory(directory: String) {
 
+    def addFont(shortId: String, longId: String) {
+      if (!fontIdShortToLong.contains(shortId)) {
+        fontIdShortToLong(shortId) = longId
+      }
+    }
+
+    def addTrueTypeCollection(nameBeforeExtension: String, absolutePathToFont: String) {
+      try {
+        val names = BaseFont.enumerateTTCNames(absolutePathToFont) // TTC file may be broken
+        for (i <- 0 until names.length) {
+          addFont(names(i), absolutePathToFont + "," + i.toString)
+        }
+      } catch {
+        case e: Exception => addFont(nameBeforeExtension, absolutePathToFont)
+      }
+    }
+
+    def addFile(file: java.io.File) {
+      val fileName = file.getName
+      val absolutePathToFont = file.getAbsolutePath
+      val (nameBeforeExtension, fileExtension) =
+        storage.FileMethods.splitFileNameAtLastPeriod(fileName)
+
+      if (fileExtension.toLowerCase() == "ttc") {
+        addTrueTypeCollection(nameBeforeExtension, absolutePathToFont)
+      } else {
+        addFont(nameBeforeExtension, absolutePathToFont)
+      }
+    }
+
     def traverseDirectory(directory: String) {
 
-      def add(file: java.io.File) {
-        val fileName = file.getName
-        val shortFontId = storage.FileMethods.splitFileNameAtLastPeriod(fileName)._1
-        
-        if (!fontIdShortToLong.contains(shortFontId)) {
-          fontIdShortToLong(shortFontId) = file.getAbsolutePath
-        }
-      }
-      
       val fontDirectory = new java.io.File(directory)
       val listOfFiles = fontDirectory.listFiles()
-      
+
       for (file <- listOfFiles) {
         if (file.isDirectory()) {
           traverseDirectory(file.getAbsolutePath) // recursion
         } else {
-          add(file)
+          addFile(file)
         }
       }
     }
