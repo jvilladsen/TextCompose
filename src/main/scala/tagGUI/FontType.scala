@@ -30,7 +30,7 @@ class FontType extends ParameterType {
 
   // Combo box showing all fonts - name of font displaying in the font itself, hence the renderer.
 
-  private val fontList = storage.StoredFontAnalysis.GetListOfInstallableFonts
+  private val fontList = storage.StoredFontAnalysis.getAllFontTitles
   private val fontField = new ComboBox(fontList) {
     renderer = new ListView.AbstractRenderer[String, Label](new Label) {
       def configure(list: ListView[_], isSelected: Boolean, focused: Boolean, fontTitle: String, index: Int) {

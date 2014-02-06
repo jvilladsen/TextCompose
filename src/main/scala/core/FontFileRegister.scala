@@ -28,28 +28,43 @@ object FontFileRegister {
 
   private val directories = new Stack[String]
 
-  // key is file name (excluding extension)
-  private val fontFileNameToFullName = new HashMap[String, String]
+  /*
+   * Short font Id:
+   *   Font file name excluding extension.
+   *   
+   * Long font Id: 
+   *   Absolute font file name including extension.
+   *   Used for registering the font at the iText font factory
+   *   and for creating the iText base font.
+   */
+  
+  private val fontIdShortToLong = new HashMap[String, String]
 
   val builtInFonts = List("Courier", "Helvetica", "Times", "Symbol", "Zapfdingbats")
 
-  def addBuildInFonts() { for (f <- builtInFonts) fontFileNameToFullName(f) = "" }
+  def addBuildInFonts() { for (f <- builtInFonts) fontIdShortToLong(f) = "" }
 
   def addDirectory(directory: String) {
 
     def traverseDirectory(directory: String) {
+
+      def add(file: java.io.File) {
+        val fileName = file.getName
+        val shortFontId = storage.FileMethods.splitFileNameAtLastPeriod(fileName)._1
+        
+        if (!fontIdShortToLong.contains(shortFontId)) {
+          fontIdShortToLong(shortFontId) = file.getAbsolutePath
+        }
+      }
+      
       val fontDirectory = new java.io.File(directory)
       val listOfFiles = fontDirectory.listFiles()
+      
       for (file <- listOfFiles) {
-        val fileName = file.getName
-
         if (file.isDirectory()) {
-          traverseDirectory(file.getAbsolutePath)
+          traverseDirectory(file.getAbsolutePath) // recursion
         } else {
-          val fontFileName = storage.FileMethods.splitFileNameAtLastPeriod(fileName)._1
-          if (!fontFileNameToFullName.contains(fontFileName)) {
-            fontFileNameToFullName(fontFileName) = file.getAbsolutePath
-          }
+          add(file)
         }
       }
     }
@@ -64,19 +79,19 @@ object FontFileRegister {
 
     def clear() {
       directories.clear()
-      fontFileNameToFullName.clear()
+      fontIdShortToLong.clear()
     }
-    
+
     val fontDirectories = directories.toList // toList to copy before clear.
     clear()
     for (d <- fontDirectories) addDirectory(d)
   }
 
-  def isBuiltIn(fontFileName: String): Boolean = builtInFonts.contains(fontFileName)
+  def isBuiltIn(shortFontId: String): Boolean = builtInFonts.contains(shortFontId)
 
-  def exists(fontFileName: String): Boolean = fontFileNameToFullName.contains(fontFileName)
+  def exists(shortFontId: String): Boolean = fontIdShortToLong.contains(shortFontId)
 
-  def getFullName(fontFileName: String): String = fontFileNameToFullName(fontFileName)
+  def getLongFontId(shortFontId: String): String = fontIdShortToLong(shortFontId)
 
-  def getListOfFullNames: scala.collection.immutable.List[String] = fontFileNameToFullName.keys.toList
+  def getShortFontIds: scala.collection.immutable.List[String] = fontIdShortToLong.keys.toList
 }

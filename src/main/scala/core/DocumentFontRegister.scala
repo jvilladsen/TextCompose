@@ -29,19 +29,23 @@ object DocumentFontRegister {
    * during creation of a PDF document. One often switches back and forth between the
    * same few fonts in a document, but we need not register and create an iText base font
    * more than one - the first time it is encountered in the source for the document.
+   * 
+   * Also keeps track of latest used encoding (code page).
    */
 
   private val fontKeyToFont = new HashMap[String, DocumentFont]
-  private val latestFontEncoding = new HashMap[String, String] // Key is fontFileName
+  
+  private val latestFontEncoding = new HashMap[String, String] // Key is shortFontId
 
-  private def getKey(fontFileName: String, encoding: String) = fontFileName + "@" + encoding
-  private def getLatestKey(fontFileName: String) = getKey(fontFileName, latestFontEncoding(fontFileName))
+  private def getKey(shortFontId: String, encoding: String) = shortFontId + "@" + encoding
+  
+  private def getLatestKey(shortFontId: String) = getKey(shortFontId, latestFontEncoding(shortFontId))
 
   def initialize() {
     fontKeyToFont.clear()
     latestFontEncoding.clear()
     for (n <- FontFileRegister.builtInFonts) {
-      fontKeyToFont(getKey(n, "")) = new DocumentFont(n, n, true, true, "")
+      fontKeyToFont(getKey(n, "")) = new DocumentFont(n, true, true, "")
       latestFontEncoding(n) = ""
     }
   }
@@ -50,43 +54,41 @@ object DocumentFontRegister {
 
   def addFont(fontTitle: String, encoding: String, embed: Boolean) {
 
-    def getRegisteredFont(fontFileName: String, embed: Boolean, encoding: String) = {
+    def getRegisteredFont(shortFontId: String, embed: Boolean, encoding: String) = {
       
-      val font = new DocumentFont(
-          fontFileName,
-          FontFileRegister.getFullName(fontFileName),
-          false,
-          embed,
-          encoding)
+      val font = new DocumentFont(shortFontId, false, embed, encoding)
+      
       font.register(true) // With caching in com.itextpdf.text.pdf.BaseFont.
       font.updateAttributes() // This call may not be necessary?
       font
     }
 
     if (storage.StoredFontAnalysis.hadFontTitle(fontTitle)) {
-      val fontFileName = storage.StoredFontAnalysis.getFileName(fontTitle)
-      val key = getKey(fontFileName, encoding)
+      val shortFontId = storage.StoredFontAnalysis.getShortFontId(fontTitle)
+      val key = getKey(shortFontId, encoding)
       if (fontKeyToFont.contains(key)) {
-        /* For the (perhaps) unusual case where you switch back to a previously
+        /* 
+         * For the (perhaps) unusual case where you switch back to a previously
 		 * used encodings on the same font after some other encoding.
 		 */
-        latestFontEncoding(fontFileName) = encoding
+        latestFontEncoding(shortFontId) = encoding
       } else {
-        if (FontFileRegister.exists(fontFileName)) {
+        if (FontFileRegister.exists(shortFontId)) {
 
-          fontKeyToFont(getKey(fontFileName, encoding)) = getRegisteredFont(fontFileName, embed, encoding)
-          latestFontEncoding(fontFileName) = encoding
+          fontKeyToFont(getKey(shortFontId, encoding)) = getRegisteredFont(shortFontId, embed, encoding)
+          latestFontEncoding(shortFontId) = encoding
 
           if (!fontKeyToFont(key).valid) {
             var message = fontKeyToFont(key).errorMessage
             if (message.contains("cannot be embedded")) {
-              message += " Add the word 'local' as parameter to 'font' tag to use font locally, i.e. without embedding it into the PDF document."
+              message += " Add the word 'local' as parameter to 'font' tag to use font locally, " +
+              "i.e. without embedding it into the PDF document."
             }
             throw new TagError("Could not register font '" +
-              fontFileName + "': " + message)
+              shortFontId + "': " + message)
           }
         } else {
-          throw new TagError("Unknown font '" + fontFileName +
+          throw new TagError("Unknown font '" + shortFontId +
             "'. The font has previously been found by Writesetter, but now the file does" +
             " not exist, in any of the folders/directories listed in the settings of Writesetter.")
         }
@@ -100,26 +102,26 @@ object DocumentFontRegister {
     }
   }
 
-  def isValid(fontFileName: String): Boolean = {
-    if (latestFontEncoding.contains(fontFileName)) {
-      val key = getLatestKey(fontFileName)
+  def isValid(shortFontId: String): Boolean = {
+    if (latestFontEncoding.contains(shortFontId)) {
+      val key = getLatestKey(shortFontId)
       fontKeyToFont.contains(key) && fontKeyToFont(key).registered && fontKeyToFont(key).valid
     } else {
       false
     }
   }
 
-  def getMessage(fontFileName: String): String = {
-    if (latestFontEncoding.contains(fontFileName)) {
-      val key = getLatestKey(fontFileName)
+  def getMessage(shortFontId: String): String = {
+    if (latestFontEncoding.contains(shortFontId)) {
+      val key = getLatestKey(shortFontId)
       fontKeyToFont(key).errorMessage
     } else {
-      "Unknown font " + fontFileName
+      "Unknown font " + shortFontId
     }
   }
 
-  def getBaseFont(fontFileName: String): BaseFont = {
-    val key = getLatestKey(fontFileName)
+  def getBaseFont(shortFontId: String): BaseFont = {
+    val key = getLatestKey(shortFontId)
     fontKeyToFont(key).baseFont
   }
 }

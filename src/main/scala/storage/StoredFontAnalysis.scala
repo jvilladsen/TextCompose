@@ -24,7 +24,7 @@ import writesetter.{ core, editor }
 object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
   /* FORMAT:
-	 * font file name -- is the primary key
+	 * short font id (see FontFileRegister) -- is primary key
 	 * can be installed (true/false)
 	 * can be embedded (true/false)
 	 * error message in case one of the above is false (the first false)
@@ -47,7 +47,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 	 * encodings
 	 */
 
-  private val fontTitleToFileName = new HashMap[String, String] // Only for fonts that can be installed.
+  private val fontTitleToShortId = new HashMap[String, String] // Only for fonts that can be installed.
   private val fontTitleToJavaFont = new HashMap[String, java.awt.Font]
 
   minimumFieldCount = 21
@@ -58,29 +58,25 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
     def countNewFonts: Int = {
       var numberOfNewFonts = 0
-      for (f <- core.FontFileRegister.getListOfFullNames) {
+      for (f <- core.FontFileRegister.getShortFontIds) {
         if (getIndexOf(List(f)) == -1) numberOfNewFonts += 1
       }
       numberOfNewFonts
     }
 
-    def getFontProperties(fontName: String) = {
+    def getFontProperties(shortFontId: String) = {
 
       def registerFont(embed: Boolean) = {
         
-        val font = new core.DocumentFont(
-          fontName,
-          core.FontFileRegister.getFullName(fontName),
-          false,
-          embed,
-          "")
+        val font = new core.DocumentFont(shortFontId, false, embed, "")
+        
         font.register(false) // without caching
         font.updateAttributes()
         (font.valid, font.errorMessage, font.getFontInfo)
       }
 
-      if (core.FontFileRegister.isBuiltIn(fontName)) {
-        List(fontName, "true", "true", "", fontName, fontName, "", "")
+      if (core.FontFileRegister.isBuiltIn(shortFontId)) {
+        List(shortFontId, "true", "true", "", shortFontId, shortFontId, "", "")
       } else {
         var result = registerFont(false)
         val canBeInstalled = result._1
@@ -89,13 +85,13 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
           result = registerFont(true)
           canBeEmbedded = result._1
         }
-        List(fontName, canBeInstalled.toString, canBeEmbedded.toString, result._2) ++ result._3
+        List(shortFontId, canBeInstalled.toString, canBeEmbedded.toString, result._2) ++ result._3
       }
     }
 
-    def updateCharacterStorage(fontName: String) {
-      if (!core.FontFileRegister.isBuiltIn(fontName)) {
-        val index = getIndexOf(List(fontName))
+    def updateCharacterStorage(shortFontId: String) {
+      if (!core.FontFileRegister.isBuiltIn(shortFontId)) {
+        val index = getIndexOf(List(shortFontId))
         if (index > -1) {
           val canBeInstalled = dataSet(index)(1)
           if (canBeInstalled == "true") {
@@ -104,7 +100,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
             var successFullEncodings = ""
             var updateRequired = false
             for (encoding <- unpackEncodingsString(encodings)) {
-              val success = FontCharacters.addNewFont(fontName, encoding)
+              val success = FontCharacters.addNewFont(shortFontId, encoding)
               if (success) {
                 successFullEncodings += (if (successFullEncodings == "") "" else "#") + encoding
               } else {
@@ -112,7 +108,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
               }
             }
             if (updateRequired) {
-              updateFrom(List(fontName), 20, List(successFullEncodings))
+              updateFrom(List(shortFontId), 20, List(successFullEncodings))
               store()
             }
           }
@@ -126,13 +122,13 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     var newFonts = new Stack[String]
 
     // Get font properties for all fonts not yet analyzed and store the result.
-    for (fontName <- core.FontFileRegister.getListOfFullNames) {
-      if (getIndexOf(List(fontName)) == -1) {
+    for (shortFontId <- core.FontFileRegister.getShortFontIds) {
+      if (getIndexOf(List(shortFontId)) == -1) {
 
-        update(getFontProperties(fontName))
-        updateCharacterStorage(fontName)
+        update(getFontProperties(shortFontId))
+        updateCharacterStorage(shortFontId)
         count += 1
-        newFonts.push(fontName)
+        newFonts.push(shortFontId)
       }
     }
     if (count > 0) {
@@ -146,14 +142,14 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
     def updateMapsFromDataSet() {
       for (configuration <- dataSet) {
-        val fontFileName = configuration(0)
+        val shortFontId = configuration(0)
         val canBeInstalled = configuration(1)
 
         val length = configuration.length
         val fontName = configuration(4)
         val fontTitle = configuration(5)
-        fontTitleToFileName(fontTitle) = fontFileName
-        val (hasJavaFont, javaFont) = GUIFonts.getFontWithMatchingName(fontName, fontTitle, fontFileName)
+        fontTitleToShortId(fontTitle) = shortFontId
+        val (hasJavaFont, javaFont) = GUIFonts.getFontWithMatchingName(fontName, fontTitle, shortFontId)
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
       }
     }
@@ -169,8 +165,8 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
     def prune {
       for (configuration <- dataSet) {
-        val fontName = configuration(0)
-        if (!core.FontFileRegister.exists(fontName)) {
+        val shortFontId = configuration(0)
+        if (!core.FontFileRegister.exists(shortFontId)) {
           remove(configuration)
         }
       }
@@ -191,12 +187,12 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     updateStorage(true)
   }
 
-  def GetListOfInstallableFonts: List[String] = {
+  def getAllFontTitles: List[String] = {
     var result = new Stack[String]
     for (configuration <- dataSet) {
       val canBeInstalled = configuration(1)
-      val fontName = configuration(5)
-      if (canBeInstalled == "true") result.push(fontName)
+      val fontTitle = configuration(5)
+      if (canBeInstalled == "true") result.push(fontTitle)
     }
     result.toList.sortWith((a, b) => a < b)
   }
@@ -212,19 +208,19 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
   }
 
   def getEncodingsOfFont(fontTitle: String): List[String] = {
-    val index = getIndexOf(List(fontTitleToFileName(fontTitle)))
+    val index = getIndexOf(List(fontTitleToShortId(fontTitle)))
     val encodings = dataSet(index)(20)
     unpackEncodingsString(encodings)
   }
 
   def getRecordForFont(fontTitle: String) = {
-    val index = getIndexOf(List(fontTitleToFileName(fontTitle)))
+    val index = getIndexOf(List(fontTitleToShortId(fontTitle)))
     dataSet(index)
   }
 
-  def hadFontTitle(fontTitle: String): Boolean = fontTitleToFileName.contains(fontTitle)
+  def hadFontTitle(fontTitle: String): Boolean = fontTitleToShortId.contains(fontTitle)
 
-  def getFileName(fontTitle: String): String = fontTitleToFileName(fontTitle)
+  def getShortFontId(fontTitle: String): String = fontTitleToShortId(fontTitle)
 
   def hasJavaFont(fontTitle: String): Boolean = fontTitleToJavaFont.contains(fontTitle)
 

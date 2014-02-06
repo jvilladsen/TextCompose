@@ -23,13 +23,12 @@ import com.itextpdf.text.pdf.BaseFont
 import writesetter.storage
 
 class DocumentFont(
-    val fileName: String,
-    val fullFileName: String,
+    val shortFontId: String,
     val builtIn: Boolean,
     val embedded: Boolean,
     enc: String) {
   
-	val encoding = if (enc == "") BaseFont.CP1252 else enc
+    val encoding = if (enc == "") BaseFont.CP1252 else enc
 	
 	// Registration, defaults
 	var registered = builtIn
@@ -57,8 +56,8 @@ class DocumentFont(
 	var encodings = ""
 	
 	if (builtIn) {
-		postscriptName = fileName
-		title = fileName
+		postscriptName = shortFontId
+		title = shortFontId
 	}
 	
 	private def getFirstValue(a: String, b: String) = if (a != "") a else b
@@ -105,6 +104,7 @@ class DocumentFont(
 	def register(caching: Boolean) {
 	  def registerFont() {
 		try {
+		    val fullFileName = FontFileRegister.getLongFontId(shortFontId)
 			FontFactory.register(fullFileName)
 			baseFont = BaseFont.createFont(fullFileName, encoding, embedded, caching, null, null)
 		} catch {
@@ -128,8 +128,8 @@ class DocumentFont(
 		 * against Java fonts, things can go wrong later on, if these fields are not filled in.
 		 * This can happen for font files that cannot install and fonts with incomplete description.
 		 */
-		postscriptName	= getFirstValue(postscriptName, fileName)
-		title 			= getFirstValue(title, fileName)
+		postscriptName	= getFirstValue(postscriptName, shortFontId)
+		title 			= getFirstValue(title, shortFontId)
 	}
 	
 	def getFontInfo: scala.collection.immutable.List[String] = {
