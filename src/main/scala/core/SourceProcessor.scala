@@ -547,23 +547,16 @@ class SourceProcessor(
     parser(se)
     document.setLineCap(parser.getNextOption)
   }
-  private def lineDashTag(se: SourceElement) {
-    se.hasNumberOfParameters(2, "The 'line-dash' tag takes 2 parameters (pattern and phase), which should be a " +
-      "sequence of numbers separated by space (in quotes), e.g. \"10 5\" and a number.")
-    val pattern = se.Parameters(0)
-    val dashElements = pattern.split(' ')
-    var patternArray = new ArrayBuffer[Float]
-    for (de <- dashElements) {
-      val deAsFloat =
-        try {
-          de.toFloat
-        } catch {
-          case e: Exception => throw new TagError("The first parameter for line-dash should be a sequence of numbers.")
-        }
-      patternArray += deAsFloat
+  private def lineDashTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val pattern = ArrayBuffer(parser.getNextString.trim.split(' ') : _*)
+    val patternNumbers = try {
+      pattern.map(s => s.toFloat)
+    } catch {
+      case e: Exception => throw new TagError("The first parameter for line-dash should be a sequence of numbers.")
     }
-    val phase = NumberFunctions.getFloat(se.Parameters(1), "The second parameter for the line-dash tag");
-    document.setLineDash(patternArray, phase)
+    val phase = parser.getNextFloat
+    document.setLineDash(patternNumbers, phase)
   }
   private def moveToTag(parser: TagParser, se: SourceElement) {
     parser(se)
@@ -1064,7 +1057,7 @@ class SourceProcessor(
       // DRAW
       case "line-width"       => lineWidthTag(element)
       case "line-cap"         => lineCapTag(Parsers.lineCap, element)
-      case "line-dash"        => lineDashTag(element)
+      case "line-dash"        => lineDashTag(Parsers.lineDash, element)
       case "move-to"          => moveToTag(Parsers.moveTo, element)
       case "line-to"          => lineToTag(Parsers.lineTo, element)
       case "draw"             => drawTag(Parsers.draw, element)

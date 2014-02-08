@@ -291,6 +291,10 @@ object Parsers {
   val lineCap = new TagParser("line-cap")
   lineCap.addOptions("shape", true, List("butt", "round", "square"))
 
+  val lineDash = new TagParser("line-dash")
+  lineDash.addString("numbers", true)
+  lineDash.addFloat("offset", true)
+  
   val moveTo = new TagParser("move-to")
   moveTo.addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R"))
   moveTo.addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
