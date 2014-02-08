@@ -437,6 +437,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "color"            => colorSelectionTag("Choose color")
       case "underline"        => underlineTag(parameters)
       case "highlight"        => highlightTag(parameters)
+      case "/highlight"       => None
       case "letter-spacing"   => tagWithNumberOrPercentage(false)
       case "scale-letter"     => numberTag("percentage", 100)
       // SPACE

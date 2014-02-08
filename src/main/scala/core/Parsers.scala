@@ -56,6 +56,20 @@ object Parsers {
   color.addInt("lightness", true)
   // FIXME: add some direction flags for the 'border' as scope - consider extending the parser with notion of function to evaluate if a parameter is included or not.
 
+  val highlight = new TagParser(
+      "highlight",
+      "on",
+      se => se.NumberOfParameters == 0,
+      "Use no parameters to turn on highlighting, one number with size of highlighting, " +
+      "or four numbers with size in all four directions.")
+  highlight.addSyntax("size", se => se.NumberOfParameters == 1)
+  highlight.addFloat("size", true)
+  highlight.addSyntax("size x4", se => se.NumberOfParameters == 4)
+  highlight.addFloat("left", true)
+  highlight.addFloat("right", true)
+  highlight.addFloat("top", true)
+  highlight.addFloat("bottom", true)
+  
   val letterspacing = new TagParser("letter-spacing")
   letterspacing.addDecNum("spacing", true, Sign.disallow, optionalPercentage) // really disallow?
 
@@ -188,6 +202,15 @@ object Parsers {
   val rotateImage = new TagParser("rotate-image")
   rotateImage.addFloat("angle in degrees", true)
 
+  val frame = new TagParser(
+      "frame",
+      "on/off",
+      se => se.NumberOfParameters == 1 && (se.Parameters(0) == "on" || se.Parameters(0) == "off"),
+      "Either 'on', 'off', or the width of the image frame")
+  frame.addOptions("on/off", true, List("on", "off"))
+  frame.addSyntax("width", se => true)
+  frame.addFloat("width", true)
+  
   val formatList = new TagParser("format-list")
   formatList.addDecNum("list indentation", true, Sign.allow, optionalPercentage)
   formatList.addDecNum("list symbol indentation", true, Sign.allow, optionalPercentage)
@@ -219,11 +242,20 @@ object Parsers {
   roman.addOptions("upper or lower case", true, List("U", "L"))
   roman.addInt("number", true)
 
+  val insert = new TagParser("insert")
+  insert.addString("file name", true)
+  
   val bookmark = new TagParser("bookmark")
   bookmark.addString("title", true)
   bookmark.addInt("level", false)
   bookmark.addString("name", false)
 
+  val label = new TagParser("label")
+  label.addString("name", true)
+  
+  val ref = new TagParser("ref")
+  ref.addString("name", true)
+  
   val replace = new TagParser("replace")
   replace.addOptions("level", true, List("source", "text"))
   replace.addInt("priority", true)

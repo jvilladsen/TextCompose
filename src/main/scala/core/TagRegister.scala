@@ -40,6 +40,7 @@ object TagRegister {
     TagNames += "color"
     TagNames += "underline"
     TagNames += "highlight"
+    TagNames += "/highlight"
     TagNames += "letter-spacing"
     TagNames += "scale-letter"
     TagNames += "image"

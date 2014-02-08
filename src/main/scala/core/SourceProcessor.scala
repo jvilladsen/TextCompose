@@ -272,58 +272,38 @@ class SourceProcessor(
     }
   }
 
-  private def highlightTag(se: SourceElement) {
-    if (se.NumberOfParameters == 1) {
-      if (se.Parameters(0) == "on") {
-        document.setUseTextBackgroundColor(true)
-      } else if (se.Parameters(0) == "off") {
-        document.setUseTextBackgroundColor(false)
-      } else {
-        throw new TagError("The parameter for 'highlight' tag with 1 parameter should be 'on' or 'off'")
+  private def highlightTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    parser.getSyntax match {
+      case "on" => document.setUseTextBackgroundColor(true)
+      case "size" => {
+        val size = parser.getNextFloat
+        document.setHighlightSize(size, size, size, size)
       }
-    } else {
-      ColorFunctions.DetermineRGB(se, 0)
-      try {
-        document.setTextBackgroundColor
-      } catch {
-        case e: Exception => throw new TagError(e.getMessage)
+      case "size x4" => {
+        val left = parser.getNextFloat
+        val right = parser.getNextFloat
+        val top = parser.getNextFloat
+        val bottom = parser.getNextFloat
+        document.setHighlightSize(left, right, top, bottom)
       }
-      se.hasNumberOfParameters(ColorFunctions.NextIndex + 4, "The 'highlight' tag takes either 1 parameter "
-        + "('on' or 'off') or a color specification and 4 numbers for left right top bottom).")
-
-      val Left = NumberFunctions.getFloat(se.Parameters(ColorFunctions.NextIndex), "left padding for 'highlight' tag")
-      val Right = NumberFunctions.getFloat(se.Parameters(ColorFunctions.NextIndex + 1), "right padding for 'highlight' tag")
-      val Top = NumberFunctions.getFloat(se.Parameters(ColorFunctions.NextIndex + 2), "top padding for 'highlight' tag")
-      val Bottom = NumberFunctions.getFloat(se.Parameters(ColorFunctions.NextIndex + 3), "bottom padding for 'highlight' tag")
-      document.setTextBackgroundColorPadding(se.ConcatParameters(ColorFunctions.NextIndex, ColorFunctions.NextIndex + 3), Left, Bottom, Right, Top) // Note how we swich the parameters
     }
   }
 
-  private def frameTag(se: SourceElement) {
-    if (se.NumberOfParameters == 1) {
-      if (se.Parameters(0) == "on") {
-        document.setUseImageBorderColor(true)
-      } else if (se.Parameters(0) == "off") {
-        document.setUseImageBorderColor(false)
-      } else {
-        throw new TagError("The parameter for the 'frame' tag with 1 parameter should be 'on' or 'off' – note that it also has a form with more parameters.")
+  private def highlightEndTag() {
+    document.setUseTextBackgroundColor(false)
+  }
+  
+  private def frameTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    parser.getSyntax match {
+      case "on/off" => {
+        val onOff = parser.getNextOption
+        document.setUseImageBorderColor(onOff == "on")
       }
-    } else {
-      var width = 0f
-      if (se.NumberOfParameters > 0) {
-        try {
-          width = se.Parameters(0).toFloat
-        } catch {
-          case e: Exception => throw new TagError("The first parameter for the 'frame' tag, when given "
-            + "more than one parameter, should be a number, namely the width of the border.")
-        }
-      }
-      document.setImageBorderWidth(width)
-      ColorFunctions.DetermineRGB(se, 1)
-      try {
-        document.setImageBorderColor
-      } catch {
-        case e: Exception => throw new TagError(e.getMessage)
+      case "width" => {
+        val width = parser.getNextFloat
+        document.setImageBorderWidth(width)
       }
     }
   }
@@ -365,18 +345,16 @@ class SourceProcessor(
     document.UpdateLineHeight(DN)
   }
 
-  private def insertTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, "The 'insert' tag takes one parameter, which is the name of the file to insert.")
-    val FileName = arguments.pathToReachablePath(se.Parameters(0))
+  private def insertTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val givenFileName = parser.getNextString
+    val fileName = arguments.pathToReachablePath(givenFileName)
     try {
-      val encoding = storage.SourcesMetaData.getEncoding(FileName, "")
-      var Source = new SourceFile(FileName, encoding, processingUnit, false)
-
-      while (Source.readLine) {
-        processSourceLine()
-      }
+      val encoding = storage.SourcesMetaData.getEncoding(fileName, "")
+      var source = new SourceFile(fileName, encoding, processingUnit, false)
+      while (source.readLine) processSourceLine()
     } catch {
-      case e: java.io.FileNotFoundException => throw new TagError("Could not insert file '" + FileName + "'. File not found.")
+      case e: java.io.FileNotFoundException => throw new TagError("Could not insert file '" + fileName + "'. File not found.")
     }
   }
 
@@ -444,20 +422,20 @@ class SourceProcessor(
     document.writer.setViewerPreferences(parser.getNextOption, parser.getNextOption)
   }
 
-  private def extensionTag {
+  private def extensionTag() {
     throw new TagError("Building a document from an extension file? The 'extension' tag is used in the top of " +
       "extension files for specifying a name of the extension.")
   }
-  private def defTag {
+  private def defTag() {
     throw new TagError("The 'def' tag, used for defining new tags, can only be used in extensions. " +
       "Extensions are separate files with the 'extension' tag in the top. Before you can refer to " +
       "an extension, with the 'include' tag, you must add it by choosing 'Add' in the 'Extensions' menu.")
   }
-  private def subTag {
+  private def subTag() {
     throw new TagError("The 'sub' tag, used for defining new tags, can only be used in extensions. The only " +
       "difference between 'sub' and 'def' is that sub's do not appear in the tag menu.")
   }
-  private def mainTag {
+  private def mainTag() {
     throw new TagError("The 'main' tag, used for specifying stuff that should be inserted along with the " +
       "extension, can only be used in extensions.")
   }
@@ -683,19 +661,20 @@ class SourceProcessor(
     document.bookmarks.setPendingBookmark(bookmarkTitle, bookmarkLevel, bookmarkName)
   }
 
-  private def labelTag(se: SourceElement) {
+  private def labelTag(parser: TagParser, se: SourceElement) {
     // A label is a destination that you can jump to with the 'ref' tag.
-    se.hasNumberOfParameters(1, "The tag 'label' takes one parameter with the name of the label. A label is a destination that you can jump to with the 'ref' tag.")
-    document.bookmarks.setLabel(se.Parameters(0))
+    parser(se)
+    document.bookmarks.setLabel(parser.getNextString)
   }
 
-  private def refTag(se: SourceElement) {
+  private def refTag(parser: TagParser, se: SourceElement) {
     // Reference to a "destination" - either bookmark or label.
+    parser(se)
     se.hasNumberOfParameters(1, "The tag 'ref' (reference) takes one parameter with the name of the destination (bookmark or label).")
-    document.bookmarks.setReference(se.Parameters(0))
+    document.bookmarks.setReference(parser.getNextString)
   }
 
-  private def endRefTag {
+  private def refEndTag() {
     document.bookmarks.endReference()
   }
 
@@ -754,13 +733,13 @@ class SourceProcessor(
     document.initiateList(parser.getNextFlag)
   }
 
-  private def itemTag {
+  private def itemTag() {
     if (!document.isListStarted) throw new TagError("A list must be started before you can add items.")
     if (document.isItemAwaitingAdd) addListItem()
     document.newListItem()
   }
 
-  private def listEndTag {
+  private def listEndTag() {
     if (!document.isListStarted) throw new TagError("Trying to end list, but no list has been started.")
     if (document.isItemAwaitingAdd) addListItem()
     document.addList()
@@ -817,7 +796,7 @@ class SourceProcessor(
     document.newTableCell(columnSpan, rowSpan)
   }
 
-  private def tableEndTag {
+  private def tableEndTag() {
     if (!document.tableStarted) throw new TagError("No table has been started.")
 
     if (document.cellAwaitingAdd) {
@@ -1042,7 +1021,8 @@ class SourceProcessor(
       case "face"             => faceTag(Parsers.face, element)
       case "color"            => colorTag(Parsers.color, element)
       case "underline"        => underlineTag(element)
-      case "highlight"        => highlightTag(element)
+      case "highlight"        => highlightTag(Parsers.highlight, element)
+      case "/highlight"       => highlightEndTag()
       case "letter-spacing"   => letterspacingTag(Parsers.letterspacing, element)
       case "scale-letter"     => scaleLetterTag(Parsers.scaleLetter, element)
       // SPACE
@@ -1068,16 +1048,16 @@ class SourceProcessor(
       case "scale-image"      => scaleImage(Parsers.scaleImage, element)
       case "fit-image"        => fitImage(Parsers.fitImage, element)
       case "rotate-image"     => rotateImage(Parsers.rotateImage, element)
-      case "frame"            => frameTag(element)
+      case "frame"            => frameTag(Parsers.frame, element)
       // LIST
       case "format-list"      => formatListTag(Parsers.formatList, element)
       case "list"             => listTag(Parsers.list, element)
-      case "item"             => itemTag
-      case "/list"            => listEndTag
+      case "item"             => itemTag()
+      case "/list"            => listEndTag()
       // TABLE
       case "table"            => tableTag(Parsers.table, element)
       case "cell"             => cellTag(element)
-      case "/table"           => tableEndTag
+      case "/table"           => tableEndTag()
       case "cell-padding"     => cellPaddingTag(element)
       case "border-width"     => borderWidthTag(element)
       case "border-color"     => borderColorTag(element)
@@ -1092,13 +1072,13 @@ class SourceProcessor(
       case "blend"            => blendModeTag(Parsers.blend, element)
       case "opacity"          => opacityTag(Parsers.opacity, element)
       // INSERT
-      case "insert"           => insertTag(element)
+      case "insert"           => insertTag(Parsers.insert, element)
       case "char"             => charTag(element)
       case "Roman"            => romanTag(Parsers.roman, element)
       case "bookmark"         => bookmarkTag(Parsers.bookmark, element)
-      case "label"            => labelTag(element)
-      case "ref"              => refTag(element)
-      case "/ref"             => endRefTag
+      case "label"            => labelTag(Parsers.label, element)
+      case "ref"              => refTag(Parsers.ref, element)
+      case "/ref"             => refEndTag()
       // STATE
       case "store"            => document.storeStateToStack()
       case "restore"          => document.restoreStateFromStack()
@@ -1106,16 +1086,16 @@ class SourceProcessor(
       // VARIABLE
       case "var"              => varTag(Parsers.variable, element)
       case "set"              => setTag(Parsers.set, element)
-      case "/set"             => None
+      case "/set"             => None // Handled in handleCopying
       case "add"              => addTag(Parsers.add, element)
-      case "/add"             => None
+      case "/add"             => None // Handled in handleCopying
       case "show"             => showTag(Parsers.show, element)
       // EXTENSION
       case "include"          => includeTag(Parsers.include, element)
-      case "extension"        => extensionTag
-      case "def"              => defTag
-      case "sub"              => subTag
-      case "main"             => mainTag
+      case "extension"        => extensionTag()
+      case "def"              => defTag()
+      case "sub"              => subTag()
+      case "main"             => mainTag()
       case "/def"             => None
       case "/sub"             => None
       case "/main"            => None

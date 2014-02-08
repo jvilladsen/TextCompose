@@ -219,8 +219,8 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
   def setTextBackgroundColor = stateStack.top.setBckgColor
 
-  def setTextBackgroundColorPadding(p: String, l: Float, r: Float, t: Float, b: Float) {
-    stateStack.top.setBckgColorPadding(p, l, r, t, b)
+  def setHighlightSize(l: Float, r: Float, t: Float, b: Float) {
+    stateStack.top.setHighlightSize(l, r, t, b)
   }
 
   def setImageScale(width: DecoratedNumber, height: DecoratedNumber) {
@@ -368,10 +368,10 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     if (stateStack.top.bckgColorUse) {
       chunk.setBackground(
         stateStack.top.actualBckgColor,
-        stateStack.top.actualBckgColorPadding.Left,
-        stateStack.top.actualBckgColorPadding.Right,
-        stateStack.top.actualBckgColorPadding.Top,
-        stateStack.top.actualBckgColorPadding.Bottom)
+        stateStack.top.actualHighlightSize.Left,
+        stateStack.top.actualHighlightSize.Bottom,
+        stateStack.top.actualHighlightSize.Right,
+        stateStack.top.actualHighlightSize.Top)
     }
     if (stateStack.top.rise != 0f) {
       chunk.setTextRise(stateStack.top.rise)

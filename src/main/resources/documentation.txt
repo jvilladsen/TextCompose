@@ -36,28 +36,18 @@ as the size in points or relative to the current font size, such as +2, -2 or
 
 Change font face
 
-Use this tag to control font face (italic and bold) in case you are using a font
-that does not come with italic and bold forms.
-
-Note that when you choose a font with the 'font' tag, you can select each form of
-the fonts that you have installed, so for example you may have 'Fontin Bold',
-'Fontin Italic', 'Fontin Regular' and 'Fontin SmallCaps' not just 'Fontin'.
-In such cases where the different forms have been crafted, this is they way to go.
-The 'face' tag performs a transformation of whichever font you have selection
-to make it appear more bold or italic. This can be okay if you do not have those
-fonts but is typically not nearly as good.
-
-If you have a document set in 'Fontin Regular' you could defined a tag 'i' and corresponding
-end tag '/i' to switch to 'Fontin Italic' and back.
+Use this tag to control font face such as italic or bold.
 
 
 ### color
 
-Change text color
+Change colors
 
-Use this tag to control the text color. The color can be specified in either RGB
-(Red, Green, Blue) or HSL (Hue, Saturation, Lightness). You can specify RGB
-these as either three decimal numbers in the range 0-255 or in hexadecimal notation.
+Use this tag to control color. You can control the color of the
+text, the line when underlining text, highlighting, page color, frame around images,
+border on tables, cell background color, and drawing color.
+The color can be specified in either RGB (Red, Green, Blue) or HSL (Hue, Saturation, Lightness).
+You can specify RGB as either three decimal numbers in the range 0-255 or in hexadecimal notation.
 
 Examples: &lt;color RGB 221 40 33&gt; or &lt;color RGB #DD2821&gt;
 Hue, saturation and lightness are specified as three decimal numbers,
@@ -70,7 +60,7 @@ Underline text
 
 Use this tag to select underlining of text. 
 
-You can also specify the color of the line, the thickness of the line and the height
+You can also control the color of the line, the thickness of the line and the height
 of the line in relation to the baseline. Both the thickness and height can be specified
 in points or as a percentage of font size.
 
@@ -79,9 +69,10 @@ in points or as a percentage of font size.
 
 Highlight text
 
-Use this tag to select background color behind the text.
+Use this tag to start highlighting the text. You can also control the size of the
+highlighting either as one number, or four numbers to specify it in each of the four directions.
 
-You can also specify the color and the size of the background coloring.
+Note that you can control the color of the highlighting with the 'color' tag.
 
 
 ### letter-spacing
@@ -311,9 +302,11 @@ relative to the column. As opposed to the 'scale-image' tag, this tag preserves 
 
 Frame images
 
-Use this to get a frame on the images that you insert. The tag can either be given a single
-parameter 'on' or 'off' to enable/disable frames, or several parameters to specify the width
-and color or the frame.
+Use this to get frames on the images that you insert. The tag can either be given 'on' or 'off'
+to enable/disable frames, or a number for the frame width.
+
+Note that you can control frame color with the 'color' tag.
+
 
 ### rotate-image
 
@@ -455,19 +448,37 @@ The second parameter is that number to present as a Roman number.
 
 ### bookmark
 
+Insert a bookmark
+
 
 ### label
+
+Insert a label
+
+A label is a reference point, a destination that you can jump to from elsewhere in the document.
+You give it a name and can then insert references (links) to it using that name.
+References are inserted using the 'ref' and corresponding end-tag.
+
+Note that bookmarks (inserted with the 'bookmark' tag) are also labels Ð but in addition to
+being labels also appear in the "outline" (list of content) pane in PDF viewers.
 
 
 ### ref
 
+Insert reference
+
+Insert a reference (link) to a label or bookmark. The references appears on the content (text)
+between the 'ref' tag and its end-tag '/ref'.
+
 
 ### /ref
+
+End reference
 
 
 ### store
 
-Store the current "state".
+Store the current "state"
 
 Here, "state" refers to all settings, such as the current choice of font, font size, text color etc.
 The tag stores the state on a "stack" so that you can return it it later using the 'restore' tag.
@@ -477,7 +488,7 @@ settings were before that change (without having to know or think about what the
 
 ### restore
 
-Restore the latest state that was stored.
+Restore the latest state that was stored
 
 The 'restore' tag restores the state (settings) that were stored with the tag 'state',
 and also removes those settings from the stack of states.
@@ -558,27 +569,70 @@ into a separate tag definition (in an inclusion).
 
 ### include
 
+Include an extension
 
 
-### inclusion
+See the description of extensions.
+
+
+### extension
+
+Declare name of extension
+
+Extensions are files that extend your list of available tags. An extension file must start with
+the 'extension' tag to give the extension a name/title, and before you can use it from other
+files (with the 'include' tag) you must add it in the 'Extensions' menu.
+
+To define a tag in an extension, use the 'def' tag and its corresponding end-tag '/def'.
+
+Extensions can contain two other kinds of definitions Ð using 'sub' and 'main'. The difference
+between tags defined using 'sub' and 'def' is that 'sub'-tags do not appear in the left-hand menu.
+An extension can contain at the most one 'main' tag. This tag has no parameters and is evaluated
+first thing when you include the extension.
+
+Note that the 'include' tag can be used in extensions.
 
 
 ### def
 
+Define a tag
+
+This tag is used inside extensions to define new tags. The tag takes one or more parameters:
+the name of the new tag optionally followed by the titles of any parameters for the tag.
+
+The values of the parameters can be accessed inside the body of the definition (between 'def'
+and '/def') with ^1 for the first parameter, ^2 for the second parameter etc.
+
 
 ### /def
+
+End tag definition
 
 
 ### sub
 
+Define an "internal" tag
+
+The only difference between using 'def' and 'sub' is that tags defined using 'sub' do not
+appear in the left-hand menu.
+
 
 ### /sub
+
+End tag definition
 
 
 ### main
 
+Define "main" of an extension
+
+The main block has no parameters and is evaluated when you include the extension.
+It can be used for default settings and declaring variables, for example.
+
 
 ### /main
+
+End main definition.
 
 
 ### template
@@ -598,6 +652,10 @@ first line to give it a name.
 
 
 ### loop
+
+Insert a loop
+
+Loop over some range of numbers or the content of a variable of type 'Map'.
 
 
 ### whitespace

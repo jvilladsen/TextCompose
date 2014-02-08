@@ -54,7 +54,6 @@ class State extends Cloneable {
 
   var bckgColorUse = false // background
   var bckgColor = "RGB 255 240 0"
-  var bckgColorPadding = "2, 2, 2, 1.5"
 
   var imgScaleWidth = new DecoratedNumber("100%", "image scale width")
   var imgScaleHeight = new DecoratedNumber("100%", "image scale height")
@@ -131,7 +130,7 @@ class State extends Cloneable {
   updateActualUnderline()
 
   var actualBckgColor = new BaseColor(255, 240, 0)
-  var actualBckgColorPadding = new Padding(2, 2, 2, 1.5f)
+  var actualHighlightSize = new Padding(2, 2, 2, 1.5f)
 
   var actualImgBdrColor = new BaseColor(0, 70, 245)
 
@@ -318,9 +317,8 @@ class State extends Cloneable {
     actualBckgColor = new BaseColor(ColorFunctions.Red, ColorFunctions.Green, ColorFunctions.Blue)
   }
 
-  def setBckgColorPadding(p: String, l: Float, r: Float, t: Float, b: Float) {
-    bckgColorPadding = p
-    actualBckgColorPadding = new Padding(l, r, t, b)
+  def setHighlightSize(l: Float, r: Float, t: Float, b: Float) {
+    actualHighlightSize = new Padding(l, r, t, b)
   }
 
   def setImgBdrColor() {
