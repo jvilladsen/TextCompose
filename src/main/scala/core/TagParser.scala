@@ -25,11 +25,11 @@ class TagParser(
   firstSyntaxName: String,
   firstSyntaxCondition: SourceElement => Boolean,
   descriptionOfAlternatives: String,
-  effect: (TagParser, SourceElement, SourceProcessor) => Unit) {
+  effect: SourceProcessor => (TagParser, SourceElement) => Unit) {
 
   def this(
       tagName: String,
-      effect: (TagParser, SourceElement, SourceProcessor) => Unit) = this(tagName, "", _ => true, "", effect)
+      effect: SourceProcessor => (TagParser, SourceElement) => Unit) = this(tagName, "", _ => true, "", effect)
 
   /*
    * Some tags accept different kinds of parameter sets.
@@ -133,7 +133,7 @@ class TagParser(
   }
 
   def evaluate(se: SourceElement, proc: SourceProcessor) {
-    effect(this, se, proc)
+    effect(proc)(this, se)
   }
   
   def apply(se: SourceElement) {

@@ -25,19 +25,19 @@ object Parsers {
   private val parser = new HashMap[String, TagParser]
   private val optionalPercentage = scala.collection.immutable.List("", "%")
 
-  private val empty = new TagParser("empty", (p, s, sp) => ())
+  private val empty = new TagParser("empty", sp => (p, s) => ())
 
   def getParser(tagName: String) = if (parser.isDefinedAt(tagName)) parser(tagName) else empty
 
-  parser("font") = (new TagParser("font", (p, s, sp) => sp.fontTag(p, s))).
+  parser("font") = (new TagParser("font", sp => sp.fontTag)).
     addString("font name", true).
     addInt("encoding", false).
     addFlag("local")
 
-  parser("size") = (new TagParser("size", (p, s, sp) => sp.sizeTag(p, s))).
+  parser("size") = (new TagParser("size", sp => sp.sizeTag)).
     addDecNum("font size", true, Sign.asDelta, optionalPercentage)
 
-  parser("face") = (new TagParser("face", (p, s, sp) => sp.faceTag(p, s))).
+  parser("face") = (new TagParser("face", sp => sp.faceTag)).
     addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic"))
 
   val colorScopes = List("text", "underline", "highlight", "page", "frame", "border", "cell", "draw")
@@ -47,7 +47,7 @@ object Parsers {
     "HEX",
     se => se.NumberOfParameters > 2 && se.Parameters(2)(0) == '#', // hexadecimal color specification
     "Scope, and 'RGB' or 'HSL' followed either by three integers or by 6 hexadecimals prefixed a '#'.",
-    (p, s, sp) => sp.colorTag(p, s))).
+    sp => sp.colorTag)).
     addOptions("scope", true, colorScopes).
     addOptions("color system", true, List("RGB", "HSL")).
     addString("hexadecimal", true). // FIXME: temporary hack? - should be some new type?
@@ -71,7 +71,7 @@ object Parsers {
     se => se.NumberOfParameters == 0,
     "Use no parameters to turn on highlighting, one number with size of highlighting, " +
       "or four numbers with size in all four directions.",
-    (p, s, sp) => sp.highlightTag(p, s))).
+    sp => sp.highlightTag)).
     addSyntax("size", se => se.NumberOfParameters == 1).
     addFloat("size", true).
     addSyntax("size x4", se => se.NumberOfParameters == 4).
@@ -80,28 +80,28 @@ object Parsers {
     addFloat("top", true).
     addFloat("bottom", true)
 
-  parser("letter-spacing") = (new TagParser("letter-spacing", (p, s, sp) => sp.letterspacingTag(p, s))).
+  parser("letter-spacing") = (new TagParser("letter-spacing", sp => sp.letterspacingTag)).
     addDecNum("spacing", true, Sign.disallow, optionalPercentage) // really disallow?
 
-  parser("scale-letter") = (new TagParser("scale-letter", (p, s, sp) => sp.scaleLetterTag(p, s))).
+  parser("scale-letter") = (new TagParser("scale-letter", sp => sp.scaleLetterTag)).
     addFloat("scale", true)
 
-  parser("new") = (new TagParser("new", (p, s, sp) => sp.newTag(p, s))).
+  parser("new") = (new TagParser("new", sp => sp.newTag)).
     addOptions("level", true, List("line", "paragraph", "column", "page")).
     addFloat("limit", false)
 
-  parser("paragraph-space") = (new TagParser("paragraph-space", (p, s, sp) => sp.paragraphSpaceTag(p, s))).
+  parser("paragraph-space") = (new TagParser("paragraph-space", sp => sp.paragraphSpaceTag)).
     addDecNum("space before paragraph", true, Sign.disallow, optionalPercentage).
     addDecNum("space after paragraph", true, Sign.disallow, optionalPercentage)
 
-  parser("whitespace") = (new TagParser("whitespace", (p, s, sp) => sp.whitespaceTag(p, s))).
+  parser("whitespace") = (new TagParser("whitespace", sp => sp.whitespaceTag)).
     addOptions("keep or trim", true, List("keep", "trim"))
 
-  parser("align") = (new TagParser("align", (p, s, sp) => sp.alignTag(p, s))).
+  parser("align") = (new TagParser("align", sp => sp.alignTag)).
     addOptions("scope", true, List("text", "image", "cell")).
     addOptions("alignment", true, List("left", "center", "right", "full"))
 
-  parser("document") = (new TagParser("document", (p, s, sp) => sp.documentTag(p, s))).
+  parser("document") = (new TagParser("document", sp => sp.documentTag)).
     addOptions("name of property", true, List("title", "author", "subject", "keywords")).
     addString("value", true)
 
@@ -118,26 +118,26 @@ object Parsers {
     "standard",
     se => se.NumberOfParameters == 1,
     "Standard page size (Letter, Leagal, A4,...) or page width and height",
-    (p, s, sp) => sp.pageSizeTag(p, s))).
+    sp => sp.pageSizeTag)).
     addOptions("standard size", true, standardPageSizes).
     addSyntax("custom", se => se.NumberOfParameters > 1).
     addFloat("width", true).
     addFloat("height", true)
 
-  parser("margins") = (new TagParser("margins", (p, s, sp) => sp.marginsTag(p, s))).
+  parser("margins") = (new TagParser("margins", sp => sp.marginsTag)).
     addFloat("left margin", true).
     addFloat("right margin", true).
     addFloat("top margin", true).
     addFloat("bottom margin", true)
 
-  parser("orientation") = (new TagParser("orientation", (p, s, sp) => sp.orientationTag(p, s))).
+  parser("orientation") = (new TagParser("orientation", sp => sp.orientationTag)).
     addOptions("orientation", true, List("portrait", "landscape"))
 
-  parser("columns") = (new TagParser("columns", (p, s, sp) => sp.columnsTag(p, s))).
+  parser("columns") = (new TagParser("columns", sp => sp.columnsTag)).
     addInt("number of columns", true).
     addFloat("size of gutter", true)
 
-  parser("view") = (new TagParser("view", (p, s, sp) => sp.viewTag(p, s))).
+  parser("view") = (new TagParser("view", sp => sp.viewTag)).
     addOptions("page layout", true, List("single page", "one column",
       "two column left", "two column right", "two page left", "two page right")).
     addOptions("page mode", true, List("none", "outline", "thumbnails",
@@ -148,7 +148,7 @@ object Parsers {
     "Str/Int",
     se => se.NumberOfParameters <= 2 || se.NumberOfParameters > 2 && se.Parameters(2) == "converge",
     "Variable name followed by Str or Int, optionally followed by Str or Int (for maps), optionally followed by 'converge'",
-    (p, s, sp) => sp.varTag(p, s))).
+    sp => sp.varTag)).
     addString("name", true).
     addOptions("type", true, List("Str", "Int")).
     addFlag("converge").
@@ -165,7 +165,7 @@ object Parsers {
     "Str/Int",
     se => se.NumberOfParameters == 1,
     "Variable name - followed by key in the case of Map variables",
-    (p, s, sp) => sp.setTag(p, s))).
+    sp => sp.setTag)).
     addString("name", true).
     addSyntax(
       "Map",
@@ -178,7 +178,7 @@ object Parsers {
     "Str/Int",
     se => se.NumberOfParameters == 1,
     "Variable name - followed by key in the case of Map variables",
-    (p, s, sp) => sp.addTag(p, s))).
+    sp => sp.addTag)).
     addString("name", true).
     addSyntax(
       "Map",
@@ -191,7 +191,7 @@ object Parsers {
     "Str/Int",
     se => se.NumberOfParameters == 1,
     "Variable name - followed by key in the case of Map variables",
-    (p, s, sp) => sp.showTag(p, s))).
+    sp => sp.showTag)).
     addString("name", true).
     addSyntax(
       "Map",
@@ -199,7 +199,7 @@ object Parsers {
     addString("name", true).
     addString("key", true)
 
-  parser("image") = (new TagParser("image", (p, s, sp) => sp.imageTag(p, s))).
+  parser("image") = (new TagParser("image", sp => sp.imageTag)).
     addString("image file name", true).
     addFlag("cache").
     addFlag("under").
@@ -207,15 +207,15 @@ object Parsers {
     addDecNum("image y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM")).
     addDecNum("image opacity percentage", false, Sign.disallow, List("%"))
 
-  parser("scale-image") = (new TagParser("scale-image", (p, s, sp) => sp.scaleImageTag(p, s))).
+  parser("scale-image") = (new TagParser("scale-image", sp => sp.scaleImageTag)).
     addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C")).
     addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
 
-  parser("fit-image") = (new TagParser("fit-image", (p, s, sp) => sp.fitImageTag(p, s))).
+  parser("fit-image") = (new TagParser("fit-image", sp => sp.fitImageTag)).
     addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C")).
     addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
 
-  parser("rotate-image") = (new TagParser("rotate-image", (p, s, sp) => sp.rotateImageTag(p, s))).
+  parser("rotate-image") = (new TagParser("rotate-image", sp => sp.rotateImageTag)).
     addFloat("angle in degrees", true)
 
   parser("frame") = (new TagParser(
@@ -223,57 +223,57 @@ object Parsers {
     "on/off",
     se => se.NumberOfParameters == 1 && (se.Parameters(0) == "on" || se.Parameters(0) == "off"),
     "Either 'on', 'off', or the width of the image frame",
-    (p, s, sp) => sp.frameTag(p, s))).
+    sp => sp.frameTag)).
     addOptions("on/off", true, List("on", "off")).
     addSyntax("width", se => true).
     addFloat("width", true)
 
-  parser("format-list") = (new TagParser("format-list", (p, s, sp) => sp.formatListTag(p, s))).
+  parser("format-list") = (new TagParser("format-list", sp => sp.formatListTag)).
     addDecNum("list indentation", true, Sign.allow, optionalPercentage).
     addDecNum("list symbol indentation", true, Sign.allow, optionalPercentage).
     addString("format", true)
 
-  parser("list") = (new TagParser("list", (p, s, sp) => sp.listTag(p, s))).
+  parser("list") = (new TagParser("list", sp => sp.listTag)).
     addFlag("continue")
 
-  parser("table") = (new TagParser("table", (p, s, sp) => sp.tableTag(p, s))).
+  parser("table") = (new TagParser("table", sp => sp.tableTag)).
     addInt("number of columns", true).
     addDecNum("width", true, Sign.disallow, optionalPercentage).
     addString("relative column widths", true)
 
-  parser("cell") = (new TagParser("cell", (p, s, sp) => sp.cellTag(p, s))).
+  parser("cell") = (new TagParser("cell", sp => sp.cellTag)).
     addDecNum("column span", false, Sign.disallow, List("C")). // NOT USED - how to use it?
     addDecNum("row span", false, Sign.disallow, List("R")) // FIXME: test this carefully!
 
-  parser("draw") = (new TagParser("draw", (p, s, sp) => sp.drawTag(p, s))).
+  parser("draw") = (new TagParser("draw", sp => sp.drawTag)).
     addFlag("under")
 
-  parser("opacity") = (new TagParser("opacity", (p, s, sp) => sp.opacityTag(p, s))).
+  parser("opacity") = (new TagParser("opacity", sp => sp.opacityTag)).
     addFloat("opacity", true)
 
-  parser("blend") = (new TagParser("blend", (p, s, sp) => sp.blendModeTag(p, s))).
+  parser("blend") = (new TagParser("blend", sp => sp.blendModeTag)).
     addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
       "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"))
 
-  parser("Roman") = (new TagParser("Roman", (p, s, sp) => sp.romanTag(p, s))).
+  parser("Roman") = (new TagParser("Roman", sp => sp.romanTag)).
     addOptions("upper or lower case", true, List("U", "L")).
     addInt("number", true)
 
-  parser("insert") = (new TagParser("insert", (p, s, sp) => sp.insertTag(p, s))).
+  parser("insert") = (new TagParser("insert", sp => sp.insertTag)).
     addString("file name", true)
 
-  parser("bookmark") = (new TagParser("bookmark", (p, s, sp) => sp.bookmarkTag(p, s))).
+  parser("bookmark") = (new TagParser("bookmark", sp => sp.bookmarkTag)).
     addString("title", true).
     addInt("level", false).
     addString("name", false)
 
-  parser("label") = (new TagParser("label", (p, s, sp) => sp.labelTag(p, s))).
+  parser("label") = (new TagParser("label", sp => sp.labelTag)).
     addString("name", true)
 
-  parser("ref") = (new TagParser("ref", (p, s, sp) => sp.refTag(p, s))).
+  parser("ref") = (new TagParser("ref", sp => sp.refTag)).
     addString("name", true)
 
-  parser("replace") = (new TagParser("replace", (p, s, sp) => sp.replaceTag(p, s))).
+  parser("replace") = (new TagParser("replace", sp => sp.replaceTag)).
     addOptions("level", true, List("source", "text")).
     addInt("priority", true).
     addString("id", true).
@@ -287,7 +287,7 @@ object Parsers {
     "range",
     se => se.NumberOfParameters >= 4,
     "either three numbers (from to step) and body, or map variable name followed by \"sort by\" 'key' or 'value' and body",
-    (p, s, sp) => sp.loopTag(p, s))).
+    sp => sp.loopTag)).
     addInt("from", true).
     addInt("to", true).
     addInt("step", true).
@@ -297,27 +297,27 @@ object Parsers {
     addOptions("sort", true, List("key", "value")).
     addString("body", true)
 
-  parser("include") = (new TagParser("include", (p, s, sp) => sp.includeTag(p, s))).
+  parser("include") = (new TagParser("include", sp => sp.includeTag)).
     addString("name of extension", true)
 
-  parser("encrypt") = (new TagParser("encrypt", (p, s, sp) => sp.encryptTag(p, s))).
+  parser("encrypt") = (new TagParser("encrypt", sp => sp.encryptTag)).
     addString("user password", true).
     addString("owner password", true).
     addFlags("permissions", true, List("print", "degPrint", "modify",
       "assembly", "copy", "accessibility", "annotate", "fill"))
 
-  parser("line-cap") = (new TagParser("line-cap", (p, s, sp) => sp.lineCapTag(p, s))).
+  parser("line-cap") = (new TagParser("line-cap", sp => sp.lineCapTag)).
     addOptions("shape", true, List("butt", "round", "square"))
 
-  parser("line-dash") = (new TagParser("line-dash", (p, s, sp) => sp.lineDashTag(p, s))).
+  parser("line-dash") = (new TagParser("line-dash", sp => sp.lineDashTag)).
     addString("numbers", true).
     addFloat("offset", true)
 
-  parser("move-to") = (new TagParser("move-to", (p, s, sp) => sp.moveToTag(p, s))).
+  parser("move-to") = (new TagParser("move-to", sp => sp.moveToTag)).
     addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R")).
     addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
 
-  parser("line-to") = (new TagParser("line-to", (p, s, sp) => sp.lineToTag(p, s))).
+  parser("line-to") = (new TagParser("line-to", sp => sp.lineToTag)).
     addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R")).
     addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
 
