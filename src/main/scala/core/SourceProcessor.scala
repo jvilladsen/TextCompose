@@ -1007,48 +1007,51 @@ class SourceProcessor(
   }
 
   private def processTag(element: SourceElement) {
+    
+    val parser = Parsers.getParser(element.TagName)
+    
     element.TagName match {
       // FONT
-      case "font"             => fontTag(Parsers.font, element)
-      case "size"             => sizeTag(Parsers.size, element)
-      case "face"             => faceTag(Parsers.face, element)
-      case "color"            => colorTag(Parsers.color, element)
+      case "font"             => fontTag(parser, element)
+      case "size"             => sizeTag(parser, element)
+      case "face"             => faceTag(parser, element)
+      case "color"            => colorTag(parser, element)
       case "underline"        => underlineTag(element)
-      case "highlight"        => highlightTag(Parsers.highlight, element)
+      case "highlight"        => highlightTag(parser, element)
       case "/highlight"       => highlightEndTag()
-      case "letter-spacing"   => letterspacingTag(Parsers.letterspacing, element)
-      case "scale-letter"     => scaleLetterTag(Parsers.scaleLetter, element)
+      case "letter-spacing"   => letterspacingTag(parser, element)
+      case "scale-letter"     => scaleLetterTag(parser, element)
       // SPACE
       case "height"           => lineHeightTag(element)
-      case "paragraph-space"  => paragraphSpaceTag(Parsers.paragraphSpace, element)
+      case "paragraph-space"  => paragraphSpaceTag(parser, element)
       case "paragraph-indent" => paragraphIndentTag(element)
-      case "new"              => newTag(Parsers.newPlace, element)
+      case "new"              => newTag(parser, element)
       // POSITION
-      case "align"            => alignTag(Parsers.align, element)
+      case "align"            => alignTag(parser, element)
       case "indent"           => indentTag(element)
       case "rise"             => riseTag(element)
       case "position"         => positionTag(element)
       // DOCUMENT
-      case "document"         => documentTag(Parsers.document, element)
-      case "page-size"        => pageSizeTag(Parsers.pageSize, element)
-      case "margins"          => marginsTag(Parsers.margins, element)
-      case "orientation"      => orientationTag(Parsers.orientation, element)
-      case "columns"          => columnsTag(Parsers.columns, element)
-      case "view"             => viewTag(Parsers.view, element)
-      case "encrypt"          => encryptTag(Parsers.encrypt, element)
+      case "document"         => documentTag(parser, element)
+      case "page-size"        => pageSizeTag(parser, element)
+      case "margins"          => marginsTag(parser, element)
+      case "orientation"      => orientationTag(parser, element)
+      case "columns"          => columnsTag(parser, element)
+      case "view"             => viewTag(parser, element)
+      case "encrypt"          => encryptTag(parser, element)
       // IMAGE
-      case "image"            => imageTag(Parsers.image, element)
-      case "scale-image"      => scaleImage(Parsers.scaleImage, element)
-      case "fit-image"        => fitImage(Parsers.fitImage, element)
-      case "rotate-image"     => rotateImage(Parsers.rotateImage, element)
-      case "frame"            => frameTag(Parsers.frame, element)
+      case "image"            => imageTag(parser, element)
+      case "scale-image"      => scaleImage(parser, element)
+      case "fit-image"        => fitImage(parser, element)
+      case "rotate-image"     => rotateImage(parser, element)
+      case "frame"            => frameTag(parser, element)
       // LIST
-      case "format-list"      => formatListTag(Parsers.formatList, element)
-      case "list"             => listTag(Parsers.list, element)
+      case "format-list"      => formatListTag(parser, element)
+      case "list"             => listTag(parser, element)
       case "item"             => itemTag()
       case "/list"            => listEndTag()
       // TABLE
-      case "table"            => tableTag(Parsers.table, element)
+      case "table"            => tableTag(parser, element)
       case "cell"             => cellTag(element)
       case "/table"           => tableEndTag()
       case "cell-padding"     => cellPaddingTag(element)
@@ -1056,35 +1059,35 @@ class SourceProcessor(
       case "border-color"     => borderColorTag(element)
       // DRAW
       case "line-width"       => lineWidthTag(element)
-      case "line-cap"         => lineCapTag(Parsers.lineCap, element)
-      case "line-dash"        => lineDashTag(Parsers.lineDash, element)
-      case "move-to"          => moveToTag(Parsers.moveTo, element)
-      case "line-to"          => lineToTag(Parsers.lineTo, element)
-      case "draw"             => drawTag(Parsers.draw, element)
+      case "line-cap"         => lineCapTag(parser, element)
+      case "line-dash"        => lineDashTag(parser, element)
+      case "move-to"          => moveToTag(parser, element)
+      case "line-to"          => lineToTag(parser, element)
+      case "draw"             => drawTag(parser, element)
       // GRAPHICS MODE
-      case "blend"            => blendModeTag(Parsers.blend, element)
-      case "opacity"          => opacityTag(Parsers.opacity, element)
+      case "blend"            => blendModeTag(parser, element)
+      case "opacity"          => opacityTag(parser, element)
       // INSERT
-      case "insert"           => insertTag(Parsers.insert, element)
+      case "insert"           => insertTag(parser, element)
       case "char"             => charTag(element)
-      case "Roman"            => romanTag(Parsers.roman, element)
-      case "bookmark"         => bookmarkTag(Parsers.bookmark, element)
-      case "label"            => labelTag(Parsers.label, element)
-      case "ref"              => refTag(Parsers.ref, element)
+      case "Roman"            => romanTag(parser, element)
+      case "bookmark"         => bookmarkTag(parser, element)
+      case "label"            => labelTag(parser, element)
+      case "ref"              => refTag(parser, element)
       case "/ref"             => refEndTag()
       // STATE
       case "store"            => document.storeStateToStack()
       case "restore"          => document.restoreStateFromStack()
       case "reset"            => document.resetState()
       // VARIABLE
-      case "var"              => varTag(Parsers.variable, element)
-      case "set"              => setTag(Parsers.set, element)
+      case "var"              => varTag(parser, element)
+      case "set"              => setTag(parser, element)
       case "/set"             => None // Handled in handleCopying
-      case "add"              => addTag(Parsers.add, element)
+      case "add"              => addTag(parser, element)
       case "/add"             => None // Handled in handleCopying
-      case "show"             => showTag(Parsers.show, element)
+      case "show"             => showTag(parser, element)
       // EXTENSION
-      case "include"          => includeTag(Parsers.include, element)
+      case "include"          => includeTag(parser, element)
       case "extension"        => extensionTag()
       case "def"              => defTag()
       case "sub"              => subTag()
@@ -1095,9 +1098,9 @@ class SourceProcessor(
       case "template"         => None
       // ADVANCED
       case "inject"           => injectionTag(element)
-      case "replace"          => replaceTag(Parsers.replace, element)
-      case "loop"             => loopTag(Parsers.loop, element)
-      case "whitespace"       => whitespaceTag(Parsers.whitespace, element)
+      case "replace"          => replaceTag(parser, element)
+      case "loop"             => loopTag(parser, element)
+      case "whitespace"       => whitespaceTag(parser, element)
       case _ => {
         if (extensions.UserDefinedTag(element.TagName)) {
           handleUserTag(element)

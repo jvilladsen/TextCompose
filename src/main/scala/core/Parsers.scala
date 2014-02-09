@@ -18,84 +18,91 @@
 
 package writesetter.core
 
+import scala.collection.mutable.HashMap
+
 object Parsers {
 
-  val optionalPercentage = scala.collection.immutable.List("", "%")
+  private val parser = new HashMap[String, TagParser]
+  private val optionalPercentage = scala.collection.immutable.List("", "%")
 
-  val font = new TagParser("font")
-  font.addString("font name", true)
-  font.addInt("encoding", false)
-  font.addFlag("local")
+  private val empty = new TagParser("empty")
+  
+  def getParser(tagName: String) = if (parser.isDefinedAt(tagName)) parser(tagName) else empty
+  
+  parser("font") = new TagParser("font")
+  parser("font").addString("font name", true)
+  parser("font").addInt("encoding", false)
+  parser("font").addFlag("local")
 
-  val size = new TagParser("size")
-  size.addDecNum("font size", true, Sign.asDelta, optionalPercentage)
+  parser("size") = new TagParser("size")
+  parser("size").addDecNum("font size", true, Sign.asDelta, optionalPercentage)
 
-  val face = new TagParser("face")
-  face.addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic"))
+  parser("face") = new TagParser("face")
+  parser("face").addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic"))
 
-  val color = new TagParser(
+  parser("color") = new TagParser(
     "color",
     "HEX",
     se => se.NumberOfParameters > 2 && se.Parameters(2)(0) == '#', // hexadecimal color specification
     "Scope, and 'RGB' or 'HSL' followed either by three integers or by 6 hexadecimals prefixed a '#'.")
   val colorScopes = List("text", "underline", "highlight", "page", "frame", "border", "cell", "draw")
-  color.addOptions("scope", true, colorScopes)
-  color.addOptions("color system", true, List("RGB", "HSL"))
-  color.addString("hexadecimal", true) // FIXME: temporary hack? - should be some new type?
-  color.addSyntax("RGB", se => se.NumberOfParameters > 1 && se.Parameters(1) == "RGB")
-  color.addOptions("scope", true, colorScopes)
-  color.addOptions("color system", true, List("RGB", "HSL")) // Looks clunky in this contex, but gives simple model.
-  color.addInt("red", true)
-  color.addInt("green", true)
-  color.addInt("blue", true)
-  color.addSyntax("HSL", se => se.NumberOfParameters > 1 && se.Parameters(1) == "HSL")
-  color.addOptions("scope", true, colorScopes)
-  color.addOptions("color system", true, List("RGB", "HSL"))
-  color.addInt("hue", true)
-  color.addInt("saturation", true)
-  color.addInt("lightness", true)
+  parser("color").addOptions("scope", true, colorScopes)
+  parser("color").addOptions("color system", true, List("RGB", "HSL"))
+  parser("color").addString("hexadecimal", true) // FIXME: temporary hack? - should be some new type?
+  parser("color").addSyntax("RGB", se => se.NumberOfParameters > 1 && se.Parameters(1) == "RGB")
+  parser("color").addOptions("scope", true, colorScopes)
+  parser("color").addOptions("color system", true, List("RGB", "HSL")) // Looks clunky in this contex, but gives simple model.
+  parser("color").addInt("red", true)
+  parser("color").addInt("green", true)
+  parser("color").addInt("blue", true)
+  parser("color").addSyntax("HSL", se => se.NumberOfParameters > 1 && se.Parameters(1) == "HSL")
+  parser("color").addOptions("scope", true, colorScopes)
+  parser("color").addOptions("color system", true, List("RGB", "HSL"))
+  parser("color").addInt("hue", true)
+  parser("color").addInt("saturation", true)
+  parser("color").addInt("lightness", true)
   // FIXME: add some direction flags for the 'border' as scope - consider extending the parser with notion of function to evaluate if a parameter is included or not.
 
-  val highlight = new TagParser(
+  parser("highlight") = new TagParser(
       "highlight",
       "on",
       se => se.NumberOfParameters == 0,
       "Use no parameters to turn on highlighting, one number with size of highlighting, " +
       "or four numbers with size in all four directions.")
-  highlight.addSyntax("size", se => se.NumberOfParameters == 1)
-  highlight.addFloat("size", true)
-  highlight.addSyntax("size x4", se => se.NumberOfParameters == 4)
-  highlight.addFloat("left", true)
-  highlight.addFloat("right", true)
-  highlight.addFloat("top", true)
-  highlight.addFloat("bottom", true)
+  parser("highlight").addSyntax("size", se => se.NumberOfParameters == 1)
+  parser("highlight").addFloat("size", true)
+  parser("highlight").addSyntax("size x4", se => se.NumberOfParameters == 4)
+  parser("highlight").addFloat("left", true)
+  parser("highlight").addFloat("right", true)
+  parser("highlight").addFloat("top", true)
+  parser("highlight").addFloat("bottom", true)
   
-  val letterspacing = new TagParser("letter-spacing")
-  letterspacing.addDecNum("spacing", true, Sign.disallow, optionalPercentage) // really disallow?
+  parser("letter-spacing") = new TagParser("letter-spacing")
+  parser("letter-spacing").addDecNum("spacing", true, Sign.disallow, optionalPercentage) // really disallow?
 
-  val scaleLetter = new TagParser("scale-letter")
-  scaleLetter.addFloat("scale", true)
+  parser("scale-letter") = new TagParser("scale-letter")
+  parser("scale-letter").addFloat("scale", true)
 
-  val newPlace = new TagParser("new")
-  newPlace.addOptions("level", true, List("line", "paragraph", "column", "page"))
-  newPlace.addFloat("limit", false)
+  parser("new") = new TagParser("new")
+  parser("new").addOptions("level", true, List("line", "paragraph", "column", "page"))
+  parser("new").addFloat("limit", false)
 
-  val paragraphSpace = new TagParser("paragraph-space")
-  paragraphSpace.addDecNum("space before paragraph", true, Sign.disallow, optionalPercentage)
-  paragraphSpace.addDecNum("space after paragraph", true, Sign.disallow, optionalPercentage)
+  parser("paragraph-space") = new TagParser("paragraph-space")
+  parser("paragraph-space").addDecNum("space before paragraph", true, Sign.disallow, optionalPercentage)
+  parser("paragraph-space").addDecNum("space after paragraph", true, Sign.disallow, optionalPercentage)
 
-  val whitespace = new TagParser("whitespace")
-  whitespace.addOptions("keep or trim", true, List("keep", "trim"))
+  parser("whitespace") = new TagParser("whitespace")
+  parser("whitespace").addOptions("keep or trim", true, List("keep", "trim"))
 
-  val align = new TagParser("align")
-  align.addOptions("scope", true, List("text", "image", "cell"))
-  align.addOptions("alignment", true, List("left", "center", "right", "full"))
+  parser("align") = new TagParser("align")
+  parser("align").addOptions("scope", true, List("text", "image", "cell"))
+  parser("align").addOptions("alignment", true, List("left", "center", "right", "full"))
 
-  val document = new TagParser("document")
-  document.addOptions("name of property", true, List("title", "author", "subject", "keywords"))
-  document.addString("value", true)
+  parser("document") = new TagParser("document")
+  parser("document").addOptions("name of property", true, List("title", "author", "subject", "keywords"))
+  parser("document").addString("value", true)
 
-  val pageSize = new TagParser(
+  parser("page-size") = new TagParser(
     "page-size",
     "standard",
     se => se.NumberOfParameters == 1,
@@ -107,200 +114,200 @@ object Parsers {
       "Crown Quarto", "Crown Octavo", "Large Crown Quarto", "Large Crown Octavo", "Demy Quarto", "Demy Octavo", "Royal Quarto", "Royal Octavo",
       "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "ID-1", "ID-2", "ID-3",
       "FLSA", "FLSE", "Small Paperback", "Penguin Small Paperback", "Penguin Large Paperback", "Note", "Custom...")
-  pageSize.addOptions("standard size", true, standardPageSizes)
-  pageSize.addSyntax("custom", se => se.NumberOfParameters > 1)
-  pageSize.addFloat("width", true)
-  pageSize.addFloat("height", true)
+  parser("page-size").addOptions("standard size", true, standardPageSizes)
+  parser("page-size").addSyntax("custom", se => se.NumberOfParameters > 1)
+  parser("page-size").addFloat("width", true)
+  parser("page-size").addFloat("height", true)
 
-  val margins = new TagParser("margins")
-  margins.addFloat("left margin", true)
-  margins.addFloat("right margin", true)
-  margins.addFloat("top margin", true)
-  margins.addFloat("bottom margin", true)
+  parser("margins") = new TagParser("margins")
+  parser("margins").addFloat("left margin", true)
+  parser("margins").addFloat("right margin", true)
+  parser("margins").addFloat("top margin", true)
+  parser("margins").addFloat("bottom margin", true)
 
-  val orientation = new TagParser("orientation")
-  orientation.addOptions("orientation", true, List("portrait", "landscape"))
+  parser("orientation") = new TagParser("orientation")
+  parser("orientation").addOptions("orientation", true, List("portrait", "landscape"))
 
-  val columns = new TagParser("columns")
-  columns.addInt("number of columns", true)
-  columns.addFloat("size of gutter", true)
+  parser("columns") = new TagParser("columns")
+  parser("columns").addInt("number of columns", true)
+  parser("columns").addFloat("size of gutter", true)
 
-  val view = new TagParser("view")
-  view.addOptions("page layout", true, List("single page", "one column",
+  parser("view") = new TagParser("view")
+  parser("view").addOptions("page layout", true, List("single page", "one column",
     "two column left", "two column right", "two page left", "two page right"))
-  view.addOptions("page mode", true, List("none", "outline", "thumbnails",
+  parser("view").addOptions("page mode", true, List("none", "outline", "thumbnails",
     "full screen", "optional content", "attachments"))
 
-  val variable = new TagParser(
+  parser("var") = new TagParser(
       "var",
       "Str/Int",
       se => se.NumberOfParameters <= 2 || se.NumberOfParameters > 2 && se.Parameters(2) == "converge",
       "Variable name followed by Str or Int, optionally followed by Str or Int (for maps), optionally followed by 'converge'")
-  variable.addString("name", true)
-  variable.addOptions("type", true, List("Str", "Int"))
-  variable.addFlag("converge")
-  variable.addSyntax(
+  parser("var").addString("name", true)
+  parser("var").addOptions("type", true, List("Str", "Int"))
+  parser("var").addFlag("converge")
+  parser("var").addSyntax(
       "Map",
       se => se.NumberOfParameters > 2 && se.Parameters(2) != "converge")
-  variable.addString("name", true)
-  variable.addOptions("key type", true, List("Str", "Int"))
-  variable.addOptions("value type", true, List("Str", "Int"))
-  variable.addFlag("converge")
+  parser("var").addString("name", true)
+  parser("var").addOptions("key type", true, List("Str", "Int"))
+  parser("var").addOptions("value type", true, List("Str", "Int"))
+  parser("var").addFlag("converge")
 
-  val set = new TagParser(
+  parser("set") = new TagParser(
       "set",
       "Str/Int",
       se => se.NumberOfParameters == 1,
       "Variable name - followed by key in the case of Map variables")
-  set.addString("name", true)
-  set.addSyntax(
+  parser("set").addString("name", true)
+  parser("set").addSyntax(
       "Map",
       se => se.NumberOfParameters == 2)
-  set.addString("name", true)
-  set.addString("key", true)
+  parser("set").addString("name", true)
+  parser("set").addString("key", true)
 
-  val add = new TagParser(
+  parser("add") = new TagParser(
       "add",
       "Str/Int",
       se => se.NumberOfParameters == 1,
       "Variable name - followed by key in the case of Map variables")
-  add.addString("name", true)
-  add.addSyntax(
+  parser("add").addString("name", true)
+  parser("add").addSyntax(
       "Map",
       se => se.NumberOfParameters == 2)
-  add.addString("name", true)
-  add.addString("key", true)
+  parser("add").addString("name", true)
+  parser("add").addString("key", true)
   
-  val show = new TagParser(
+  parser("show") = new TagParser(
       "show",
       "Str/Int",
       se => se.NumberOfParameters == 1,
       "Variable name - followed by key in the case of Map variables")
-  show.addString("name", true)
-  show.addSyntax(
+  parser("show").addString("name", true)
+  parser("show").addSyntax(
       "Map",
       se => se.NumberOfParameters == 2)
-  show.addString("name", true)
-  show.addString("key", true)
+  parser("show").addString("name", true)
+  parser("show").addString("key", true)
 
-  val image = new TagParser("image")
-  image.addString("image file name", true)
-  image.addFlag("cache")
-  image.addFlag("under")
-  image.addDecNum("image x-position", false, Sign.allow, List("", "L", "C", "R", "LM", "CM", "RM"))
-  image.addDecNum("image y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM"))
-  image.addDecNum("image opacity percentage", false, Sign.disallow, List("%"))
+  parser("image") = new TagParser("image")
+  parser("image").addString("image file name", true)
+  parser("image").addFlag("cache")
+  parser("image").addFlag("under")
+  parser("image").addDecNum("image x-position", false, Sign.allow, List("", "L", "C", "R", "LM", "CM", "RM"))
+  parser("image").addDecNum("image y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM"))
+  parser("image").addDecNum("image opacity percentage", false, Sign.disallow, List("%"))
 
-  val scaleImage = new TagParser("scale-image")
-  scaleImage.addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
-  scaleImage.addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
+  parser("scale-image") = new TagParser("scale-image")
+  parser("scale-image").addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
+  parser("scale-image").addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
 
-  val fitImage = new TagParser("fit-image")
-  fitImage.addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
-  fitImage.addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
+  parser("fit-image") = new TagParser("fit-image")
+  parser("fit-image").addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
+  parser("fit-image").addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
 
-  val rotateImage = new TagParser("rotate-image")
-  rotateImage.addFloat("angle in degrees", true)
+  parser("rotate-image") = new TagParser("rotate-image")
+  parser("rotate-image").addFloat("angle in degrees", true)
 
-  val frame = new TagParser(
+  parser("frame") = new TagParser(
       "frame",
       "on/off",
       se => se.NumberOfParameters == 1 && (se.Parameters(0) == "on" || se.Parameters(0) == "off"),
       "Either 'on', 'off', or the width of the image frame")
-  frame.addOptions("on/off", true, List("on", "off"))
-  frame.addSyntax("width", se => true)
-  frame.addFloat("width", true)
+  parser("frame").addOptions("on/off", true, List("on", "off"))
+  parser("frame").addSyntax("width", se => true)
+  parser("frame").addFloat("width", true)
   
-  val formatList = new TagParser("format-list")
-  formatList.addDecNum("list indentation", true, Sign.allow, optionalPercentage)
-  formatList.addDecNum("list symbol indentation", true, Sign.allow, optionalPercentage)
-  formatList.addString("format", true)
+  parser("format-list") = new TagParser("format-list")
+  parser("format-list").addDecNum("list indentation", true, Sign.allow, optionalPercentage)
+  parser("format-list").addDecNum("list symbol indentation", true, Sign.allow, optionalPercentage)
+  parser("format-list").addString("format", true)
 
-  val list = new TagParser("list")
-  list.addFlag("continue")
+  parser("list") = new TagParser("list")
+  parser("list").addFlag("continue")
 
-  val table = new TagParser("table")
-  table.addInt("number of columns", true)
-  table.addDecNum("width", true, Sign.disallow, optionalPercentage)
-  table.addString("relative column widths", true)
+  parser("table") = new TagParser("table")
+  parser("table").addInt("number of columns", true)
+  parser("table").addDecNum("width", true, Sign.disallow, optionalPercentage)
+  parser("table").addString("relative column widths", true)
 
-  val cell = new TagParser("cell")
-  cell.addDecNum("column span", false, Sign.disallow, List("C")) // NOT USED - how to use it?
-  cell.addDecNum("row span", false, Sign.disallow, List("R")) // FIXME: test this carefully!
+  parser("cell") = new TagParser("cell")
+  parser("cell").addDecNum("column span", false, Sign.disallow, List("C")) // NOT USED - how to use it?
+  parser("cell").addDecNum("row span", false, Sign.disallow, List("R")) // FIXME: test this carefully!
 
-  val draw = new TagParser("draw")
-  draw.addFlag("under")
+  parser("draw") = new TagParser("draw")
+  parser("draw").addFlag("under")
 
-  val opacity = new TagParser("opacity")
-  opacity.addFloat("opacity", true)
+  parser("opacity") = new TagParser("opacity")
+  parser("opacity").addFloat("opacity", true)
 
-  val blend = new TagParser("blend")
-  blend.addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
+  parser("blend") = new TagParser("blend")
+  parser("blend").addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
     "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"))
 
-  val roman = new TagParser("Roman")
-  roman.addOptions("upper or lower case", true, List("U", "L"))
-  roman.addInt("number", true)
+  parser("Roman") = new TagParser("Roman")
+  parser("Roman").addOptions("upper or lower case", true, List("U", "L"))
+  parser("Roman").addInt("number", true)
 
-  val insert = new TagParser("insert")
-  insert.addString("file name", true)
+  parser("insert") = new TagParser("insert")
+  parser("insert").addString("file name", true)
   
-  val bookmark = new TagParser("bookmark")
-  bookmark.addString("title", true)
-  bookmark.addInt("level", false)
-  bookmark.addString("name", false)
+  parser("bookmark") = new TagParser("bookmark")
+  parser("bookmark").addString("title", true)
+  parser("bookmark").addInt("level", false)
+  parser("bookmark").addString("name", false)
 
-  val label = new TagParser("label")
-  label.addString("name", true)
+  parser("label") = new TagParser("label")
+  parser("label").addString("name", true)
   
-  val ref = new TagParser("ref")
-  ref.addString("name", true)
+  parser("ref") = new TagParser("ref")
+  parser("ref").addString("name", true)
   
-  val replace = new TagParser("replace")
-  replace.addOptions("level", true, List("source", "text"))
-  replace.addInt("priority", true)
-  replace.addString("id", true)
-  replace.addString("replace", true)
-  replace.addString("by", true)
-  replace.addFlag("i")
-  replace.addFlag("t")
+  parser("replace") = new TagParser("replace")
+  parser("replace").addOptions("level", true, List("source", "text"))
+  parser("replace").addInt("priority", true)
+  parser("replace").addString("id", true)
+  parser("replace").addString("replace", true)
+  parser("replace").addString("by", true)
+  parser("replace").addFlag("i")
+  parser("replace").addFlag("t")
 
-  val loop = new TagParser(
+  parser("loop") = new TagParser(
       "loop",
       "range",
       se => se.NumberOfParameters >= 4,
       "either three numbers (from to step) and body, or map variable name followed by \"sort by\" 'key' or 'value' and body")
-  loop.addInt("from", true)
-  loop.addInt("to", true)
-  loop.addInt("step", true)
-  loop.addString("body", true)
-  loop.addSyntax("map", se => se.NumberOfParameters < 4)
-  loop.addString("variable", true)
-  loop.addOptions("sort", true,List("key", "value"))
-  loop.addString("body", true)
+  parser("loop").addInt("from", true)
+  parser("loop").addInt("to", true)
+  parser("loop").addInt("step", true)
+  parser("loop").addString("body", true)
+  parser("loop").addSyntax("map", se => se.NumberOfParameters < 4)
+  parser("loop").addString("variable", true)
+  parser("loop").addOptions("sort", true,List("key", "value"))
+  parser("loop").addString("body", true)
   
-  val include = new TagParser("include")
-  include.addString("name of extension", true)
+  parser("include") = new TagParser("include")
+  parser("include").addString("name of extension", true)
 
-  val encrypt = new TagParser("encrypt")
-  encrypt.addString("user password", true)
-  encrypt.addString("owner password", true)
-  encrypt.addFlags("permissions", true, List("print", "degPrint", "modify",
+  parser("encrypt") = new TagParser("encrypt")
+  parser("encrypt").addString("user password", true)
+  parser("encrypt").addString("owner password", true)
+  parser("encrypt").addFlags("permissions", true, List("print", "degPrint", "modify",
     "assembly", "copy", "accessibility", "annotate", "fill"))
 
-  val lineCap = new TagParser("line-cap")
-  lineCap.addOptions("shape", true, List("butt", "round", "square"))
+  parser("line-cap") = new TagParser("line-cap")
+  parser("line-cap").addOptions("shape", true, List("butt", "round", "square"))
 
-  val lineDash = new TagParser("line-dash")
-  lineDash.addString("numbers", true)
-  lineDash.addFloat("offset", true)
+  parser("line-dash") = new TagParser("line-dash")
+  parser("line-dash").addString("numbers", true)
+  parser("line-dash").addFloat("offset", true)
   
-  val moveTo = new TagParser("move-to")
-  moveTo.addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R"))
-  moveTo.addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
+  parser("move-to") = new TagParser("move-to")
+  parser("move-to").addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R"))
+  parser("move-to").addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
 
-  val lineTo = new TagParser("line-to")
-  lineTo.addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R"))
-  lineTo.addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
+  parser("line-to") = new TagParser("line-to")
+  parser("line-to").addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R"))
+  parser("line-to").addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
 
 }
