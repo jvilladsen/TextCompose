@@ -35,12 +35,12 @@ class SourceProcessor(
   private var keepWhitespace = false
   private var showingErrorMessage = false
 
-  private def whitespaceTag(parser: TagParser, se: SourceElement) {
+  def whitespaceTag(parser: TagParser, se: SourceElement) {
     parser(se)
     keepWhitespace = parser.getNextOption == "keep"
   }
 
-  private def varTag(parser: TagParser, se: SourceElement) {
+  def varTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
       case "Str/Int" => {
@@ -60,7 +60,7 @@ class SourceProcessor(
     }
   }
 
-  private def setTag(parser: TagParser, se: SourceElement) {
+  def setTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
       case "Str/Int" => {
@@ -78,7 +78,7 @@ class SourceProcessor(
     }
   }
 
-  private def addTag(parser: TagParser, se: SourceElement) {
+  def addTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
       case "Str/Int" => {
@@ -96,7 +96,7 @@ class SourceProcessor(
     }
   }
 
-  private def showTag(parser: TagParser, se: SourceElement) {
+  def showTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val variableName = parser.getNextString
     val value =
@@ -118,7 +118,7 @@ class SourceProcessor(
     keepWhitespace = originalKeepWhitespace
   }
 
-  private def replaceTag(parser: TagParser, se: SourceElement) {
+  def replaceTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.replacementRegister.add(
       parser.getNextOption, // source or text
@@ -130,7 +130,7 @@ class SourceProcessor(
       parser.getNextFlag("t")) // even apply to tags
   }
 
-  private def includeTag(parser: TagParser, se: SourceElement) {
+  def includeTag(parser: TagParser, se: SourceElement) {
     parser(se)
     extensions.addNewExtension(parser.getNextString, processingUnit)
     for ((message, unit) <- extensions.errorMessages) { showErrorMessage(message, unit) }
@@ -147,7 +147,7 @@ class SourceProcessor(
     extensions.cleanUpAfterReadingExtension
   }
 
-  private def encryptTag(parser: TagParser, se: SourceElement) {
+  def encryptTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.writer.setEncryption(
       parser.getNextString, // user password
@@ -157,7 +157,7 @@ class SourceProcessor(
 
   // Handle user defined tag
 
-  private def handleUserTag(se: SourceElement) {
+  def handleUserTag(se: SourceElement) {
     val tagLineNumber = extensions.TagDefinitions(se.TagName).lineNumber
     val defWithValues = extensions.TagDefinitions(se.TagName).GetDefinitionWithValues(se)
     processingUnit.addUserTag(se.TagName, tagLineNumber)
@@ -202,7 +202,7 @@ class SourceProcessor(
     showErrorMessage(message, " Found in " + unit.getSourceLocation)
   }
 
-  private def fontTag(parser: TagParser, se: SourceElement) {
+  def fontTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val fontTitle = parser.getNextString
     val encoding = if (parser.isNextInt) "Cp" + parser.getNextInt.toString else ""
@@ -210,27 +210,27 @@ class SourceProcessor(
     document.setFont(fontTitle)
   }
 
-  private def sizeTag(parser: TagParser, se: SourceElement) {
+  def sizeTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setFontSize(parser.getNextDecNum)
   }
 
-  private def letterspacingTag(parser: TagParser, se: SourceElement) {
+  def letterspacingTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setLetterSpacing(parser.getNextDecNum)
   }
 
-  private def scaleLetterTag(parser: TagParser, se: SourceElement) {
+  def scaleLetterTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setLetterScaling(parser.getNextFloat)
   }
 
-  private def faceTag(parser: TagParser, se: SourceElement) {
+  def faceTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setFontFace(parser.getNextOption)
   }
 
-  private def colorTag(parser: TagParser, se: SourceElement) {
+  def colorTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val scope = parser.getNextOption
     parser.getSyntax match {
@@ -250,7 +250,7 @@ class SourceProcessor(
     }
   }
 
-  private def underlineTag(se: SourceElement) {
+  def underlineTag(se: SourceElement) {
     if (se.NumberOfParameters == 1) {
       if (se.Parameters(0) == "on") {
         document.setUnderlineUse(true)
@@ -272,7 +272,7 @@ class SourceProcessor(
     }
   }
 
-  private def highlightTag(parser: TagParser, se: SourceElement) {
+  def highlightTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
       case "on" => document.setUseTextBackgroundColor(true)
@@ -290,11 +290,11 @@ class SourceProcessor(
     }
   }
 
-  private def highlightEndTag() {
+  def highlightEndTag() {
     document.setUseTextBackgroundColor(false)
   }
   
-  private def frameTag(parser: TagParser, se: SourceElement) {
+  def frameTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
       case "on/off" => {
@@ -308,19 +308,19 @@ class SourceProcessor(
     }
   }
 
-  private def riseTag(se: SourceElement) {
+  def riseTag(se: SourceElement) {
     se.hasNumberOfParameters(1, "The 'rise' tag takes one parameter: a number, possibly with decimals.")
     var DN = new DecoratedNumber("rise")
     DN.parse(se.Parameters(0))
     document.setRise(DN)
   }
 
-  private def alignTag(parser: TagParser, se: SourceElement) {
+  def alignTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setAlignment(parser.getNextOption, parser.getNextOption)
   }
 
-  private def indentTag(se: SourceElement) {
+  def indentTag(se: SourceElement) {
     se.hasNumberOfParameters(2, "The 'indent' tag takes two parameter: left/right and a number, possibly with +/- in front.")
     if (se.Parameters(0) == "left") {
       var DN = new DecoratedNumber("left indentation")
@@ -337,7 +337,7 @@ class SourceProcessor(
     }
   }
 
-  private def lineHeightTag(se: SourceElement) {
+  def lineHeightTag(se: SourceElement) {
     se.hasNumberOfParameters(1, "The 'height' tag takes one parameter, namely a decorated number.")
     var DN = new DecoratedNumber("height")
     DN.parse(se.Parameters(0))
@@ -345,7 +345,7 @@ class SourceProcessor(
     document.UpdateLineHeight(DN)
   }
 
-  private def insertTag(parser: TagParser, se: SourceElement) {
+  def insertTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val givenFileName = parser.getNextString
     val fileName = arguments.pathToReachablePath(givenFileName)
@@ -358,7 +358,7 @@ class SourceProcessor(
     }
   }
 
-  private def imageTag(parser: TagParser, se: SourceElement) {
+  def imageTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val fileName = parser.getNextString
     val useCache = parser.getNextFlag("cache")
@@ -395,52 +395,52 @@ class SourceProcessor(
     }
   }
 
-  private def scaleImage(parser: TagParser, se: SourceElement) {
+  def scaleImageTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setImageScale(parser.getNextDecNum, parser.getNextDecNum)
   }
 
-  private def fitImage(parser: TagParser, se: SourceElement) {
+  def fitImageTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setImageFit(parser.getNextDecNum, parser.getNextDecNum)
   }
 
-  private def rotateImage(parser: TagParser, se: SourceElement) {
+  def rotateImageTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setImageRotate(parser.getNextFloat)
   }
 
-  private def documentTag(parser: TagParser, se: SourceElement) {
+  def documentTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setProperty(
       parser.getNextOption,
       parser.getNextString)
   }
 
-  private def viewTag(parser: TagParser, se: SourceElement) {
+  def viewTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.writer.setViewerPreferences(parser.getNextOption, parser.getNextOption)
   }
 
-  private def extensionTag() {
+  def extensionTag() {
     throw new TagError("Building a document from an extension file? The 'extension' tag is used in the top of " +
       "extension files for specifying a name of the extension.")
   }
-  private def defTag() {
+  def defTag() {
     throw new TagError("The 'def' tag, used for defining new tags, can only be used in extensions. " +
       "Extensions are separate files with the 'extension' tag in the top. Before you can refer to " +
       "an extension, with the 'include' tag, you must add it by choosing 'Add' in the 'Extensions' menu.")
   }
-  private def subTag() {
+  def subTag() {
     throw new TagError("The 'sub' tag, used for defining new tags, can only be used in extensions. The only " +
       "difference between 'sub' and 'def' is that sub's do not appear in the tag menu.")
   }
-  private def mainTag() {
+  def mainTag() {
     throw new TagError("The 'main' tag, used for specifying stuff that should be inserted along with the " +
       "extension, can only be used in extensions.")
   }
 
-  private def marginsTag(parser: TagParser, se: SourceElement) {
+  def marginsTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setMargins(
       parser.getNextFloat,
@@ -449,7 +449,7 @@ class SourceProcessor(
       parser.getNextFloat)
   }
 
-  private def pageSizeTag(parser: TagParser, se: SourceElement) {
+  def pageSizeTag(parser: TagParser, se: SourceElement) {
 
     def processPaperSizeName(size: String): String = {
       val r = size.toUpperCase.replace(' ', '_')
@@ -475,17 +475,17 @@ class SourceProcessor(
     }
   }
 
-  private def orientationTag(parser: TagParser, se: SourceElement) {
+  def orientationTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setOrientation(parser.getNextOption)
   }
 
-  private def columnsTag(parser: TagParser, se: SourceElement) {
+  def columnsTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setColumn(parser.getNextInt, parser.getNextFloat)
   }
 
-  private def positionTag(se: SourceElement) {
+  def positionTag(se: SourceElement) {
     se.hasNumberOfParameters(2, 4, "The 'position' tag takes 2 to 4 parameters: x coordinate, y coordinate and, optionally, "
       + "an angle and 'under'. The x coordinate can be decorated by L, R or C; y with T, C or B, e.g. 0L 50T.")
 
@@ -500,7 +500,7 @@ class SourceProcessor(
     document.directlyAddPhrase(x, y, angle, under)
   }
 
-  private def borderColorTag(se: SourceElement) {
+  def borderColorTag(se: SourceElement) {
     ColorFunctions.DetermineRGB(se, 0)
     DirectionFunctions.Initialize
     if (se.NumberOfParameters == ColorFunctions.NextIndex + 1) {
@@ -513,7 +513,7 @@ class SourceProcessor(
     }
   }
 
-  private def borderWidthTag(se: SourceElement) {
+  def borderWidthTag(se: SourceElement) {
     // Border-width (0=no border)
     se.hasNumberOfParameters(1, 2, "The 'border-width' tag takes 1 or 2 parameters, namely the width of the border of " +
       "cells in tables. The second parameter is optional. It should be made up of any of the characters L R T B " +
@@ -526,7 +526,7 @@ class SourceProcessor(
     document.setCellBorderWidth(width)
   }
 
-  private def cellPaddingTag(se: SourceElement) {
+  def cellPaddingTag(se: SourceElement) {
     se.hasNumberOfParameters(1, 2, "The 'cell-padding' tag takes 1 or 2 parameters, namely the padding of cells in " +
       "tables. The second parameter is optional. It should be made up of any of the characters L R T B (left, " +
       "right top, bottom), e.g. 'LT' means apply the width to the left and top borders.")
@@ -538,16 +538,16 @@ class SourceProcessor(
     document.setCellPadding(padding)
   }
 
-  private def lineWidthTag(se: SourceElement) {
+  def lineWidthTag(se: SourceElement) {
     se.hasNumberOfParameters(1, "The 'line-width' tag takes 1 parameter, namely the width.")
     val width = NumberFunctions.getFloat(se.Parameters(0), "The line width")
     document.setLineWidth(width)
   }
-  private def lineCapTag(parser: TagParser, se: SourceElement) {
+  def lineCapTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setLineCap(parser.getNextOption)
   }
-  private def lineDashTag(parser: TagParser, se: SourceElement) {
+  def lineDashTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val pattern = ArrayBuffer(parser.getNextString.trim.split(' ') : _*)
     val patternNumbers = try {
@@ -558,37 +558,37 @@ class SourceProcessor(
     val phase = parser.getNextFloat
     document.setLineDash(patternNumbers, phase)
   }
-  private def moveToTag(parser: TagParser, se: SourceElement) {
+  def moveToTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.drawingMoveTo(parser.getNextDecNum, parser.getNextDecNum)
   }
-  private def lineToTag(parser: TagParser, se: SourceElement) {
+  def lineToTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.drawingLineTo(parser.getNextDecNum, parser.getNextDecNum)
   }
-  private def drawTag(parser: TagParser, se: SourceElement) {
+  def drawTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.drawingDraw(parser.getNextFlag)
   }
 
-  private def blendModeTag(parser: TagParser, se: SourceElement) {
+  def blendModeTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setBlendMode(parser.getNextOption)
   }
 
-  private def opacityTag(parser: TagParser, se: SourceElement) {
+  def opacityTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val so = parser.getNextFloat
     if (so < 0 || so > 100) throw new TagError("The stroke opacity must be between 0 and 100.")
     document.setStrokeOpacity(so)
   }
 
-  private def paragraphSpaceTag(parser: TagParser, se: SourceElement) {
+  def paragraphSpaceTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setParagraphSpace(parser.getNextDecNum, parser.getNextDecNum)
   }
 
-  private def paragraphIndentTag(se: SourceElement) {
+  def paragraphIndentTag(se: SourceElement) {
     se.hasNumberOfParameters(1, 2, "The tag 'paragraph-indent' takes one or two parameters: either the size of " +
       "indentation optionally followed by 'delay', or on/off.")
     if (se.Parameters(0) == "on") {
@@ -606,7 +606,7 @@ class SourceProcessor(
     }
   }
 
-  private def newTag(parser: TagParser, se: SourceElement) {
+  def newTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val level = parser.getNextOption
     val withLimit = parser.isNextFloat
@@ -614,7 +614,7 @@ class SourceProcessor(
     document.newTag(level, withLimit, limit)
   }
 
-  private def charTag(se: SourceElement) {
+  def charTag(se: SourceElement) {
     se.hasNumberOfParameters(1, 2, "The tag 'char' takes one (or two) parameter(s) namely the number of a character. " +
       "If two parameters are given, they are simply added first.")
     val number = try {
@@ -634,14 +634,14 @@ class SourceProcessor(
     document.AddText((number + number2).toChar.toString)
   }
 
-  private def romanTag(parser: TagParser, se: SourceElement) {
+  def romanTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.AddText(NumberFunctions.getRomanNumber(
       parser.getNextOption == "L",
       parser.getNextInt))
   }
 
-  private def bookmarkTag(parser: TagParser, se: SourceElement) {
+  def bookmarkTag(parser: TagParser, se: SourceElement) {
     // FIXME: breaking a rule here: it is possible to specify title and name without level in-between.
     // That is nice, but the tag dialog might not handle it.
     parser(se)
@@ -654,24 +654,24 @@ class SourceProcessor(
     document.bookmarks.setPendingBookmark(bookmarkTitle, bookmarkLevel, bookmarkName)
   }
 
-  private def labelTag(parser: TagParser, se: SourceElement) {
+  def labelTag(parser: TagParser, se: SourceElement) {
     // A label is a destination that you can jump to with the 'ref' tag.
     parser(se)
     document.bookmarks.setLabel(parser.getNextString)
   }
 
-  private def refTag(parser: TagParser, se: SourceElement) {
+  def refTag(parser: TagParser, se: SourceElement) {
     // Reference to a "destination" - either bookmark or label.
     parser(se)
     se.hasNumberOfParameters(1, "The tag 'ref' (reference) takes one parameter with the name of the destination (bookmark or label).")
     document.bookmarks.setReference(parser.getNextString)
   }
 
-  private def refEndTag() {
+  def refEndTag() {
     document.bookmarks.endReference()
   }
 
-  private def formatListTag(parser: TagParser, se: SourceElement) {
+  def formatListTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setListFormat(
       parser.getNextDecNum,
@@ -719,26 +719,26 @@ class SourceProcessor(
     document.addItemToList(listItem)
   }
 
-  private def listTag(parser: TagParser, se: SourceElement) {
+  def listTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.beforeEnteringListMode()
     if (document.isItemAwaitingAdd) addListItem()
     document.initiateList(parser.getNextFlag)
   }
 
-  private def itemTag() {
+  def itemTag() {
     if (!document.isListStarted) throw new TagError("A list must be started before you can add items.")
     if (document.isItemAwaitingAdd) addListItem()
     document.newListItem()
   }
 
-  private def listEndTag() {
+  def listEndTag() {
     if (!document.isListStarted) throw new TagError("Trying to end list, but no list has been started.")
     if (document.isItemAwaitingAdd) addListItem()
     document.addList()
   }
 
-  private def tableTag(parser: TagParser, se: SourceElement) {
+  def tableTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val columns = parser.getNextInt
     val width = parser.getNextDecNum
@@ -762,7 +762,7 @@ class SourceProcessor(
     document.initiateTable(columns, width, widthFloats)
   }
 
-  private def cellTag(se: SourceElement) {
+  def cellTag(parser: TagParser, se: SourceElement) { // FIXME: TAG PARSER NOT USED
     var columnSpan = 0
     var rowSpan = 0
     for (par <- se.Parameters) {
@@ -789,7 +789,7 @@ class SourceProcessor(
     document.newTableCell(columnSpan, rowSpan)
   }
 
-  private def tableEndTag() {
+  def tableEndTag() {
     if (!document.tableStarted) throw new TagError("No table has been started.")
 
     if (document.cellAwaitingAdd) {
@@ -801,7 +801,7 @@ class SourceProcessor(
     document.addTable()
   }
 
-  private def injectionTag(se: SourceElement) {
+  def injectionTag(se: SourceElement) {
     se.hasNumberOfParameters(2, "The 'injection' tag takes at least two parameters: injection point and content.")
     var point = se.Parameters(0)
     var content = se.Parameters(1)
@@ -809,7 +809,7 @@ class SourceProcessor(
   }
 
   // FIXME: There must be something we can factor out here:
-  private def loopTag(parser: TagParser, se: SourceElement) {
+  def loopTag(parser: TagParser, se: SourceElement) {
 
     def inlineTagHandler(
       inlineSource: String,
@@ -1012,82 +1012,82 @@ class SourceProcessor(
     
     element.TagName match {
       // FONT
-      case "font"             => fontTag(parser, element)
-      case "size"             => sizeTag(parser, element)
-      case "face"             => faceTag(parser, element)
-      case "color"            => colorTag(parser, element)
+      case "font"             => parser.evaluate(element, this)
+      case "size"             => parser.evaluate(element, this)
+      case "face"             => parser.evaluate(element, this)
+      case "color"            => parser.evaluate(element, this)
       case "underline"        => underlineTag(element)
-      case "highlight"        => highlightTag(parser, element)
+      case "highlight"        => parser.evaluate(element, this)
       case "/highlight"       => highlightEndTag()
-      case "letter-spacing"   => letterspacingTag(parser, element)
-      case "scale-letter"     => scaleLetterTag(parser, element)
+      case "letter-spacing"   => parser.evaluate(element, this)
+      case "scale-letter"     => parser.evaluate(element, this)
       // SPACE
       case "height"           => lineHeightTag(element)
-      case "paragraph-space"  => paragraphSpaceTag(parser, element)
+      case "paragraph-space"  => parser.evaluate(element, this)
       case "paragraph-indent" => paragraphIndentTag(element)
-      case "new"              => newTag(parser, element)
+      case "new"              => parser.evaluate(element, this)
       // POSITION
-      case "align"            => alignTag(parser, element)
+      case "align"            => parser.evaluate(element, this)
       case "indent"           => indentTag(element)
       case "rise"             => riseTag(element)
       case "position"         => positionTag(element)
       // DOCUMENT
-      case "document"         => documentTag(parser, element)
-      case "page-size"        => pageSizeTag(parser, element)
-      case "margins"          => marginsTag(parser, element)
-      case "orientation"      => orientationTag(parser, element)
-      case "columns"          => columnsTag(parser, element)
-      case "view"             => viewTag(parser, element)
-      case "encrypt"          => encryptTag(parser, element)
+      case "document"         => parser.evaluate(element, this)
+      case "page-size"        => parser.evaluate(element, this)
+      case "margins"          => parser.evaluate(element, this)
+      case "orientation"      => parser.evaluate(element, this)
+      case "columns"          => parser.evaluate(element, this)
+      case "view"             => parser.evaluate(element, this)
+      case "encrypt"          => parser.evaluate(element, this)
       // IMAGE
-      case "image"            => imageTag(parser, element)
-      case "scale-image"      => scaleImage(parser, element)
-      case "fit-image"        => fitImage(parser, element)
-      case "rotate-image"     => rotateImage(parser, element)
-      case "frame"            => frameTag(parser, element)
+      case "image"            => parser.evaluate(element, this)
+      case "scale-image"      => parser.evaluate(element, this)
+      case "fit-image"        => parser.evaluate(element, this)
+      case "rotate-image"     => parser.evaluate(element, this)
+      case "frame"            => parser.evaluate(element, this)
       // LIST
-      case "format-list"      => formatListTag(parser, element)
-      case "list"             => listTag(parser, element)
+      case "format-list"      => parser.evaluate(element, this)
+      case "list"             => parser.evaluate(element, this)
       case "item"             => itemTag()
       case "/list"            => listEndTag()
       // TABLE
-      case "table"            => tableTag(parser, element)
-      case "cell"             => cellTag(element)
+      case "table"            => parser.evaluate(element, this)
+      case "cell"             => parser.evaluate(element, this) //FIXME
       case "/table"           => tableEndTag()
       case "cell-padding"     => cellPaddingTag(element)
       case "border-width"     => borderWidthTag(element)
       case "border-color"     => borderColorTag(element)
       // DRAW
       case "line-width"       => lineWidthTag(element)
-      case "line-cap"         => lineCapTag(parser, element)
-      case "line-dash"        => lineDashTag(parser, element)
-      case "move-to"          => moveToTag(parser, element)
-      case "line-to"          => lineToTag(parser, element)
-      case "draw"             => drawTag(parser, element)
+      case "line-cap"         => parser.evaluate(element, this)
+      case "line-dash"        => parser.evaluate(element, this)
+      case "move-to"          => parser.evaluate(element, this)
+      case "line-to"          => parser.evaluate(element, this)
+      case "draw"             => parser.evaluate(element, this)
       // GRAPHICS MODE
-      case "blend"            => blendModeTag(parser, element)
-      case "opacity"          => opacityTag(parser, element)
+      case "blend"            => parser.evaluate(element, this)
+      case "opacity"          => parser.evaluate(element, this)
       // INSERT
-      case "insert"           => insertTag(parser, element)
+      case "insert"           => parser.evaluate(element, this)
       case "char"             => charTag(element)
-      case "Roman"            => romanTag(parser, element)
-      case "bookmark"         => bookmarkTag(parser, element)
-      case "label"            => labelTag(parser, element)
-      case "ref"              => refTag(parser, element)
+      case "Roman"            => parser.evaluate(element, this)
+      case "bookmark"         => parser.evaluate(element, this)
+      case "label"            => parser.evaluate(element, this)
+      case "ref"              => parser.evaluate(element, this)
       case "/ref"             => refEndTag()
       // STATE
       case "store"            => document.storeStateToStack()
       case "restore"          => document.restoreStateFromStack()
       case "reset"            => document.resetState()
       // VARIABLE
-      case "var"              => varTag(parser, element)
-      case "set"              => setTag(parser, element)
+      case "var"              => parser.evaluate(element, this)
+      case "set"              => parser.evaluate(element, this)
       case "/set"             => None // Handled in handleCopying
-      case "add"              => addTag(parser, element)
+      case "add"              => parser.evaluate(element, this)
       case "/add"             => None // Handled in handleCopying
-      case "show"             => showTag(parser, element)
+      case "show"             => parser.evaluate(element, this)
       // EXTENSION
-      case "include"          => includeTag(parser, element)
+      case "include"          => parser.evaluate(element, this)
       case "extension"        => extensionTag()
       case "def"              => defTag()
       case "sub"              => subTag()
@@ -1098,9 +1098,9 @@ class SourceProcessor(
       case "template"         => None
       // ADVANCED
       case "inject"           => injectionTag(element)
-      case "replace"          => replaceTag(parser, element)
-      case "loop"             => loopTag(parser, element)
-      case "whitespace"       => whitespaceTag(parser, element)
+      case "replace"          => parser.evaluate(element, this)
+      case "loop"             => parser.evaluate(element, this)
+      case "whitespace"       => parser.evaluate(element, this)
       case _ => {
         if (extensions.UserDefinedTag(element.TagName)) {
           handleUserTag(element)

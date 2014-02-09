@@ -22,11 +22,14 @@ import scala.collection.mutable.ArrayBuffer
 
 class TagParser(
   tagName: String,
-  name: String,
-  condition: SourceElement => Boolean,
-  descriptionOfAlternatives: String) {
+  firstSyntaxName: String,
+  firstSyntaxCondition: SourceElement => Boolean,
+  descriptionOfAlternatives: String,
+  effect: (TagParser, SourceElement, SourceProcessor) => Unit) {
 
-  def this(tagName: String) = this(tagName, "", _ => true, "")
+  def this(
+      tagName: String,
+      effect: (TagParser, SourceElement, SourceProcessor) => Unit) = this(tagName, "", _ => true, "", effect)
 
   /*
    * Some tags accept different kinds of parameter sets.
@@ -38,7 +41,7 @@ class TagParser(
   }
 
   private val syntaxAlternatives = new ArrayBuffer[Syntax]
-  syntaxAlternatives += new Syntax(name, condition)
+  syntaxAlternatives += new Syntax(firstSyntaxName, firstSyntaxCondition)
 
   /* 
    * When applying the parser, we start out by finding the first matching
@@ -129,6 +132,10 @@ class TagParser(
     this
   }
 
+  def evaluate(se: SourceElement, proc: SourceProcessor) {
+    effect(this, se, proc)
+  }
+  
   def apply(se: SourceElement) {
 
     def ordinalNumber(n: Int): String = {
