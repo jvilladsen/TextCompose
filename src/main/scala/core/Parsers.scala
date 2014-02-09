@@ -65,6 +65,19 @@ object Parsers {
     addInt("lightness", true)
   // FIXME: add some direction flags for the 'border' as scope - consider extending the parser with notion of function to evaluate if a parameter is included or not.
 
+  parser("underline") = (new TagParser(
+    "underline",
+    "on",
+    se => se.NumberOfParameters == 0,
+    "Use no parameters to turn on underlining, or set up width, height and cap of the line.",
+    sp => sp.underlineTag)).
+    addSyntax("setup", se => se.NumberOfParameters == 3).
+    addDecNum("width", true, Sign.allow, optionalPercentage).
+    addDecNum("height", true, Sign.allow, optionalPercentage).
+    addOptions("cap", true, List("Butt", "Round", "Square"))
+  
+  parser("/underline") = new TagParser("/underline", sp => sp.underlineEndTag)
+  
   parser("highlight") = (new TagParser(
     "highlight",
     "on",
@@ -80,6 +93,8 @@ object Parsers {
     addFloat("top", true).
     addFloat("bottom", true)
 
+  parser("/highlight") = new TagParser("/highlight", sp => sp.highlightEndTag)
+  
   parser("letter-spacing") = (new TagParser("letter-spacing", sp => sp.letterspacingTag)).
     addDecNum("spacing", true, Sign.disallow, optionalPercentage) // really disallow?
 
@@ -173,6 +188,8 @@ object Parsers {
     addString("name", true).
     addString("key", true)
 
+  parser("/set") = (new TagParser("/set", sp => sp.defTag))	// Handled in handleCopying
+  
   parser("add") = (new TagParser(
     "add",
     "Str/Int",
@@ -186,6 +203,8 @@ object Parsers {
     addString("name", true).
     addString("key", true)
 
+  parser("/add") = (new TagParser("/add", sp => sp.defTag))	// Handled in handleCopying
+  
   parser("show") = (new TagParser(
     "show",
     "Str/Int",
@@ -236,6 +255,10 @@ object Parsers {
   parser("list") = (new TagParser("list", sp => sp.listTag)).
     addFlag("continue")
 
+  parser("item") = (new TagParser("item", sp => sp.itemTag))
+  
+  parser("/list") = (new TagParser("/list", sp => sp.listEndTag))
+  
   parser("table") = (new TagParser("table", sp => sp.tableTag)).
     addInt("number of columns", true).
     addDecNum("width", true, Sign.disallow, optionalPercentage).
@@ -245,6 +268,8 @@ object Parsers {
     addDecNum("column span", false, Sign.disallow, List("C")). // NOT USED - how to use it?
     addDecNum("row span", false, Sign.disallow, List("R")) // FIXME: test this carefully!
 
+  parser("/table") = (new TagParser("/table", sp => sp.tableEndTag))
+  
   parser("draw") = (new TagParser("draw", sp => sp.drawTag)).
     addFlag("under")
 
@@ -272,6 +297,14 @@ object Parsers {
 
   parser("ref") = (new TagParser("ref", sp => sp.refTag)).
     addString("name", true)
+
+  parser("/ref") = (new TagParser("/ref", sp => sp.refEndTag))
+
+  parser("store") = (new TagParser("store", sp => sp.storeTag))
+
+  parser("restore") = (new TagParser("restore", sp => sp.restoreTag))
+
+  parser("reset") = (new TagParser("reset", sp => sp.resetTag))
 
   parser("replace") = (new TagParser("replace", sp => sp.replaceTag)).
     addOptions("level", true, List("source", "text")).
@@ -320,5 +353,21 @@ object Parsers {
   parser("line-to") = (new TagParser("line-to", sp => sp.lineToTag)).
     addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R")).
     addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
-
+  
+  parser("extension") = (new TagParser("extension", sp => sp.extensionTag))
+  
+  parser("def") = (new TagParser("def", sp => sp.defTag))
+  
+  parser("sub") = (new TagParser("sub", sp => sp.subTag))
+  
+  parser("main") = (new TagParser("main", sp => sp.mainTag))
+ 
+  parser("/def") = new TagParser("/def", sp => (p, s) => ())
+  
+  parser("/sub") = new TagParser("/sub", sp => (p, s) => ())
+  
+  parser("/main") = new TagParser("/main", sp => (p, s) => ())
+  
+  parser("template") = new TagParser("template", sp => (p, s) => ())
+  
 }

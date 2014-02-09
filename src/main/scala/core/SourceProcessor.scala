@@ -250,28 +250,23 @@ class SourceProcessor(
     }
   }
 
-  def underlineTag(se: SourceElement) {
-    if (se.NumberOfParameters == 1) {
-      if (se.Parameters(0) == "on") {
-        document.setUnderlineUse(true)
-      } else if (se.Parameters(0) == "off") {
-        document.setUnderlineUse(false)
-      } else {
-        throw new TagError("The parameter for 'underline' tag with 1 parameter should be 'on' or 'off'")
+  def underlineTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    parser.getSyntax match {
+      case "on" => document.setUnderlineUse(true)
+      case "setup" => {
+        val thickness = parser.getNextDecNum
+        val height = parser.getNextDecNum
+        val cap = parser.getNextOption
+        document.setUnderlineSizing(thickness, height, cap)
       }
-    } else {
-      se.hasNumberOfParameters(3, "The 'underline' tag takes either 1 parameter ('on' or 'off') "
-        + "or 2 numbers for thickness and height, and the 'cap' (Butt, Round or Square).")
-
-      val thickness = new DecoratedNumber("underline thickness")
-      val height = new DecoratedNumber("underline height")
-      thickness.parse(se.Parameters(0))
-      height.parse(se.Parameters(1))
-      val cap = se.Parameters(2)
-      document.setUnderlineSizing(thickness, height, cap)
     }
   }
 
+  def underlineEndTag(parser: TagParser, se: SourceElement) {
+    document.setUnderlineUse(false)
+  }
+  
   def highlightTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
@@ -290,7 +285,7 @@ class SourceProcessor(
     }
   }
 
-  def highlightEndTag() {
+  def highlightEndTag(parser: TagParser, se: SourceElement) {
     document.setUseTextBackgroundColor(false)
   }
   
@@ -422,20 +417,20 @@ class SourceProcessor(
     document.writer.setViewerPreferences(parser.getNextOption, parser.getNextOption)
   }
 
-  def extensionTag() {
+  def extensionTag(parser: TagParser, se: SourceElement) {
     throw new TagError("Building a document from an extension file? The 'extension' tag is used in the top of " +
       "extension files for specifying a name of the extension.")
   }
-  def defTag() {
+  def defTag(parser: TagParser, se: SourceElement) {
     throw new TagError("The 'def' tag, used for defining new tags, can only be used in extensions. " +
       "Extensions are separate files with the 'extension' tag in the top. Before you can refer to " +
       "an extension, with the 'include' tag, you must add it by choosing 'Add' in the 'Extensions' menu.")
   }
-  def subTag() {
+  def subTag(parser: TagParser, se: SourceElement) {
     throw new TagError("The 'sub' tag, used for defining new tags, can only be used in extensions. The only " +
       "difference between 'sub' and 'def' is that sub's do not appear in the tag menu.")
   }
-  def mainTag() {
+  def mainTag(parser: TagParser, se: SourceElement) {
     throw new TagError("The 'main' tag, used for specifying stuff that should be inserted along with the " +
       "extension, can only be used in extensions.")
   }
@@ -667,10 +662,22 @@ class SourceProcessor(
     document.bookmarks.setReference(parser.getNextString)
   }
 
-  def refEndTag() {
+  def refEndTag(parser: TagParser, se: SourceElement) {
     document.bookmarks.endReference()
   }
 
+  def storeTag(parser: TagParser, se: SourceElement) {
+    document.storeStateToStack()
+  }
+  
+  def restoreTag(parser: TagParser, se: SourceElement) {
+    document.restoreStateFromStack()
+  }
+  
+  def resetTag(parser: TagParser, se: SourceElement) {
+    document.resetState()
+  }
+  
   def formatListTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setListFormat(
@@ -685,7 +692,6 @@ class SourceProcessor(
     document.storeStateToStack()
     document.enteringItemFormatting
 
-    // SHAMELES COPY
     var inLineSE = new SourceElement // Used as a way to feed a parameter into ^1
     inLineSE.SetTag("item format") // In place of "def" as in <def ...
     inLineSE.SetParameter("item format") // In place of the name of the user-defined tag
@@ -726,13 +732,13 @@ class SourceProcessor(
     document.initiateList(parser.getNextFlag)
   }
 
-  def itemTag() {
+  def itemTag(parser: TagParser, se: SourceElement) {
     if (!document.isListStarted) throw new TagError("A list must be started before you can add items.")
     if (document.isItemAwaitingAdd) addListItem()
     document.newListItem()
   }
 
-  def listEndTag() {
+  def listEndTag(parser: TagParser, se: SourceElement) {
     if (!document.isListStarted) throw new TagError("Trying to end list, but no list has been started.")
     if (document.isItemAwaitingAdd) addListItem()
     document.addList()
@@ -789,7 +795,7 @@ class SourceProcessor(
     document.newTableCell(columnSpan, rowSpan)
   }
 
-  def tableEndTag() {
+  def tableEndTag(parser: TagParser, se: SourceElement) {
     if (!document.tableStarted) throw new TagError("No table has been started.")
 
     if (document.cellAwaitingAdd) {
@@ -1016,9 +1022,10 @@ class SourceProcessor(
       case "size"             => parser.evaluate(element, this)
       case "face"             => parser.evaluate(element, this)
       case "color"            => parser.evaluate(element, this)
-      case "underline"        => underlineTag(element)
+      case "underline"        => parser.evaluate(element, this)
+      case "/underline"       => parser.evaluate(element, this)
       case "highlight"        => parser.evaluate(element, this)
-      case "/highlight"       => highlightEndTag()
+      case "/highlight"       => parser.evaluate(element, this)
       case "letter-spacing"   => parser.evaluate(element, this)
       case "scale-letter"     => parser.evaluate(element, this)
       // SPACE
@@ -1048,12 +1055,12 @@ class SourceProcessor(
       // LIST
       case "format-list"      => parser.evaluate(element, this)
       case "list"             => parser.evaluate(element, this)
-      case "item"             => itemTag()
-      case "/list"            => listEndTag()
+      case "item"             => parser.evaluate(element, this)
+      case "/list"            => parser.evaluate(element, this)
       // TABLE
       case "table"            => parser.evaluate(element, this)
       case "cell"             => parser.evaluate(element, this) //FIXME
-      case "/table"           => tableEndTag()
+      case "/table"           => parser.evaluate(element, this)
       case "cell-padding"     => cellPaddingTag(element)
       case "border-width"     => borderWidthTag(element)
       case "border-color"     => borderColorTag(element)
@@ -1074,28 +1081,28 @@ class SourceProcessor(
       case "bookmark"         => parser.evaluate(element, this)
       case "label"            => parser.evaluate(element, this)
       case "ref"              => parser.evaluate(element, this)
-      case "/ref"             => refEndTag()
+      case "/ref"             => parser.evaluate(element, this)
       // STATE
-      case "store"            => document.storeStateToStack()
-      case "restore"          => document.restoreStateFromStack()
-      case "reset"            => document.resetState()
+      case "store"            => parser.evaluate(element, this)
+      case "restore"          => parser.evaluate(element, this)
+      case "reset"            => parser.evaluate(element, this)
       // VARIABLE
       case "var"              => parser.evaluate(element, this)
       case "set"              => parser.evaluate(element, this)
-      case "/set"             => None // Handled in handleCopying
+      case "/set"             => parser.evaluate(element, this)
       case "add"              => parser.evaluate(element, this)
-      case "/add"             => None // Handled in handleCopying
+      case "/add"             => parser.evaluate(element, this)
       case "show"             => parser.evaluate(element, this)
       // EXTENSION
       case "include"          => parser.evaluate(element, this)
-      case "extension"        => extensionTag()
-      case "def"              => defTag()
-      case "sub"              => subTag()
-      case "main"             => mainTag()
-      case "/def"             => None
-      case "/sub"             => None
-      case "/main"            => None
-      case "template"         => None
+      case "extension"        => parser.evaluate(element, this)
+      case "def"              => parser.evaluate(element, this)
+      case "sub"              => parser.evaluate(element, this)
+      case "main"             => parser.evaluate(element, this)
+      case "/def"             => parser.evaluate(element, this)
+      case "/sub"             => parser.evaluate(element, this)
+      case "/main"            => parser.evaluate(element, this)
+      case "template"         => parser.evaluate(element, this)
       // ADVANCED
       case "inject"           => injectionTag(element)
       case "replace"          => parser.evaluate(element, this)
