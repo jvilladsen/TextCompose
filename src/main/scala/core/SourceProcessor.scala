@@ -332,12 +332,9 @@ class SourceProcessor(
     }
   }
 
-  def lineHeightTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, "The 'height' tag takes one parameter, namely a decorated number.")
-    var DN = new DecoratedNumber("height")
-    DN.parse(se.Parameters(0))
-    if (DN.isDelta) throw new TagError("The height cannot be specified with a '+' or '-' sign.")
-    document.UpdateLineHeight(DN)
+  def heightTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    document.UpdateLineHeight(parser.getNextDecNum)
   }
 
   def insertTag(parser: TagParser, se: SourceElement) {
@@ -583,21 +580,11 @@ class SourceProcessor(
     document.setParagraphSpace(parser.getNextDecNum, parser.getNextDecNum)
   }
 
-  def paragraphIndentTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, 2, "The tag 'paragraph-indent' takes one or two parameters: either the size of " +
-      "indentation optionally followed by 'delay', or on/off.")
-    if (se.Parameters(0) == "on") {
-      document.enabledParagraphIndent(true)
-    } else if (se.Parameters(0) == "off") {
-      document.enabledParagraphIndent(false)
-    } else {
-      if (se.NumberOfParameters == 2 && se.Parameters(1) != "delay") {
-        throw new TagError("If the 'paragraph-indent' tag is given two parameters, the second must be the word 'delay'.")
-      }
-      var DN = new DecoratedNumber("paragraph-indent")
-      DN.parse(se.Parameters(0))
-      val delay = se.NumberOfParameters == 2
-      document.setParagraphIndent(DN, delay)
+  def paragraphIndentTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    parser.getSyntax match {
+      case "on/off" => document.enabledParagraphIndent(parser.getNextOption == "on")
+      case "setup" => document.setParagraphIndent(parser.getNextDecNum, parser.getNextFlag)
     }
   }
 
@@ -605,7 +592,7 @@ class SourceProcessor(
     parser(se)
     val level = parser.getNextOption
     val withLimit = parser.isNextFloat
-    val limit = if (withLimit) parser.getNextFloat else 0
+    val limit = if (withLimit) parser.getNextFloat else 0f
     document.newTag(level, withLimit, limit)
   }
 
@@ -1018,7 +1005,7 @@ class SourceProcessor(
     
     element.TagName match {
       // FONT
-      case "font"             => parser.evaluate(element, this)
+      case "font"             => parser.evaluate(element, this)	//FIXME: eventually do "parser(se)" right after getting parser, and then no need for sending element to evaluate method.
       case "size"             => parser.evaluate(element, this)
       case "face"             => parser.evaluate(element, this)
       case "color"            => parser.evaluate(element, this)
@@ -1029,9 +1016,9 @@ class SourceProcessor(
       case "letter-spacing"   => parser.evaluate(element, this)
       case "scale-letter"     => parser.evaluate(element, this)
       // SPACE
-      case "height"           => lineHeightTag(element)
+      case "height"           => parser.evaluate(element, this)
       case "paragraph-space"  => parser.evaluate(element, this)
-      case "paragraph-indent" => paragraphIndentTag(element)
+      case "paragraph-indent" => parser.evaluate(element, this)
       case "new"              => parser.evaluate(element, this)
       // POSITION
       case "align"            => parser.evaluate(element, this)

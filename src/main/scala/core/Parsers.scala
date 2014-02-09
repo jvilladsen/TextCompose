@@ -101,6 +101,9 @@ object Parsers {
   parser("scale-letter") = (new TagParser("scale-letter", sp => sp.scaleLetterTag)).
     addFloat("scale", true)
 
+  parser("height") = (new TagParser("height", sp => sp.heightTag)).
+    addDecNum("line height", true, Sign.disallow, optionalPercentage)
+
   parser("new") = (new TagParser("new", sp => sp.newTag)).
     addOptions("level", true, List("line", "paragraph", "column", "page")).
     addFloat("limit", false)
@@ -109,6 +112,17 @@ object Parsers {
     addDecNum("space before paragraph", true, Sign.disallow, optionalPercentage).
     addDecNum("space after paragraph", true, Sign.disallow, optionalPercentage)
 
+  parser("paragraph-indent") = (new TagParser(
+    "paragraph-indent",
+    "on/off",
+    se => se.NumberOfParameters == 1 && (se.Parameters(0) == "on" || se.Parameters(0) == "off"),
+    "Either 'on', 'off', or the size of indentation optionally followed by 'delay'.",
+    sp => sp.paragraphIndentTag)).
+    addOptions("on/off", true, List("on", "off")).
+    addSyntax("setup", se => true).
+    addDecNum("indentation", true, Sign.allow, optionalPercentage).
+    addFlag("delay")
+    
   parser("whitespace") = (new TagParser("whitespace", sp => sp.whitespaceTag)).
     addOptions("keep or trim", true, List("keep", "trim"))
 
