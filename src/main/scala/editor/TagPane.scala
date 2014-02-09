@@ -38,50 +38,21 @@ class TagPane {
   }
   private var dialog: writesetter.tagGUI.TagDialog = null
 
-  def updateColors() {
-    panel.background = Colors.supportPane
-    if (dialog != null) {
-      dialog.signalUpdate() // instead of updating color on each single label, field, panel...
+  private def signalUpdate {
+    // Workspace listens to changes in this "fake action".
+    fakeAction.enabled = !fakeAction.enabled // toggle to trigger an update of editor (hack)
+  }
+
+  private def clearLayout() { panel.contents.clear() }
+
+  private def addContent(c: scala.swing.Component) { panel.contents += c }
+
+  private def addOKButton(okAction: Action) {
+    val okButton = new Button {
+      text = "OK"
+      action = okAction
     }
-  }
-
-  val fakeAction = new Action("<signal to update editor>") {
-    enabled = false
-    def apply() { None }
-  }
-
-  def updateFromEditor(
-    givenKey: String,
-    inside: Boolean,
-    start: Int,
-    end: Int,
-    tag: writesetter.core.SourceElement) {
-    fileKey = givenKey
-    isInsideTag = inside
-    foundTagStartingAt = start
-    foundTagEndingAt = end
-
-    refreshLayout(tag.TagName, tag.Parameters)
-  }
-  
-  def updateWithParserErrorFromEditor(message: String) {
-    clearLayout
-    
-    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, "")
-    dialog.layoutParserError(message)
-    addContent(dialog.panel)
-    
-    panel.revalidate()
-    panel.repaint()
-    triggeredFromTagTree = false
-  }
-
-  private def refreshLayout(tagName: String, parameters: ArrayBuffer[String]) {
-    clearLayout
-    if (isInsideTag) { assembleDialog(tagName, parameters) }
-    panel.revalidate()
-    panel.repaint()
-    triggeredFromTagTree = false
+    addContent(okButton)
   }
 
   private def assembleDialog(tagName: String, parameters: ArrayBuffer[String]) {
@@ -124,22 +95,53 @@ class TagPane {
     }
   }
 
-  def SetTriggeredFromTagTree { triggeredFromTagTree = true }
-
-  private def signalUpdate {
-    // Workspace listens to changes in this "fake action".
-    fakeAction.enabled = !fakeAction.enabled // toggle to trigger an update of editor (hack)
+  private def refreshLayout(tagName: String, parameters: ArrayBuffer[String]) {
+    clearLayout()
+    if (isInsideTag) { assembleDialog(tagName, parameters) }
+    panel.revalidate()
+    panel.repaint()
+    triggeredFromTagTree = false
   }
 
-  private def clearLayout { panel.contents.clear() }
-
-  private def addContent(c: scala.swing.Component) { panel.contents += c }
-
-  private def addOKButton(okAction: Action) {
-    val okButton = new Button {
-      text = "OK"
-      action = okAction
+  def updateColors() {
+    panel.background = Colors.supportPane
+    if (dialog != null) {
+      dialog.signalUpdate() // instead of updating color on each single label, field, panel...
     }
-    addContent(okButton)
   }
+
+  val fakeAction = new Action("<signal to update editor>") {
+    enabled = false
+    def apply() { None }
+  }
+
+  def updateFromEditor(
+    givenKey: String,
+    inside: Boolean,
+    start: Int,
+    end: Int,
+    tag: writesetter.core.SourceElement) {
+
+    fileKey = givenKey
+    isInsideTag = inside
+    foundTagStartingAt = start
+    foundTagEndingAt = end
+
+    refreshLayout(tag.TagName, tag.Parameters)
+  }
+
+  def updateWithParserErrorFromEditor(message: String) {
+    clearLayout()
+
+    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, "")
+    dialog.layoutParserError(message)
+    addContent(dialog.panel)
+
+    panel.revalidate()
+    panel.repaint()
+    triggeredFromTagTree = false
+  }
+
+  def SetTriggeredFromTagTree() { triggeredFromTagTree = true }
+
 }
