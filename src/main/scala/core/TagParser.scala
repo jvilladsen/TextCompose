@@ -56,10 +56,11 @@ class TagParser(
     syntaxAlternatives(index).formalParameters
   }
 
-  def addSyntax(name: String, condition: SourceElement => Boolean) {
+  def addSyntax(name: String, condition: SourceElement => Boolean) = {
     val syntax = new Syntax(name, condition)
     syntaxAlternatives += syntax
     formalParameters = syntax.formalParameters
+    this
   }
 
   /* Questions:
@@ -89,30 +90,43 @@ class TagParser(
 
   def getSyntaxDescription: String = formalParameters.map(p => p.toString).mkString("", ", ", ".")
 
-  def addString(name: String, mandatory: Boolean) {
+  def addString(name: String, mandatory: Boolean) = {
     formalParameters += FormalString(name, mandatory)
+    this
   }
-  def addInt(name: String, mandatory: Boolean) {
+  
+  def addInt(name: String, mandatory: Boolean) = {
     formalParameters += FormalInt(name, mandatory)
+    this
   }
-  def addFloat(name: String, mandatory: Boolean) {
+  
+  def addFloat(name: String, mandatory: Boolean) = {
     formalParameters += FormalFloat(name, mandatory)
+    this
   }
+  
   def addDecNum(
     name: String,
     mandatory: Boolean,
     sign: Sign.Value,
-    decor: List[String]) {
+    decor: List[String]) = {
     formalParameters += FormalDecNum(name, mandatory, sign, decor)
+    this
   }
-  def addOptions(name: String, mandatory: Boolean, options: List[String]) {
+  
+  def addOptions(name: String, mandatory: Boolean, options: List[String]) = {
     formalParameters += FormalOptions(name, mandatory, options)
+    this
   }
-  def addFlag(name: String) {
+  
+  def addFlag(name: String) = {
     formalParameters += FormalFlag(name)
+    this
   }
-  def addFlags(name: String, spaced: Boolean, flags: List[String]) {
+  
+  def addFlags(name: String, spaced: Boolean, flags: List[String]) = {
     formalParameters += FormalFlags(name, spaced, flags)
+    this
   }
 
   def apply(se: SourceElement) {
