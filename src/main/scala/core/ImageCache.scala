@@ -25,10 +25,10 @@ import com.itextpdf.text._
 object ImageCache {
 
   /* The point is that if you insert the same image on every page,
-	 * (a watermark or logo/decoration in the header or footer)
-	 * then you still only want one single instance of it in the PDF file.
-	 * Plus it is faster not to load it every time.
-	 */
+   * (a watermark or logo/decoration in the header or footer)
+   * then you still only want one single instance of it in the PDF file.
+   * Plus it is faster not to load it every time.
+   */
 
   private var fullFileNameToImage = new HashMap[String, Image]
   private var fullFileNameUtilization = new HashMap[String, Int]
@@ -57,9 +57,10 @@ object ImageCache {
   }
 
   def adviceOnCaching {
-    // Give warning somewhere sometimes... 
-    // - if utilization is zero for more than 3 images
-    // - if un-cached counter above 2
+    /* Give warning somewhere sometimes... 
+     * - if utilization is zero for more than 3 images
+     * - if un-cached counter above 2
+     */
     var warningMessages = new ArrayBuffer[String]
     var numberOfNonUtilizedCaches = 0
     for (f <- fullFileNameUtilization) { if (f._2 == 0) { numberOfNonUtilizedCaches += 1 } }

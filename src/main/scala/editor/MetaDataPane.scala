@@ -22,33 +22,33 @@ import swing._
 
 class MetaDataPane {
 
-	private val errors = new CompilationErrors
-	
-	private var tabsPane = new TabbedPane {
-		border = Swing.EmptyBorder(1, -13, -15, -12)
-		background = Colors.tabsPane
-	}
-	val wrappedTabsPane = new BoxPanel(Orientation.Horizontal) {
-		contents += tabsPane
-		background = Colors.tabsPane
-	}
-	
-	tabsPane.pages.+=(new TabbedPane.Page("Messages", errors.getPane))
-	
-	def updateErrors() {
-		errors.update()
-		metaDataFakeAction.enabled = !metaDataFakeAction.enabled // toggle to trigger showing meta data (hack)
-	}
-	
-	def updateColors() {
-		errors.updateColors()
-		tabsPane.background = Colors.tabsPane
-		wrappedTabsPane.background = Colors.tabsPane
-	}
-	
-	def getNumberOfErrors = errors.getNumberOfErrors
-	val metaDataFakeAction = new Action("<signal to show meta data>") {
-		enabled = false
-		def apply() { None }
-	}
+  private val errors = new CompilationErrors
+
+  private var tabsPane = new TabbedPane {
+    border = Swing.EmptyBorder(1, -13, -15, -12)
+    background = Colors.tabsPane
+  }
+  val wrappedTabsPane = new BoxPanel(Orientation.Horizontal) {
+    contents += tabsPane
+    background = Colors.tabsPane
+  }
+
+  tabsPane.pages.+=(new TabbedPane.Page("Messages", errors.getPane))
+
+  def updateErrors() {
+    errors.update()
+    metaDataFakeAction.enabled = !metaDataFakeAction.enabled // toggle to trigger showing meta data (hack)
+  }
+
+  def updateColors() {
+    errors.updateColors()
+    tabsPane.background = Colors.tabsPane
+    wrappedTabsPane.background = Colors.tabsPane
+  }
+
+  def getNumberOfErrors = errors.getNumberOfErrors
+  val metaDataFakeAction = new Action("<signal to show meta data>") {
+    enabled = false
+    def apply() { None }
+  }
 }

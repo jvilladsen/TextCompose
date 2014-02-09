@@ -34,7 +34,7 @@ object DesktopInteraction {
       }
     } else {
       val osName = core.Environment.operatingSystemName
-      
+
       val command =
         if (core.Environment.isMacOSX) {
           Array[String]("open", "-a", "Preview.app", PDFFileName)
@@ -45,7 +45,7 @@ object DesktopInteraction {
         } else {
           throw new Exception("Not prepared for opening PDF on '" + osName + "'.")
         }
-      
+
       val runTime = Runtime.getRuntime()
       try {
         val process = runTime.exec(command)

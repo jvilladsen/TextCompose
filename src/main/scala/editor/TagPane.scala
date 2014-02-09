@@ -38,6 +38,11 @@ class TagPane {
   }
   private var dialog: writesetter.tagGUI.TagDialog = null
 
+  val fakeAction = new Action("<signal to update editor>") {
+    enabled = false
+    def apply() { None }
+  }
+
   private def signalUpdate {
     // Workspace listens to changes in this "fake action".
     fakeAction.enabled = !fakeAction.enabled // toggle to trigger an update of editor (hack)
@@ -78,7 +83,7 @@ class TagPane {
       if (triggeredFromTagTree) dialog.grabFocus
 
       // Here, we can set up a listener on some fake action inside dialog object - listener calls refreshLayout
-      var setSwitcherAndRefresh = new PropertyChangeListener() {
+      val setSwitcherAndRefresh = new PropertyChangeListener() {
         def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
           val newSelectedValue = dialog.GetSwitchingSelectedValue
           if (par.length > 0) {
@@ -110,11 +115,6 @@ class TagPane {
     }
   }
 
-  val fakeAction = new Action("<signal to update editor>") {
-    enabled = false
-    def apply() { None }
-  }
-
   def updateFromEditor(
     givenKey: String,
     inside: Boolean,
@@ -142,6 +142,6 @@ class TagPane {
     triggeredFromTagTree = false
   }
 
-  def SetTriggeredFromTagTree() { triggeredFromTagTree = true }
+  def setTriggeredFromTagTree() { triggeredFromTagTree = true }
 
 }

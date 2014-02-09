@@ -227,7 +227,7 @@ object Application extends SimpleSwingApplication {
      * On OS X the settings menu is part of the application menu item.
      * On Gnome, KDE, Windows it's under Help.
      */
-    
+
     if (!core.Environment.isMacOSX) {
       editMenu.contents += new Separator
       editMenu.contents += new MenuItem(new Action("Preferences") {
@@ -241,7 +241,7 @@ object Application extends SimpleSwingApplication {
     fontsMenu.contents += getMenuItem(viewFontIssuesAction, KeyEvent.VK_E, true)
     fontsMenu.contents += new Separator
     fontsMenu.contents += new MenuItem(Action("Refresh List of Fonts") {
-    	storage.StoredFontAnalysis.recalculate()
+      storage.StoredFontAnalysis.recalculate()
     })
 
     // View menu

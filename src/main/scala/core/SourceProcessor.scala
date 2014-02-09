@@ -266,7 +266,7 @@ class SourceProcessor(
   def underlineEndTag(parser: TagParser, se: SourceElement) {
     document.setUnderlineUse(false)
   }
-  
+
   def highlightTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
@@ -288,7 +288,7 @@ class SourceProcessor(
   def highlightEndTag(parser: TagParser, se: SourceElement) {
     document.setUseTextBackgroundColor(false)
   }
-  
+
   def frameTag(parser: TagParser, se: SourceElement) {
     parser(se)
     parser.getSyntax match {
@@ -541,7 +541,7 @@ class SourceProcessor(
   }
   def lineDashTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    val pattern = ArrayBuffer(parser.getNextString.trim.split(' ') : _*)
+    val pattern = ArrayBuffer(parser.getNextString.trim.split(' '): _*)
     val patternNumbers = try {
       pattern.map(s => s.toFloat)
     } catch {
@@ -584,7 +584,7 @@ class SourceProcessor(
     parser(se)
     parser.getSyntax match {
       case "on/off" => document.enabledParagraphIndent(parser.getNextOption == "on")
-      case "setup" => document.setParagraphIndent(parser.getNextDecNum, parser.getNextFlag)
+      case "setup"  => document.setParagraphIndent(parser.getNextDecNum, parser.getNextFlag)
     }
   }
 
@@ -656,15 +656,15 @@ class SourceProcessor(
   def storeTag(parser: TagParser, se: SourceElement) {
     document.storeStateToStack()
   }
-  
+
   def restoreTag(parser: TagParser, se: SourceElement) {
     document.restoreStateFromStack()
   }
-  
+
   def resetTag(parser: TagParser, se: SourceElement) {
     document.resetState()
   }
-  
+
   def formatListTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setListFormat(
@@ -1000,12 +1000,12 @@ class SourceProcessor(
   }
 
   private def processTag(element: SourceElement) {
-    
+
     val parser = Parsers.getParser(element.TagName)
-    
+
     element.TagName match {
       // FONT
-      case "font"             => parser.evaluate(element, this)	//FIXME: eventually do "parser(se)" right after getting parser, and then no need for sending element to evaluate method.
+      case "font"             => parser.evaluate(element, this) //FIXME: eventually do "parser(se)" right after getting parser, and then no need for sending element to evaluate method.
       case "size"             => parser.evaluate(element, this)
       case "face"             => parser.evaluate(element, this)
       case "color"            => parser.evaluate(element, this)

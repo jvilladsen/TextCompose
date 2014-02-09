@@ -24,28 +24,28 @@ import writesetter.{ core, editor }
 object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
   /* FORMAT:
-	 * short font id (see FontFileRegister) -- is primary key
-	 * can be installed (true/false)
-	 * can be embedded (true/false)
-	 * error message in case one of the above is false (the first false)
-	 * name of font
-	 * title of font
-	 * version
-	 * copyright
-	 * familyName
-	 * subFamilyName
-	 * uniqueId
-	 * trademark
-	 * manufacturer
-	 * designer
-	 * description
-	 * vendorURL
-	 * designerURL
-	 * license
-	 * licenseURL
-	 * sampleText
-	 * encodings
-	 */
+   * short font id (see FontFileRegister) -- is primary key
+   * can be installed (true/false)
+   * can be embedded (true/false)
+   * error message in case one of the above is false (the first false)
+   * name of font
+   * title of font
+   * version
+   * copyright
+   * familyName
+   * subFamilyName
+   * uniqueId
+   * trademark
+   * manufacturer
+   * designer
+   * description
+   * vendorURL
+   * designerURL
+   * license
+   * licenseURL
+   * sampleText
+   * encodings
+   */
 
   private val fontTitleToShortId = new HashMap[String, String] // Only for fonts that can be installed.
   private val fontTitleToJavaFont = new HashMap[String, java.awt.Font]

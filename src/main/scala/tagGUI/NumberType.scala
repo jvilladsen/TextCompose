@@ -34,10 +34,10 @@ class NumberType(
   forcedPercentage: Boolean) extends ParameterType {
 
   /*
-	 * forcedPercentage : use this for numbers that are always a percentage (so not an option in the dialog)
-	 * 					  and decorated with a percentage sign in the source code.
-	 * 					  Example: opacity in image tag. 
-	 */
+   * forcedPercentage : use this for numbers that are always a percentage (so not an option in the dialog)
+   * 					  and decorated with a percentage sign in the source code.
+   * 					  Example: opacity in image tag. 
+   */
 
   def this(tagName: String, label: String) = {
     this(tagName, label, false, false, List(), false, false)
@@ -159,12 +159,12 @@ class NumberType(
 
     def valueMadeEasy = {
       /*
-			 * If the type is "integer" this is the value before the decimal point.
-			 * Float's tend to get shown with a ".0" at the end. This is fine, since
-			 * you get information about the possibility to enter a decimal number.
-			 * However, in case you enter no decimals, it is most convenient to remove
-			 * the trailing ".0".
-			 */
+       * If the type is "integer" this is the value before the decimal point.
+       * Float's tend to get shown with a ".0" at the end. This is fine, since
+       * you get information about the possibility to enter a decimal number.
+       * However, in case you enter no decimals, it is most convenient to remove
+       * the trailing ".0".
+       */
       if (integer) {
         val point = valueField.text.indexOf('.')
         if (point < 0) {

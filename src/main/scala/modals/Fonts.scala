@@ -29,34 +29,34 @@ import writesetter.editor.Colors
 class Fonts(viewIssues: Boolean) extends Dialog {
 
   /* Table:
-	 * - Consider which factors should determine the size of the window.
-	 * - Time stamps: consider not showing date if date is current date
-	 * 		and consider not showing year if current year etc.
-	 * - Respect users changes to column width and column order when re-sorting table.
-	 */
+   * - Consider which factors should determine the size of the window.
+   * - Time stamps: consider not showing date if date is current date
+   * 		and consider not showing year if current year etc.
+   * - Respect users changes to column width and column order when re-sorting table.
+   */
   /* FORMAT:
-	 * font file name -- is the primary key
-	 * can be installed (true/false)
-	 * can be embedded (true/false)
-	 * error message in case one of the above is false (the first false)
-	 * name of font
-	 * title of font
-	 * version
-	 * copyright
-	 * familyName
-	 * subFamilyName
-	 * uniqueId
-	 * trademark
-	 * manufacturer
-	 * designer
-	 * description
-	 * vendorURL
-	 * designerURL
-	 * license
-	 * licenseURL
-	 * sampleText
-	 * encodings
-	 */
+   * font file name -- is the primary key
+   * can be installed (true/false)
+   * can be embedded (true/false)
+   * error message in case one of the above is false (the first false)
+   * name of font
+   * title of font
+   * version
+   * copyright
+   * familyName
+   * subFamilyName
+   * uniqueId
+   * trademark
+   * manufacturer
+   * designer
+   * description
+   * vendorURL
+   * designerURL
+   * license
+   * licenseURL
+   * sampleText
+   * encodings
+   */
 
   private val cols = new editor.TableColumns
   cols.add(5, "Title", "String", "String", 200, 250, false)

@@ -20,7 +20,6 @@ package writesetter.core
 
 import scala.collection.mutable.HashMap
 
-
 object BaseType extends Enumeration {
   val Str = Value
   val Int = Value
@@ -96,21 +95,21 @@ case class MapVariable(
 
   def checkTypes(k: String, v: String) {
     if (k.contains('\t')) throw new TagError("The key for map variables (in this case '" +
-        name + "') must not contain tab characters. You wrote '" + k + "'")
+      name + "') must not contain tab characters. You wrote '" + k + "'")
     if (keyType == BaseType.Int) {
       try {
         k.toInt
       } catch {
-        case e: Exception => throw new TagError("The map variable '" + name + 
-            "' has key of type Int. You wrote '" + k + "'")
+        case e: Exception => throw new TagError("The map variable '" + name +
+          "' has key of type Int. You wrote '" + k + "'")
       }
     }
     if (valType == BaseType.Int) {
       try {
         v.toInt
       } catch {
-        case e: Exception => throw new TagError("The map variable '" + name + 
-            "' has value of type Int. You wrote '" + v + "'")
+        case e: Exception => throw new TagError("The map variable '" + name +
+          "' has value of type Int. You wrote '" + v + "'")
       }
     }
   }

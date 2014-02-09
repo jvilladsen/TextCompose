@@ -20,42 +20,42 @@ package writesetter.editor
 
 import concurrent.ExecutionContext.Implicits.global
 import concurrent._
-import writesetter.{core, storage}
+import writesetter.{ core, storage }
 
 object CompileOrGUI {
 
-	private var calledWithArguments = false
-	
-	def handleOpenFile(fileName: String) {
-		Application.workspaceTabs.openNamedFile(fileName)
-	}
-	
-	def switcher(arguments: Array[String]) {
-		
-		storage.Configurations.initialize()
-		storage.FontCharacters.initialize()
-		storage.StoredFontAnalysis.initialize()
-		storage.SourcesMetaData.initialize()
-		storage.Dictionaries.initialize()
-		
-		if (arguments.length > 0) {
-			try {
-				calledWithArguments = true
-				val externalArgs = new core.ExternalArguments(arguments)
-				externalArgs.parseAndCompile()
-			} catch {
-				case e: Exception => println(e.getMessage)
-			}
-		} else {
-			ResourceHandling.copyDictionaries()
-			ResourceHandling.copyDocuments()
-			future {
-			  // Pretend to open the window now to make it faster later.
-			  new writesetter.modals.Preferences(true)
-			}
-			Application.main(arguments)
-		}
-	}
-	
-	def canExpectGUI: Boolean = !calledWithArguments
+  private var calledWithArguments = false
+
+  def handleOpenFile(fileName: String) {
+    Application.workspaceTabs.openNamedFile(fileName)
+  }
+
+  def switcher(arguments: Array[String]) {
+
+    storage.Configurations.initialize()
+    storage.FontCharacters.initialize()
+    storage.StoredFontAnalysis.initialize()
+    storage.SourcesMetaData.initialize()
+    storage.Dictionaries.initialize()
+
+    if (arguments.length > 0) {
+      try {
+        calledWithArguments = true
+        val externalArgs = new core.ExternalArguments(arguments)
+        externalArgs.parseAndCompile()
+      } catch {
+        case e: Exception => println(e.getMessage)
+      }
+    } else {
+      ResourceHandling.copyDictionaries()
+      ResourceHandling.copyDocuments()
+      future {
+        // Pretend to open the window now to make it faster later.
+        new writesetter.modals.Preferences(true)
+      }
+      Application.main(arguments)
+    }
+  }
+
+  def canExpectGUI: Boolean = !calledWithArguments
 }

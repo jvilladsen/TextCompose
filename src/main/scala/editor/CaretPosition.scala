@@ -25,121 +25,120 @@ import writesetter.core
 
 object CaretPosition {
 
-	var currentEditor: TextFileEditor = null
-	var currentPosition = 0
-	var currentLength = 0
-	var updateTimestamp = 0L
-	val millisecondsToWait = 600
-	
-	var currentLine = ""
-	var positionOnLine = 0
-	
-	var wellFormedLine = true
-	var isInsideTag = false
-	var parseErrorMessage = ""
-	var ElmStack = new core.SourceElementStack(true)
-	var currentTagName = ""
-	var foundTagStartingAt = 0
-	var foundTagEndingAt = 0
-	
-	var delayIsSpawned = false
-	
-	
-	def handleUpdate(fileEditor: TextFileEditor, tagPane: TagPane) {
-		currentEditor = fileEditor
-		currentPosition = fileEditor.editor.getCursorPosition
-		currentLength = fileEditor.editor.document.getLength
-		
-		updateTimestamp = java.util.Calendar.getInstance().getTimeInMillis
-		
-		if (!delayIsSpawned) {
-			delayIsSpawned = true
-			
-			future {
-				// Wait for the user to take a break in the typing.
-				var keepWaiting = true
-				while (keepWaiting) {
-					Thread.sleep(200)
-					val timeSinceLastUpdate = java.util.Calendar.getInstance().getTimeInMillis - updateTimestamp
-					if (timeSinceLastUpdate > millisecondsToWait) {
-						keepWaiting = false
-					}
-				}
-				
-				determineCurrentLine()
-				parseCurrentLine()
-				if (wellFormedLine) {
-					tagPane.updateFromEditor(fileEditor.file.getFileKey,
-											 isInsideTag,
-											 foundTagStartingAt,
-											 foundTagEndingAt,
-											 ElmStack.TagAtPosition)
-				} else {
-				  tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
-				}
-				delayIsSpawned = false
-			}
-		}
-	}
-	
-	private def determineCurrentLine() {
-		
-		def safePosition(p: Int): Int = {
-			if (p < 0) {
-				return 0
-			} else if (p > currentLength) {
-				return currentLength
-			}
-			return p
-		}
-		
-		def getFirstOrLastBeforeBreak(s: String, f: Boolean): String = {
-			val sl = s.split('\n')
-			if (sl.length == 0) {
-				return ""
-			} else if (f) {
-				return sl(0)
-			} else {
-				return sl(sl.length - 1)
-			}
-		}
-		
-		val rightAfterNewline = (currentPosition > 0 && currentEditor.editor.document.getText(currentPosition - 1, 1) == "\n")
-		var beforeCurrentPosition = ""
-		if (!rightAfterNewline) {
-			val start = safePosition(currentPosition - 500)
-			var y = currentEditor.editor.document.getText(start, currentPosition - start)
-			beforeCurrentPosition = getFirstOrLastBeforeBreak(y, false)
-		}
-		
-		val stop = safePosition(currentPosition + 500)
-		var y = currentEditor.editor.document.getText(currentPosition, stop - currentPosition)
-		var afterCurrentPosition = getFirstOrLastBeforeBreak(y, true)
-		currentLine = beforeCurrentPosition + afterCurrentPosition
-		positionOnLine = beforeCurrentPosition.length
-		// FIXME: The above is not correct in general, because of the 500 character limit on both directions from current position.
-	}
-	
-	private def parseCurrentLine() {
-		wellFormedLine = true
-		parseErrorMessage = ""
-		ElmStack.setPositionForMatching(positionOnLine)
-		
-		try {
-			ElmStack.ParseLine(currentLine)
-		} catch {
-			case e: core.ParseError => wellFormedLine = false; parseErrorMessage = e.getMessage
-		}
-		
-		isInsideTag = ElmStack.TagFoundAtPosition // wellFormedLine && 
-		
-		if (isInsideTag) {
-			currentTagName = ElmStack.TagAtPosition.TagName
-			foundTagStartingAt = currentPosition + ElmStack.TagFoundStartsAt
-			foundTagEndingAt = currentPosition + ElmStack.TagFoundEndsAt
-			ElmStack.TagFoundAtPosition = false
-		} else {
-			currentTagName = ""
-		}
-	}
+  var currentEditor: TextFileEditor = null
+  var currentPosition = 0
+  var currentLength = 0
+  var updateTimestamp = 0L
+  val millisecondsToWait = 600
+
+  var currentLine = ""
+  var positionOnLine = 0
+
+  var wellFormedLine = true
+  var isInsideTag = false
+  var parseErrorMessage = ""
+  var ElmStack = new core.SourceElementStack(true)
+  var currentTagName = ""
+  var foundTagStartingAt = 0
+  var foundTagEndingAt = 0
+
+  var delayIsSpawned = false
+
+  def handleUpdate(fileEditor: TextFileEditor, tagPane: TagPane) {
+    currentEditor = fileEditor
+    currentPosition = fileEditor.editor.getCursorPosition
+    currentLength = fileEditor.editor.document.getLength
+
+    updateTimestamp = java.util.Calendar.getInstance().getTimeInMillis
+
+    if (!delayIsSpawned) {
+      delayIsSpawned = true
+
+      future {
+        // Wait for the user to take a break in the typing.
+        var keepWaiting = true
+        while (keepWaiting) {
+          Thread.sleep(200)
+          val timeSinceLastUpdate = java.util.Calendar.getInstance().getTimeInMillis - updateTimestamp
+          if (timeSinceLastUpdate > millisecondsToWait) {
+            keepWaiting = false
+          }
+        }
+
+        determineCurrentLine()
+        parseCurrentLine()
+        if (wellFormedLine) {
+          tagPane.updateFromEditor(fileEditor.file.getFileKey,
+            isInsideTag,
+            foundTagStartingAt,
+            foundTagEndingAt,
+            ElmStack.TagAtPosition)
+        } else {
+          tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
+        }
+        delayIsSpawned = false
+      }
+    }
+  }
+
+  private def determineCurrentLine() {
+
+    def safePosition(p: Int): Int = {
+      if (p < 0) {
+        return 0
+      } else if (p > currentLength) {
+        return currentLength
+      }
+      return p
+    }
+
+    def getFirstOrLastBeforeBreak(s: String, f: Boolean): String = {
+      val sl = s.split('\n')
+      if (sl.length == 0) {
+        return ""
+      } else if (f) {
+        return sl(0)
+      } else {
+        return sl(sl.length - 1)
+      }
+    }
+
+    val rightAfterNewline = (currentPosition > 0 && currentEditor.editor.document.getText(currentPosition - 1, 1) == "\n")
+    var beforeCurrentPosition = ""
+    if (!rightAfterNewline) {
+      val start = safePosition(currentPosition - 500)
+      var y = currentEditor.editor.document.getText(start, currentPosition - start)
+      beforeCurrentPosition = getFirstOrLastBeforeBreak(y, false)
+    }
+
+    val stop = safePosition(currentPosition + 500)
+    var y = currentEditor.editor.document.getText(currentPosition, stop - currentPosition)
+    var afterCurrentPosition = getFirstOrLastBeforeBreak(y, true)
+    currentLine = beforeCurrentPosition + afterCurrentPosition
+    positionOnLine = beforeCurrentPosition.length
+    // FIXME: The above is not correct in general, because of the 500 character limit on both directions from current position.
+  }
+
+  private def parseCurrentLine() {
+    wellFormedLine = true
+    parseErrorMessage = ""
+    ElmStack.setPositionForMatching(positionOnLine)
+
+    try {
+      ElmStack.ParseLine(currentLine)
+    } catch {
+      case e: core.ParseError => wellFormedLine = false; parseErrorMessage = e.getMessage
+    }
+
+    isInsideTag = ElmStack.TagFoundAtPosition // wellFormedLine && 
+
+    if (isInsideTag) {
+      currentTagName = ElmStack.TagAtPosition.TagName
+      foundTagStartingAt = currentPosition + ElmStack.TagFoundStartsAt
+      foundTagEndingAt = currentPosition + ElmStack.TagFoundEndsAt
+      ElmStack.TagFoundAtPosition = false
+    } else {
+      currentTagName = ""
+    }
+  }
 }

@@ -31,31 +31,31 @@ import scala.util.matching.Regex
 
 object FileMethods {
 
-	def IsFile(fullFileName: String): Boolean = {
-		val fileHandle = new java.io.File(fullFileName)
-		return fileHandle.exists && fileHandle.isFile
-	}
-	
-	def IsDirectory(directoryName: String): Boolean = {
-		val fileHandle = new java.io.File(directoryName)
-		return fileHandle.exists && fileHandle.isDirectory
-	}
+  def IsFile(fullFileName: String): Boolean = {
+    val fileHandle = new java.io.File(fullFileName)
+    return fileHandle.exists && fileHandle.isFile
+  }
 
-	def GetTimeStamp(fullFileName: String): Long = {
-		val fileHandle = new java.io.File(fullFileName)
-		return fileHandle.lastModified
-	}
-	
-	def GetDirectory(fullFileName: String): String = {
-		val fileHandle = new java.io.File(fullFileName)
-		fileHandle.getParent
-	}
-	
-	def splitFileNameAtLastPeriod(fileName: String) = {
-      val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
-      fileName match {
-        case fileNameWithExtension(before, after) => (before, after)
-        case _ => (fileName, "")
-      }
-	}
+  def IsDirectory(directoryName: String): Boolean = {
+    val fileHandle = new java.io.File(directoryName)
+    return fileHandle.exists && fileHandle.isDirectory
+  }
+
+  def GetTimeStamp(fullFileName: String): Long = {
+    val fileHandle = new java.io.File(fullFileName)
+    return fileHandle.lastModified
+  }
+
+  def GetDirectory(fullFileName: String): String = {
+    val fileHandle = new java.io.File(fullFileName)
+    fileHandle.getParent
+  }
+
+  def splitFileNameAtLastPeriod(fileName: String) = {
+    val fileNameWithExtension = new Regex("""(.+)\.([^.]+)""")
+    fileName match {
+      case fileNameWithExtension(before, after) => (before, after)
+      case _                                    => (fileName, "")
+    }
+  }
 }

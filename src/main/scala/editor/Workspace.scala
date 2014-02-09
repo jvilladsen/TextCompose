@@ -132,7 +132,7 @@ class Workspace(fontSize: Int) {
           val tagName = selPath.getLastPathComponent.toString
           val tag = "<" + tagName + ">"
           if (tagTree.isAvailableTag(tagName)) {
-            tagPane.SetTriggeredFromTagTree // this flag tells tagPane to grab focus
+            tagPane.setTriggeredFromTagTree() // this flag tells tagPane to grab focus
             fileEditor.insertAtCurrentPosition(tag)
           }
         }
@@ -147,7 +147,7 @@ class Workspace(fontSize: Int) {
       val tagName = tagTree.selectedOnEnter
       val tag = "<" + tagName + ">"
       if (tagTree.isAvailableTag(tagName)) {
-        tagPane.SetTriggeredFromTagTree // this flag tells tagPane to grab focus
+        tagPane.setTriggeredFromTagTree() // this flag tells tagPane to grab focus
         fileEditor.insertAtCurrentPosition(tag)
       }
     }

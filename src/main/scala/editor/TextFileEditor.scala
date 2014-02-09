@@ -45,9 +45,9 @@ class TextFileEditor(fontSize: Int) {
   }
 
   private def saveFile(
-      saveEvenIfNotDirty: Boolean,
-      updateSourcesMetaData: Boolean): Boolean = {
-    
+    saveEvenIfNotDirty: Boolean,
+    updateSourcesMetaData: Boolean): Boolean = {
+
     var completed = true
     if (!file.fileIsReadOnly && (saveEvenIfNotDirty || editor.fileIsDirty)) {
       completed = file.checkFileStamp
@@ -68,9 +68,9 @@ class TextFileEditor(fontSize: Int) {
     val originalFileName = file.fullFileName
 
     if (file.chooseFileForSaving(forcedEncoding, moveOrRename)) {
-      
+
       completed = saveFile(true, !moveOrRename)
-      
+
       if (completed && moveOrRename && originalFileName != file.fullFileName) {
         val originalFile = new File(originalFileName)
         originalFile.delete()

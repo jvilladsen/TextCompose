@@ -274,8 +274,8 @@ class WorkspaceTabs {
 
   val showInFinderTitle =
     if (core.Environment.isMacOSX) "Show in Finder"
-      else "Show in File System"
-  
+    else "Show in File System"
+
   val showInFinderAction = new Action(showInFinderTitle) {
     enabled = false
     def apply() {

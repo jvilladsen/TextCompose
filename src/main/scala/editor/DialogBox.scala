@@ -94,7 +94,7 @@ object DialogBox {
       ResourceHandling.licenseText,
       editor.Images.writeSetterIcon)
   }
-  
+
   def newFonts(count: Int, fonts: Stack[String], recalculation: Boolean) {
     val subText = if (recalculation) {
       "No preview available until after restart of " + appTitle + "."

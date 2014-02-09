@@ -84,7 +84,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
     val length = line.length()
 
     def isSpaceCharacter(c: Char): Boolean = (c == ' ' || c == '\t')
-    
+
     def isSpaceAtPosition(position: Int): Boolean =
       position < length && isSpaceCharacter(line.charAt(position))
 
@@ -132,7 +132,7 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         }
       }
     }
-    
+
     var isInsideTag = false
     var isInsideTagName = false
     var isInsideQuote = false
@@ -147,9 +147,9 @@ class SourceElementStack(matchPositionForTag: Boolean) {
       val beforeInset = if (startingNew) " before beginning a new tag. " else ". "
       val found = builder.getCurrentElement.ToString
       val foundInset = if (found == "") "" else " Looks like: " + found + "."
-      throw new ParseError("You must complete the tag"+ tagInset + " with a '>'" + beforeInset +
-          "Alternatively, if it should not start a tag, insert space after the '<', " +
-          "or \"escape\" it by writing '\\<'." + foundInset)
+      throw new ParseError("You must complete the tag" + tagInset + " with a '>'" + beforeInset +
+        "Alternatively, if it should not start a tag, insert space after the '<', " +
+        "or \"escape\" it by writing '\\<'." + foundInset)
     }
 
     for (position <- 0 until length) {
@@ -188,14 +188,14 @@ class SourceElementStack(matchPositionForTag: Boolean) {
         isInsideTagName = false
       } else {
         if (isInsideTag &&
-            ((isInsideQuote && char == '"' && !escaping && isEndQuote(position + 1) && builder.isBalanced) ||
-             (!isInsideQuote && isSpaceCharacter(char)))) {
+          ((isInsideQuote && char == '"' && !escaping && isEndQuote(position + 1) && builder.isBalanced) ||
+            (!isInsideQuote && isSpaceCharacter(char)))) {
           /*
            * Inside a tag and either end of tag name or end of parameter.
            */
           wasEmptyQuote = isInsideQuote && builder.isEmpty
           isInsideQuote = false
-          
+
           if (isInsideTagName && !builder.isEmpty) {
             builder.setTag()
             isInsideTagName = false

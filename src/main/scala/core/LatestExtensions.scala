@@ -22,11 +22,12 @@ import scala.collection.mutable.{ HashMap, HashSet, ArrayBuffer }
 
 object LatestExtensions {
 
-  // This object keeps track of the latest known extension files used by a given source.
-  // It also keeps track of the latest known list of tag names defined in those extension files.
-  // We refresh the information when a source is compiled to PDF.
-  // Future extension: save to a file, and load when starting the editor.
-  // Alternative improvement: keep an updated list of extensions mentioned in the current editor.
+  /* This object keeps track of the latest known extension files used by a given source.
+   * It also keeps track of the latest known list of tag names defined in those extension files.
+   * We refresh the information when a source is compiled to PDF.
+   * Future extension: save to a file, and load when starting the editor.
+   * Alternative improvement: keep an updated list of extensions mentioned in the current editor.
+   */
 
   class Tag(t: String, d: List[String]) {
     val tagName = t

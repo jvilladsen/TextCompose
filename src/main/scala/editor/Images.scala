@@ -37,21 +37,21 @@ object Images {
 
   // Dialog Box
   val systemErrorIcon = getIcon("oxygen_48_embarrassed.png")
-  val errorIcon       = getIcon("crystal_48_error.png")
-  val warningIcon     = getIcon("crystal_48_warning.png")
-  val infoIcon        = getIcon("crystal_48_info.png")
-  val checkmarkIcon   = getIcon("crystal_48_check.png")
+  val errorIcon = getIcon("crystal_48_error.png")
+  val warningIcon = getIcon("crystal_48_warning.png")
+  val infoIcon = getIcon("crystal_48_info.png")
+  val checkmarkIcon = getIcon("crystal_48_check.png")
 
   // Toolbar
-  val newIcon       = getIcon("crystal_32_add.png")
-  val openIcon      = getIcon("crystal_32_folder.png")
-  val overviewIcon  = getIcon("crystal_32_archive.png")
-  val saveIcon      = getIcon("crystal_32_save.png")
-  val closeIcon     = getIcon("gnome_32_close.png")
-  val findIcon      = getIcon("crystal_32_find2.png")
-  val spellingIcon  = getIcon("crystal_32_spell.png")
+  val newIcon = getIcon("crystal_32_add.png")
+  val openIcon = getIcon("crystal_32_folder.png")
+  val overviewIcon = getIcon("crystal_32_archive.png")
+  val saveIcon = getIcon("crystal_32_save.png")
+  val closeIcon = getIcon("gnome_32_close.png")
+  val findIcon = getIcon("crystal_32_find2.png")
+  val spellingIcon = getIcon("crystal_32_spell.png")
   val createPdfIcon = getIcon("crystal_32_right2.png")
-  val pdfIcon       = getIcon("eponasDeeway_32_pdf.png")
+  val pdfIcon = getIcon("eponasDeeway_32_pdf.png")
 
   val writeSetterIcon = getIcon("oxygen_writesetter_tiny.png")
 }
