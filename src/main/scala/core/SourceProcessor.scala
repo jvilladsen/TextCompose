@@ -303,11 +303,9 @@ class SourceProcessor(
     }
   }
 
-  def riseTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, "The 'rise' tag takes one parameter: a number, possibly with decimals.")
-    var DN = new DecoratedNumber("rise")
-    DN.parse(se.Parameters(0))
-    document.setRise(DN)
+  def riseTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    document.setRise(parser.getNextDecNum)
   }
 
   def alignTag(parser: TagParser, se: SourceElement) {
@@ -315,21 +313,16 @@ class SourceProcessor(
     document.setAlignment(parser.getNextOption, parser.getNextOption)
   }
 
-  def indentTag(se: SourceElement) {
-    se.hasNumberOfParameters(2, "The 'indent' tag takes two parameter: left/right and a number, possibly with +/- in front.")
-    if (se.Parameters(0) == "left") {
-      var DN = new DecoratedNumber("left indentation")
-      DN.parse(se.Parameters(1))
-      document.setIndentationLeft(DN.value)
-      document.addParagraph()
-    } else if (se.Parameters(0) == "right") {
-      var DN = new DecoratedNumber("right indentation")
-      DN.parse(se.Parameters(1))
-      document.setIndentationRight(DN.value)
-      document.addParagraph()
+  def indentTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val margin = parser.getNextOption
+    val size = parser.getNextFloat
+    if (margin == "left") {
+      document.setIndentationLeft(size)
     } else {
-      throw new TagError("The first parameter for the 'indent' tag must be either 'left' or 'right'.")
+      document.setIndentationRight(size)
     }
+    document.addParagraph()
   }
 
   def heightTag(parser: TagParser, se: SourceElement) {
@@ -477,18 +470,12 @@ class SourceProcessor(
     document.setColumn(parser.getNextInt, parser.getNextFloat)
   }
 
-  def positionTag(se: SourceElement) {
-    se.hasNumberOfParameters(2, 4, "The 'position' tag takes 2 to 4 parameters: x coordinate, y coordinate and, optionally, "
-      + "an angle and 'under'. The x coordinate can be decorated by L, R or C; y with T, C or B, e.g. 0L 50T.")
-
-    val xDN = new DecoratedNumber("x coordinate")
-    val yDN = new DecoratedNumber("y coordinate")
-    xDN.parse(se.Parameters(0))
-    yDN.parse(se.Parameters(1))
-    val x = document.DetermineXcoordinate(xDN)
-    val y = document.DetermineYcoordinate(yDN)
-    val angle = if (se.NumberOfParameters > 2) NumberFunctions.getFloat(se.Parameters(2), "the angle for the 'position' tag") else 0f
-    val under = se.NumberOfParameters == 4 && se.Parameters(3) == "under"
+  def positionTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val x = document.DetermineXcoordinate(parser.getNextDecNum)
+    val y = document.DetermineYcoordinate(parser.getNextDecNum)
+    val angle = if (parser.isNextFloat) parser.getNextFloat else 0f
+    val under = parser.getNextFlag
     document.directlyAddPhrase(x, y, angle, under)
   }
 
@@ -755,21 +742,18 @@ class SourceProcessor(
     document.initiateTable(columns, width, widthFloats)
   }
 
-  def cellTag(parser: TagParser, se: SourceElement) { // FIXME: TAG PARSER NOT USED
-    var columnSpan = 0
-    var rowSpan = 0
-    for (par <- se.Parameters) {
-      var DN = new DecoratedNumber("column span and row span")
-      DN.parse(par)
-      if (DN.decoration == "C") {
-        columnSpan = DN.value.toInt
-      } else if (DN.decoration == "R") {
-        rowSpan = DN.value.toInt
-      } else {
-        throw new TagError("The 'cell' tag only takes numbers decorated by 'C' or 'R', to set column span and/or row span.")
-      }
+  def cellTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val colSpan = if (parser.isNextDecNum && parser.getFormalName == "column span") {
+      parser.getNextDecNum.value.toInt
+    } else {
+      0
     }
-
+    val rowSpan = if (parser.isNextDecNum && parser.getFormalName == "row span") {
+      parser.getNextDecNum.value.toInt
+    } else {
+      0
+    }
     if (!document.tableStarted) throw new TagError("No table has been started.")
     if (document.cellAwaitingAdd) {
       document.addCell()
@@ -779,7 +763,7 @@ class SourceProcessor(
     }
     if (document.getNewCellColumnNumber == 1) applyInjections("before", "row", document.getNewCellRowNumber)
     applyInjections("before", "column", document.getNewCellColumnNumber)
-    document.newTableCell(columnSpan, rowSpan)
+    document.newTableCell(colSpan, rowSpan)
   }
 
   def tableEndTag(parser: TagParser, se: SourceElement) {
@@ -1022,9 +1006,9 @@ class SourceProcessor(
       case "new"              => parser.evaluate(element, this)
       // POSITION
       case "align"            => parser.evaluate(element, this)
-      case "indent"           => indentTag(element)
-      case "rise"             => riseTag(element)
-      case "position"         => positionTag(element)
+      case "indent"           => parser.evaluate(element, this)
+      case "rise"             => parser.evaluate(element, this)
+      case "position"         => parser.evaluate(element, this)
       // DOCUMENT
       case "document"         => parser.evaluate(element, this)
       case "page-size"        => parser.evaluate(element, this)
@@ -1046,7 +1030,7 @@ class SourceProcessor(
       case "/list"            => parser.evaluate(element, this)
       // TABLE
       case "table"            => parser.evaluate(element, this)
-      case "cell"             => parser.evaluate(element, this) //FIXME
+      case "cell"             => parser.evaluate(element, this)
       case "/table"           => parser.evaluate(element, this)
       case "cell-padding"     => cellPaddingTag(element)
       case "border-width"     => borderWidthTag(element)

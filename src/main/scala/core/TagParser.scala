@@ -201,6 +201,7 @@ class TagParser(
                   throw new TagError("The mandatory parameter '" + p.name +
                     "' for the '" + tagName + "' " + p.requiredDecoration + ".")
                 }
+                // Nice: if the decor does not match and its not mandatory we just leap over it.
               } else {
                 actualParameters += ActualDecNum(formalName, d); index += 1
               }

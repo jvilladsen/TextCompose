@@ -130,6 +130,19 @@ object Parsers {
     addOptions("scope", true, List("text", "image", "cell")).
     addOptions("alignment", true, List("left", "center", "right", "full"))
 
+  parser("indent") = (new TagParser("indent", sp => sp.indentTag)).
+    addOptions("margin", true, List("left", "right")).
+    addFloat("size", true)
+
+  parser("rise") = (new TagParser("rise", sp => sp.riseTag)).
+    addDecNum("rise", true, Sign.allow, optionalPercentage)
+
+  parser("position") = (new TagParser("position", sp => sp.positionTag)).
+    addDecNum("x", true, Sign.allow, List("L", "C", "R")).
+    addDecNum("y", true, Sign.allow, List("T", "C", "B")).
+    addFloat("angle", false).
+    addFlag("under")
+
   parser("document") = (new TagParser("document", sp => sp.documentTag)).
     addOptions("name of property", true, List("title", "author", "subject", "keywords")).
     addString("value", true)
@@ -279,8 +292,8 @@ object Parsers {
     addString("relative column widths", true)
 
   parser("cell") = (new TagParser("cell", sp => sp.cellTag)).
-    addDecNum("column span", false, Sign.disallow, List("C")). // NOT USED - how to use it?
-    addDecNum("row span", false, Sign.disallow, List("R")) // FIXME: test this carefully!
+    addDecNum("column span", false, Sign.disallow, List("C")).
+    addDecNum("row span", false, Sign.disallow, List("R"))
 
   parser("/table") = (new TagParser("/table", sp => sp.tableEndTag))
   
