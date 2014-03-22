@@ -19,10 +19,13 @@
 package writesetter.core
 
 abstract class FormalParameter(name: String, mandatory: Boolean) {
+  var hideGuiTitle = false
+  
   def isMandatory: Boolean = mandatory
   def getName: String = name
   def wrap(s: String) = if (mandatory) s else "[" + s + "]"
   def format(sl: List[String]): String = sl.map(s => "'" + s + "'").mkString(", ")
+  def noGuiTitle() { hideGuiTitle = true }
 }
 
 case class FormalString(

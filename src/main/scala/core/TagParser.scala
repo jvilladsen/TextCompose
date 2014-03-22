@@ -134,7 +134,12 @@ class TagParser(
     formalParameters += FormalFlags(name, spaced, flags)
     this
   }
-
+  
+  def noGuiTitle() = {
+    formalParameters.last.noGuiTitle()
+    this
+  }
+  
   def evaluate(se: SourceElement, proc: SourceProcessor) {
     effect(proc)(this, se)
   }
@@ -379,20 +384,21 @@ class TagParser(
     val syntax = syntaxAlternatives(currentSyntaxIndex)
     for (formalParameter <- syntax.formalParameters) {
       val formalName = formalParameter.getName
+      val title = if (formalParameter.hideGuiTitle) "" else formalParameter.getName
       formalParameter match {
-        case p: FormalString => fields.append(new TextType(formalName, false))	//FIXME: "large" text field in GUI
-        case p: FormalInt => fields.append(new NumberType(tagName, formalName, true))
-        case p: FormalFloat => fields.append(new NumberType(tagName, formalName))
+        case p: FormalString => fields.append(new TextType(title, false))	//FIXME: "large" text field in GUI
+        case p: FormalInt => fields.append(new NumberType(tagName, title, true))
+        case p: FormalFloat => fields.append(new NumberType(tagName, title))
         case p: FormalDecNum => {
           val allowDelta = p.sign == Sign.asDelta || p.sign == Sign.allow
           val percentageOption = isOptionalPercentage(p.decor)
           val forcedPercentage = isForcedPercentage(p.decor)
-          fields.append(new NumberType(tagName, formalName, allowDelta, false, p.decor, percentageOption, forcedPercentage))
+          fields.append(new NumberType(tagName, title, allowDelta, false, p.decor, percentageOption, forcedPercentage))
         }
-        case p: FormalOptions => fields.append(new ComboBoxType(formalName, p.options, p.mandatory))
+        case p: FormalOptions => fields.append(new ComboBoxType(title, p.options, p.mandatory))
         case p: FormalFlag => fields.append(new BooleanType(formalName, formalName))
         case p: FormalFlags => {
-          val booleanGroup = new BooleanGroupType(p.flags, p.flags, formalName)
+          val booleanGroup = new BooleanGroupType(p.flags, p.flags, title)
           booleanGroup.SetNotMandatory
           fields.append(booleanGroup)
         }

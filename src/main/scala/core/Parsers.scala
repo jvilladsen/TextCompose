@@ -35,7 +35,7 @@ object Parsers {
     addFlag("local")
 
   parser("size") = (new TagParser("size", sp => sp.sizeTag)).
-    addDecNum("font size", true, Sign.asDelta, optionalPercentage)
+    addDecNum("font size", true, Sign.asDelta, optionalPercentage).noGuiTitle()
 
   parser("face") = (new TagParser("face", sp => sp.faceTag)).
     addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic"))
@@ -96,13 +96,13 @@ object Parsers {
   parser("/highlight") = new TagParser("/highlight", sp => sp.highlightEndTag)
   
   parser("letter-spacing") = (new TagParser("letter-spacing", sp => sp.letterspacingTag)).
-    addDecNum("spacing", true, Sign.disallow, optionalPercentage) // really disallow?
+    addDecNum("spacing", true, Sign.allow, optionalPercentage).noGuiTitle()
 
   parser("scale-letter") = (new TagParser("scale-letter", sp => sp.scaleLetterTag)).
     addFloat("scale", true)
 
   parser("height") = (new TagParser("height", sp => sp.heightTag)).
-    addDecNum("line height", true, Sign.disallow, optionalPercentage)
+    addDecNum("line height", true, Sign.disallow, optionalPercentage).noGuiTitle()
 
   parser("new") = (new TagParser("new", sp => sp.newTag)).
     addOptions("level", true, List("line", "paragraph", "column", "page")).
@@ -135,7 +135,7 @@ object Parsers {
     addFloat("size", true)
 
   parser("rise") = (new TagParser("rise", sp => sp.riseTag)).
-    addDecNum("rise", true, Sign.allow, optionalPercentage)
+    addDecNum("rise", true, Sign.allow, optionalPercentage).noGuiTitle()
 
   parser("position") = (new TagParser("position", sp => sp.positionTag)).
     addDecNum("x", true, Sign.allow, List("L", "C", "R")).

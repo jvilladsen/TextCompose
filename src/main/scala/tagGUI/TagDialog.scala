@@ -148,10 +148,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new NumberType(tagName, "Y", decor))
   }
 
-  private def tagWithNumberOrPercentage(allowDelta: Boolean) {
-    fields.append(new NumberType(tagName, "", allowDelta, false, List(), true, false))
-  }
-
   private def newPlace() {
     fields.append(new ComboBoxType("", List("line", "paragraph", "column", "page"), true))
     val limit = new TextType("limit", false)
@@ -441,23 +437,23 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     tagName match {
       // FONT
       case "font"             => fontSelectionTag()
-      case "size"             => tagWithNumberOrPercentage(true)
+      case "size"             => parser.buildGUI(fields)
       case "face"             => tagWithComboBox(List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic"))
       case "color"            => colorSelectionTag("Choose color")
       case "underline"        => underlineTag(parameters)
       case "highlight"        => highlightTag(parameters)
-      case "/highlight"       => None
-      case "letter-spacing"   => tagWithNumberOrPercentage(false)
+      case "/highlight"       => parser.buildGUI(fields)
+      case "letter-spacing"   => parser.buildGUI(fields)
       case "scale-letter"     => numberTag("percentage", 100)
       // SPACE
-      case "height"           => tagWithNumberOrPercentage(false)
+      case "height"           => parser.buildGUI(fields)
       case "paragraph-space"  => parser.buildGUI(fields) 
       case "paragraph-indent" => paragraphIndentTag(parameters)
       case "new"              => newPlace()
       // POSITION
       case "align"            => alignTag()
       case "indent"           => indentTag()
-      case "rise"             => tagWithNumberOrPercentage(false)
+      case "rise"             => parser.buildGUI(fields)
       case "position"         => positionWithAngleTag()
       // DOCUMENT
       case "document"         => documentTag()
@@ -476,12 +472,12 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       // LIST
       case "format-list"      => listFormatTag()
       case "list"             => listTag()
-      case "item"             => None
-      case "/list"            => None
+      case "item"             => parser.buildGUI(fields)
+      case "/list"            => parser.buildGUI(fields)
       // TABLE
       case "table"            => tableTag()
       case "cell"             => cellTag()
-      case "/table"           => None
+      case "/table"           => parser.buildGUI(fields)
       case "cell-padding"     => tagWithNumberAndDirections("Padding")
       case "border-width"     => tagWithNumberAndDirections("Width")
       case "border-color"     => colorSelectionTag("Choose color")
@@ -501,27 +497,27 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "bookmark"         => bookmarkTag()
       case "label"            => labelTag()
       case "ref"              => refTag()
-      case "/ref"             => None
+      case "/ref"             => parser.buildGUI(fields)
       // STATE
-      case "store"            => None
-      case "restore"          => None
-      case "reset"            => None
+      case "store"            => parser.buildGUI(fields)
+      case "restore"          => parser.buildGUI(fields)
+      case "reset"            => parser.buildGUI(fields)
       // VARIABLE
       case "var"              => varTag()
       case "set"              => tagWithOneTextField("Variable")
-      case "/set"             => None
+      case "/set"             => parser.buildGUI(fields)
       case "add"              => tagWithOneTextField("Variable")
-      case "/add"             => None
+      case "/add"             => parser.buildGUI(fields)
       case "show"             => tagWithOneTextField("Variable")
       // EXTENSION
       case "include"          => tagWithComboBox(storage.Configurations.getListOfExtensions)
       case "extension"        => tagWithOneTextField("Name")
       case "def"              => defTag()
       case "sub"              => defTag()
-      case "main"             => None
-      case "/def"             => None
-      case "/sub"             => None
-      case "/main"            => None
+      case "main"             => parser.buildGUI(fields)
+      case "/def"             => parser.buildGUI(fields)
+      case "/sub"             => parser.buildGUI(fields)
+      case "/main"            => parser.buildGUI(fields)
       case "template"         => tagWithOneTextField("Name")
       // ADVANCED
       case "inject"           => injectTag()
