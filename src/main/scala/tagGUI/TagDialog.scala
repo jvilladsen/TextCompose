@@ -68,8 +68,8 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
 
     if (tagName == "image") {
       /* The point with this sub-standard code is that you are allowed to specify opacity 
-			 * (which ends with '%') without specifying position of image.
-			 */
+	   * (which ends with '%') without specifying position of image.
+       */
       val len = parameters.length
       val par = new ArrayBuffer[String]
       var i = 0
@@ -150,11 +150,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
 
   private def tagWithNumberOrPercentage(allowDelta: Boolean) {
     fields.append(new NumberType(tagName, "", allowDelta, false, List(), true, false))
-  }
-
-  private def paragraphSpaceTag() {
-    fields.append(new NumberType(tagName, "Before"))
-    fields.append(new NumberType(tagName, "After"))
   }
 
   private def newPlace() {
@@ -427,8 +422,22 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
   }
 
-  def Layout(parameters: ArrayBuffer[String], okAction: Action) {
+  def Layout(se: writesetter.core.SourceElement, okAction: Action) {
     knownTag = true
+    val parser = writesetter.core.Parsers.getParser(tagName)
+    var errorFound = false
+    var errorMessage = ""
+    try {
+      parser(se)
+    } catch {
+      case e: Exception => {
+        errorFound = true
+        errorMessage = e.getMessage
+      }
+    }
+    
+    val parameters = se.Parameters
+
     tagName match {
       // FONT
       case "font"             => fontSelectionTag()
@@ -442,7 +451,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "scale-letter"     => numberTag("percentage", 100)
       // SPACE
       case "height"           => tagWithNumberOrPercentage(false)
-      case "paragraph-space"  => paragraphSpaceTag()
+      case "paragraph-space"  => parser.buildGUI(fields) 
       case "paragraph-indent" => paragraphIndentTag(parameters)
       case "new"              => newPlace()
       // POSITION

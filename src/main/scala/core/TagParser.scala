@@ -19,6 +19,7 @@
 package writesetter.core
 
 import scala.collection.mutable.ArrayBuffer
+import writesetter.tagGUI._
 
 class TagParser(
   tagName: String,
@@ -55,7 +56,8 @@ class TagParser(
       throw new TagError("Could not figure out the paramters for '" +
         tagName + "': " + descriptionOfAlternatives)
     }
-    currentSyntax = syntaxAlternatives(index).name
+    currentSyntaxIndex = index
+    currentSyntaxName = syntaxAlternatives(index).name
     syntaxAlternatives(index).formalParameters
   }
 
@@ -87,7 +89,8 @@ class TagParser(
 
   var formalParameters: ArrayBuffer[FormalParameter] = syntaxAlternatives(0).formalParameters
   val actualParameters = new ArrayBuffer[ActualParameter]
-  private var currentSyntax: String = ""
+  private var currentSyntaxName: String = ""
+  private var currentSyntaxIndex: Int = 0
   var numberOfActualParameters = 0
   var indexActual = 0
 
@@ -249,7 +252,7 @@ class TagParser(
       "' for '" + tagName + "' tag. Parameters should be " + getSyntaxDescription)
   }
 
-  def getSyntax: String = currentSyntax
+  def getSyntax: String = currentSyntaxName
 
   def getFormalName: String =
     if (indexActual < numberOfActualParameters) {
@@ -367,6 +370,35 @@ class TagParser(
     } else {
       ""
     }
+  
+  def buildGUI(fields: ArrayBuffer[ParameterType]) {
+    
+    def isOptionalPercentage(op: List[String]) = op.length == 2 && op(0) == "" && op(1) == "%"
+    def isForcedPercentage(op: List[String]) = op.length == 1 && op(0) == "%"
+    
+    val syntax = syntaxAlternatives(currentSyntaxIndex)
+    for (formalParameter <- syntax.formalParameters) {
+      val formalName = formalParameter.getName
+      formalParameter match {
+        case p: FormalString => fields.append(new TextType(formalName, false))	//FIXME: "large" text field in GUI
+        case p: FormalInt => fields.append(new NumberType(tagName, formalName, true))
+        case p: FormalFloat => fields.append(new NumberType(tagName, formalName))
+        case p: FormalDecNum => {
+          val allowDelta = p.sign == Sign.asDelta || p.sign == Sign.allow
+          val percentageOption = isOptionalPercentage(p.decor)
+          val forcedPercentage = isForcedPercentage(p.decor)
+          fields.append(new NumberType(tagName, formalName, allowDelta, false, p.decor, percentageOption, forcedPercentage))
+        }
+        case p: FormalOptions => fields.append(new ComboBoxType(formalName, p.options, p.mandatory))
+        case p: FormalFlag => fields.append(new BooleanType(formalName, formalName))
+        case p: FormalFlags => {
+          val booleanGroup = new BooleanGroupType(p.flags, p.flags, formalName)
+          booleanGroup.SetNotMandatory
+          fields.append(booleanGroup)
+        }
+      }
+    }
+  }
 }
 
 object Sign extends Enumeration {

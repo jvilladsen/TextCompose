@@ -64,23 +64,24 @@ class NumberType(
     horizontalAlignment = Alignment.Right
   }
   private val percentageLabel = new Label {
-    text = "percentage"
+    text = "%"
     foreground = editor.Colors.standard
   }
 
   private var defaultValue = 0f
 
+  val useDecor = !decor.isEmpty && !percentageOption && !forcedPercentage
   var columns = 1
   if (label != "") { columns += 1 }
   if (allowDelta) { columns += 1 }
-  if (!decor.isEmpty) { columns += 1 }
+  if (useDecor) { columns += 1 }
   if (percentageOption) { columns += 2 }
 
   private val layoutGroup = new GridPanel(1, columns) {
     if (label != "") { contents += labelLabel }
     if (allowDelta) { contents += deltaField.panel }
     contents += valueField
-    if (!decor.isEmpty) { contents += decoration.panel }
+    if (useDecor) { contents += decoration.panel }
     if (percentageOption) {
       contents += percentageField
       contents += percentageLabel

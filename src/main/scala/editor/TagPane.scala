@@ -43,7 +43,7 @@ class TagPane {
     def apply() { None }
   }
 
-  private def signalUpdate {
+  private def signalUpdate() {
     // Workspace listens to changes in this "fake action".
     fakeAction.enabled = !fakeAction.enabled // toggle to trigger an update of editor (hack)
   }
@@ -60,22 +60,22 @@ class TagPane {
     addContent(okButton)
   }
 
-  private def assembleDialog(tagName: String, parameters: ArrayBuffer[String]) {
+  private def assembleDialog(se: writesetter.core.SourceElement) {
 
-    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, tagName)
+    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, se.TagName)
     val okAction = new Action("OK") {
       enabled = true
       def apply() {
         if (dialog.IsValid) {
           result = dialog.Get
-          signalUpdate
+          signalUpdate()
         }
       }
     }
-    dialog.Layout(parameters, okAction)
+    dialog.Layout(se, okAction)
 
     if (dialog.IsKnownTag) {
-      val par = dialog.preprocessParameters(tagName, parameters)
+      val par = dialog.preprocessParameters(se.TagName, se.Parameters)
       dialog.Set(par, 0)
       addContent(dialog.panel)
       if (dialog.HasParameters) { addOKButton(okAction) }
@@ -91,7 +91,7 @@ class TagPane {
           } else {
             par.append(newSelectedValue)
           }
-          refreshLayout(tagName, par)
+          refreshLayout(se)
         }
       }
       dialog.fakeAction.peer.addPropertyChangeListener(setSwitcherAndRefresh)
@@ -100,9 +100,9 @@ class TagPane {
     }
   }
 
-  private def refreshLayout(tagName: String, parameters: ArrayBuffer[String]) {
+  private def refreshLayout(se: writesetter.core.SourceElement) {
     clearLayout()
-    if (isInsideTag) { assembleDialog(tagName, parameters) }
+    if (isInsideTag) { assembleDialog(se) }
     panel.revalidate()
     panel.repaint()
     triggeredFromTagTree = false
@@ -120,16 +120,17 @@ class TagPane {
     inside: Boolean,
     start: Int,
     end: Int,
-    tag: writesetter.core.SourceElement) {
+    se: writesetter.core.SourceElement) {
 
     fileKey = givenKey
     isInsideTag = inside
     foundTagStartingAt = start
     foundTagEndingAt = end
 
-    refreshLayout(tag.TagName, tag.Parameters)
+    refreshLayout(se)
   }
 
+  // FIXME: apart from presenting simple parser errors we could also parse tags and show error from that.
   def updateWithParserErrorFromEditor(message: String) {
     clearLayout()
 

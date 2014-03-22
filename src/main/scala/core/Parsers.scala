@@ -53,7 +53,7 @@ object Parsers {
     addString("hexadecimal", true). // FIXME: temporary hack? - should be some new type?
     addSyntax("RGB", se => se.NumberOfParameters > 1 && se.Parameters(1) == "RGB").
     addOptions("scope", true, colorScopes).
-    addOptions("color system", true, List("RGB", "HSL")). // Looks clunky in this contex, but gives simple model.
+    addOptions("color system", true, List("RGB", "HSL")). // Looks clunky in this context, but gives simple model.
     addInt("red", true).
     addInt("green", true).
     addInt("blue", true).
@@ -109,8 +109,8 @@ object Parsers {
     addFloat("limit", false)
 
   parser("paragraph-space") = (new TagParser("paragraph-space", sp => sp.paragraphSpaceTag)).
-    addDecNum("space before paragraph", true, Sign.disallow, optionalPercentage).
-    addDecNum("space after paragraph", true, Sign.disallow, optionalPercentage)
+    addDecNum("before", true, Sign.disallow, optionalPercentage).
+    addDecNum("after", true, Sign.disallow, optionalPercentage)
 
   parser("paragraph-indent") = (new TagParser(
     "paragraph-indent",
