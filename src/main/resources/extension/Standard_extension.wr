@@ -44,7 +44,7 @@ They are not enumerated, but otherwise appear as chapter headers in the text and
 </sub>
 
 <sub startPageNumbering>
-	<inject "before page-break" "<pageNumberInjection>">
+	<inject before page-break "<pageNumberInjection>">
 </sub>
 
 <main>

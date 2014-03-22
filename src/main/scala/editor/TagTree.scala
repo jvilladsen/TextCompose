@@ -121,7 +121,7 @@ class TagTree {
   }
 
   var builtInTags = new HashMap[String, String]
-  builtInTags += "FONT" -> "font size face color underline highlight /highlight letter-spacing scale-letter"
+  builtInTags += "FONT" -> "font size face color underline /underline highlight /highlight letter-spacing scale-letter"
   builtInTags += "SPACE" -> "new height paragraph-space paragraph-indent letter-spacing whitespace"
   builtInTags += "POSITION" -> "align indent rise position"
   builtInTags += "DOCUMENT" -> "document page-size orientation margins columns color view encrypt"

@@ -517,15 +517,16 @@ class SourceProcessor(
     document.setCellPadding(padding)
   }
 
-  def lineWidthTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, "The 'line-width' tag takes 1 parameter, namely the width.")
-    val width = NumberFunctions.getFloat(se.Parameters(0), "The line width")
-    document.setLineWidth(width)
+  def lineWidthTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    document.setLineWidth(parser.getNextFloat)
   }
+  
   def lineCapTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setLineCap(parser.getNextOption)
   }
+  
   def lineDashTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val pattern = ArrayBuffer(parser.getNextString.trim.split(' '): _*)
@@ -583,24 +584,21 @@ class SourceProcessor(
     document.newTag(level, withLimit, limit)
   }
 
-  def charTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, 2, "The tag 'char' takes one (or two) parameter(s) namely the number of a character. " +
-      "If two parameters are given, they are simply added first.")
-    val number = try {
-      NumberFunctions.getNumber(se.Parameters(0))
-    } catch {
-      case e: Exception => throw new TagError("The first parameter for the 'char' tag should be a number. " + e.getMessage)
+  def charTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val number = parser.getNextInt
+    val setFont = parser.isNextString
+    if (setFont) {
+      val fontTitle = parser.getNextString
+      val encoding = if (parser.isNextInt) "Cp" + parser.getNextInt.toString else ""
+      document.storeStateToStack()
+      DocumentFontRegister.addFont(fontTitle, encoding, !parser.getNextFlag)
+      document.setFont(fontTitle)
     }
-    val number2 = if (se.NumberOfParameters > 1) {
-      try {
-        NumberFunctions.getNumber(se.Parameters(1))
-      } catch {
-        case e: Exception => throw new TagError("The second parameter for the 'char' tag should be a number. " + e.getMessage)
-      }
-    } else {
-      0
+    document.AddText((number).toChar.toString)
+    if (setFont) {
+      document.restoreStateFromStack()
     }
-    document.AddText((number + number2).toChar.toString)
   }
 
   def romanTag(parser: TagParser, se: SourceElement) {
@@ -778,11 +776,16 @@ class SourceProcessor(
     document.addTable()
   }
 
-  def injectionTag(se: SourceElement) {
-    se.hasNumberOfParameters(2, "The 'injection' tag takes at least two parameters: injection point and content.")
-    var point = se.Parameters(0)
-    var content = se.Parameters(1)
-    document.injectionRegister.addInjection(point, content, "yet to come", 1)
+  def injectTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    
+    val beforeOrAfter = parser.getNextOption
+    val oddOrEven = if (parser.getFormalName == "odd/even") parser.getNextOption else ""
+    val point = parser.getNextOption
+    val number = if (parser.isNextInt) parser.getNextInt else 0
+    val content = parser.getNextString
+    
+    document.injectionRegister.addInjection(beforeOrAfter, oddOrEven, point, number, content, "yet to come", 1)
   }
 
   // FIXME: There must be something we can factor out here:
@@ -1036,7 +1039,7 @@ class SourceProcessor(
       case "border-width"     => borderWidthTag(element)
       case "border-color"     => borderColorTag(element)
       // DRAW
-      case "line-width"       => lineWidthTag(element)
+      case "line-width"       => parser.evaluate(element, this)
       case "line-cap"         => parser.evaluate(element, this)
       case "line-dash"        => parser.evaluate(element, this)
       case "move-to"          => parser.evaluate(element, this)
@@ -1047,7 +1050,7 @@ class SourceProcessor(
       case "opacity"          => parser.evaluate(element, this)
       // INSERT
       case "insert"           => parser.evaluate(element, this)
-      case "char"             => charTag(element)
+      case "char"             => parser.evaluate(element, this)
       case "Roman"            => parser.evaluate(element, this)
       case "bookmark"         => parser.evaluate(element, this)
       case "label"            => parser.evaluate(element, this)
@@ -1075,7 +1078,7 @@ class SourceProcessor(
       case "/main"            => parser.evaluate(element, this)
       case "template"         => parser.evaluate(element, this)
       // ADVANCED
-      case "inject"           => injectionTag(element)
+      case "inject"           => parser.evaluate(element, this)
       case "replace"          => parser.evaluate(element, this)
       case "loop"             => parser.evaluate(element, this)
       case "whitespace"       => parser.evaluate(element, this)

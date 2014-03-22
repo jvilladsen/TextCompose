@@ -307,6 +307,12 @@ object Parsers {
     addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
       "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"))
 
+  parser("char") = (new TagParser("char", sp => sp.charTag)).
+    addInt("number", true).
+    addString("font name", false).
+    addInt("encoding", false).
+    addFlag("local")
+
   parser("Roman") = (new TagParser("Roman", sp => sp.romanTag)).
     addOptions("upper or lower case", true, List("U", "L")).
     addInt("number", true)
@@ -356,6 +362,12 @@ object Parsers {
     addString("variable", true).
     addOptions("sort", true, List("key", "value")).
     addString("body", true)
+    
+  parser("inject") = (new TagParser("inject", sp => sp.injectTag)).
+    addOptions("before/after", true, List("before", "after")).
+    addOptions("odd/even", false, List("odd", "even")).
+    addOptions("position", true, List("row", "column", "page-break", "all")).
+    addInt("number", false).addString("content", true)
 
   parser("include") = (new TagParser("include", sp => sp.includeTag)).
     addString("name of extension", true)
@@ -365,6 +377,9 @@ object Parsers {
     addString("owner password", true).
     addFlags("permissions", true, List("print", "degPrint", "modify",
       "assembly", "copy", "accessibility", "annotate", "fill"))
+
+  parser("line-width") = (new TagParser("line-width", sp => sp.lineWidthTag)).
+    addFloat("width", true)
 
   parser("line-cap") = (new TagParser("line-cap", sp => sp.lineCapTag)).
     addOptions("shape", true, List("butt", "round", "square"))
