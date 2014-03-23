@@ -100,7 +100,7 @@ class FontType extends ParameterType {
       val dialog = new modals.FontInfoDialog(selectedFontName)
     }
   }
-  private val fontInfoButton = new Button { action = fontInfoAction }
+  private val fontInfoButton = new Button(fontInfoAction)
   fontInfoButton.peer.setAlignmentX(Component.LEFT_ALIGNMENT)
 
   AddToPanel(fontField, false)

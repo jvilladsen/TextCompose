@@ -172,7 +172,7 @@ class ColorType(frame: JPanel, title: String) extends ParameterType {
       thirdField.text = roundOf(value3)
     }
   }
-  private val chooserButton = new Button { action = colorChooserAction }
+  private val chooserButton = new Button(colorChooserAction)
 
   private val colorSpecification = new GridPanel(5, 2) {
     contents += scopeLabel

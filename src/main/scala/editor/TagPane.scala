@@ -52,14 +52,6 @@ class TagPane {
 
   private def addContent(c: scala.swing.Component) { panel.contents += c }
 
-  private def addOKButton(okAction: Action) {
-    val okButton = new Button {
-      text = "OK"
-      action = okAction
-    }
-    addContent(okButton)
-  }
-
   private def assembleDialog(se: writesetter.core.SourceElement) {
 
     dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, se.TagName)
@@ -78,7 +70,7 @@ class TagPane {
       val par = dialog.preprocessParameters(se.TagName, se.Parameters)
       dialog.Set(par, 0)
       addContent(dialog.panel)
-      if (dialog.HasParameters) { addOKButton(okAction) }
+      if (dialog.HasParameters) { addContent(new Button(okAction)) }
       panel.contents += Swing.VStrut(10000) // is there a nicer way to pack the content from the top?
       if (triggeredFromTagTree) dialog.grabFocus
 

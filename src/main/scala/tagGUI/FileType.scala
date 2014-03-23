@@ -55,7 +55,7 @@ class FileType(title: String) extends ParameterType {
       openFileChooser.dispose
     }
   }
-  private val chooserButton = new Button { action = fileChooserAction }
+  private val chooserButton = new Button(fileChooserAction)
   chooserButton.peer.setAlignmentX(Component.LEFT_ALIGNMENT)
 
   private val fileOpenAction = new Action("Open") {
@@ -79,7 +79,7 @@ class FileType(title: String) extends ParameterType {
       }
     }
   }
-  private val openButton = new Button { action = fileOpenAction }
+  private val openButton = new Button(fileOpenAction)
   openButton.peer.setAlignmentX(Component.LEFT_ALIGNMENT)
 
   private val buttonPanel = new BoxPanel(Orientation.Vertical) {
