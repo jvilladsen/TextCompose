@@ -160,12 +160,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new NumberType(tagName, ""))
   }
 
-  private def numberTag(label: String, defaultValue: Float) {
-    val nt = new NumberType(tagName, label)
-    nt.setDefaultValue(defaultValue)
-    fields.append(nt)
-  }
-
   private def positionTag() {
     fields.append(new NumberType(tagName, "X", List("L", "LM", "C", "CM", "R", "RM")))
     fields.append(new NumberType(tagName, "Y", List("T", "TM", "C", "CM", "B", "BM")))
@@ -440,7 +434,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "highlight"        => highlightTag(parameters)
       case "/highlight"       => parser.buildGUI(fields)
       case "letter-spacing"   => parser.buildGUI(fields)
-      case "scale-letter"     => numberTag("percentage", 100)
+      case "scale-letter"     => parser.buildGUI(fields)
       // SPACE
       case "height"           => parser.buildGUI(fields)
       case "paragraph-space"  => parser.buildGUI(fields) 
@@ -463,7 +457,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "image"            => imageTag()
       case "scale-image"      => decoratedSize(List("%", "%P", "%M", "%C"))
       case "fit-image"        => decoratedSize(List("%P", "%M", "%C"))
-      case "rotate-image"     => numberTag("degrees", 0)
+      case "rotate-image"     => parser.buildGUI(fields)
       case "frame"            => imageBorderTag(parameters)
       // LIST
       case "format-list"      => listFormatTag()
@@ -478,7 +472,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "border-width"     => tagWithNumberAndDirections("Width")
       case "border-color"     => colorSelectionTag("Choose color")
       // DRAW
-      case "line-width"       => numberTag("points", 1)
+      case "line-width"       => parser.buildGUI(fields)
       case "line-cap"         => parser.buildGUI(fields)
       case "line-dash"        => lineDashTag()
       case "move-to"          => positionTag()
@@ -486,7 +480,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "draw"             => drawTag()
       // GRAPHICS MODE
       case "blend"            => parser.buildGUI(fields)
-      case "opacity"          => numberTag("percentage", 100)
+      case "opacity"          => parser.buildGUI(fields)
       // INSERT
       case "insert"           => insertTag()
       case "Roman"            => romanTag()

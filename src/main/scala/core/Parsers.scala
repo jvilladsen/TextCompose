@@ -99,7 +99,7 @@ object Parsers {
     addDecNum("spacing", true, Sign.allow, optionalPercentage).noGuiTitle()
 
   parser("scale-letter") = (new TagParser("scale-letter", sp => sp.scaleLetterTag)).
-    addFloat("scale", true)
+    addFloat("percentage", true).setGuiDefault("100")
 
   parser("height") = (new TagParser("height", sp => sp.heightTag)).
     addDecNum("line height", true, Sign.disallow, optionalPercentage).noGuiTitle()
@@ -251,7 +251,7 @@ object Parsers {
     addFlag("under").
     addDecNum("image x-position", false, Sign.allow, List("", "L", "C", "R", "LM", "CM", "RM")).
     addDecNum("image y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM")).
-    addDecNum("image opacity percentage", false, Sign.disallow, List("%"))
+    addDecNum("image opacity percentage", false, Sign.disallow, List("%")).setGuiDefault("100")
 
   parser("scale-image") = (new TagParser("scale-image", sp => sp.scaleImageTag)).
     addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C")).
@@ -262,7 +262,7 @@ object Parsers {
     addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
 
   parser("rotate-image") = (new TagParser("rotate-image", sp => sp.rotateImageTag)).
-    addFloat("angle in degrees", true)
+    addFloat("degrees", true).setGuiDefault("0")
 
   parser("frame") = (new TagParser(
     "frame",
@@ -301,7 +301,7 @@ object Parsers {
     addFlag("under")
 
   parser("opacity") = (new TagParser("opacity", sp => sp.opacityTag)).
-    addFloat("opacity", true)
+    addFloat("percentage", true).setGuiDefault("100")
 
   parser("blend") = (new TagParser("blend", sp => sp.blendModeTag)).
     addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
@@ -384,7 +384,7 @@ object Parsers {
       "assembly", "copy", "accessibility", "annotate", "fill"))
 
   parser("line-width") = (new TagParser("line-width", sp => sp.lineWidthTag)).
-    addFloat("width", true)
+    addFloat("width", true).setGuiDefault("1")
 
   parser("line-cap") = (new TagParser("line-cap", sp => sp.lineCapTag)).
     addOptions("shape", true, List("butt", "round", "square")).noGuiTitle()

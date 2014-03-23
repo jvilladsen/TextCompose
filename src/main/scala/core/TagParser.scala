@@ -157,6 +157,11 @@ class TagParser(
     this
   }
   
+  def setGuiDefault(d: String) = {
+    formalParameters.last.setGuiDefault(d)
+    this
+  }
+  
   def evaluate(se: SourceElement, proc: SourceProcessor) {
     effect(proc)(this, se)
   }
@@ -405,7 +410,11 @@ class TagParser(
       formalParameter match {
         case p: FormalString => fields.append(new TextType(title, false))	//FIXME: "large" text field in GUI
         case p: FormalInt => fields.append(new NumberType(tagName, title, true))
-        case p: FormalFloat => fields.append(new NumberType(tagName, title))
+        case p: FormalFloat => {
+          val nt = new NumberType(tagName, title)
+          nt.setDefaultValue(p.default)		//FIXME: extend setting default value to other types as necessary
+          fields.append(nt)
+        }
         case p: FormalDecNum => {
           val allowDelta = p.sign == Sign.asDelta || p.sign == Sign.allow
           val percentageOption = isOptionalPercentage(p.decor)
