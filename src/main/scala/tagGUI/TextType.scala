@@ -32,7 +32,10 @@ class TextType(label: String, large: Boolean) extends ParameterType {
   }
 
   if (label == "") {
-    AddToPanel(field, false)
+    val unLabeledField = new GridPanel(1, 1) {
+      contents += field
+    }
+    AddToPanel(unLabeledField, true)
   } else {
     if (large) {
       val labeledField = new BoxPanel(Orientation.Vertical) {

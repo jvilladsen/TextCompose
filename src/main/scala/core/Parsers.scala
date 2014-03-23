@@ -144,8 +144,8 @@ object Parsers {
     addFlag("under")
 
   parser("document") = (new TagParser("document", sp => sp.documentTag)).
-    addOptions("name of property", true, List("title", "author", "subject", "keywords")).
-    addString("value", true)
+    addOptions("property", true, List("title", "author", "subject", "keywords")).noGuiTitle().
+    addString("value", true).noGuiTitle()
 
   val standardPageSizes =
     List("A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
@@ -167,22 +167,22 @@ object Parsers {
     addFloat("height", true)
 
   parser("margins") = (new TagParser("margins", sp => sp.marginsTag)).
-    addFloat("left margin", true).
-    addFloat("right margin", true).
-    addFloat("top margin", true).
-    addFloat("bottom margin", true)
+    addFloat("left", true).
+    addFloat("right", true).
+    addFloat("top", true).
+    addFloat("bottom", true)
 
   parser("orientation") = (new TagParser("orientation", sp => sp.orientationTag)).
     addOptions("orientation", true, List("portrait", "landscape")).noGuiTitle()
 
   parser("columns") = (new TagParser("columns", sp => sp.columnsTag)).
-    addInt("number of columns", true).
-    addFloat("size of gutter", true)
+    addInt("columns", true).setDefaultValue("2").
+    addFloat("gutter", true).setDefaultValue("30")
 
   parser("view") = (new TagParser("view", sp => sp.viewTag)).
-    addOptions("page layout", true, List("single page", "one column",
+    addOptions("layout", true, List("single page", "one column",
       "two column left", "two column right", "two page left", "two page right")).
-    addOptions("page mode", true, List("none", "outline", "thumbnails",
+    addOptions("mode", true, List("none", "outline", "thumbnails",
       "full screen", "optional content", "attachments"))
 
   parser("var") = (new TagParser(

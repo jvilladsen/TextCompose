@@ -148,11 +148,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new NumberType(tagName, "Y", decor))
   }
 
-  private def indentTag() {
-    fields.append(new ComboBoxType("", List("left", "right"), true))
-    fields.append(new NumberType(tagName, ""))
-  }
-
   private def positionTag() {
     fields.append(new NumberType(tagName, "X", List("L", "LM", "C", "CM", "R", "RM")))
     fields.append(new NumberType(tagName, "Y", List("T", "TM", "C", "CM", "B", "BM")))
@@ -175,32 +170,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new BooleanType("under", "under"))
   }
 
-  private def documentTag() {
-    fields.append(new ComboBoxType("", List("title", "author", "subject", "keywords"), true))
-    fields.append(new TextType("", false))
-  }
-
-  private def viewTag() {
-    fields.append(new ComboBoxType("", List("single page", "one column", "two column left", "two column right", "two page left", "two page right"), true))
-    fields.append(new ComboBoxType("", List("none", "outline", "thumbnails", "full screen", "optional content", "attachments"), true))
-  }
-
-  private def encryptTag() {
-    fields.append(new TextType("User password", false))
-    fields.append(new TextType("Owner password", false))
-    val rights = List("Print", "DegPrint", "Modify", "Assembly", "Copy", "Accessibility", "Annotate", "Fill")
-    val rightsGroup = new BooleanGroupType(rights, rights, "Grant user rights")
-    rightsGroup.setNotMandatory()
-    fields.append(rightsGroup)
-  }
-
-  private def marginsTag() {
-    fields.append(new NumberType(tagName, "Left"))
-    fields.append(new NumberType(tagName, "Right"))
-    fields.append(new NumberType(tagName, "Top"))
-    fields.append(new NumberType(tagName, "Bottom"))
-  }
-
   private def pageSizeTag(parameters: ArrayBuffer[String]) {
 
     val pageSizes = List("A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
@@ -219,11 +188,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       fields.append(new NumberType(tagName, "Width"))
       fields.append(new NumberType(tagName, "Height"))
     }
-  }
-
-  private def columnsTag() {
-    fields.append(new NumberType(tagName, "Columns", true))
-    fields.append(new NumberType(tagName, "Gutter"))
   }
 
   private def imageTag() {
@@ -308,11 +272,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
 
   private def refTag() {
     fields.append(new TextType("Name", false))
-  }
-
-  private def alignTag() {
-    fields.append(new ComboBoxType("", List("text", "image", "cell"), true))
-    fields.append(new ComboBoxType("", List("left", "right", "center", "full"), true))
   }
 
   private def varTag() {
@@ -434,18 +393,18 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "paragraph-indent" => paragraphIndentTag(parameters)
       case "new"              => parser.buildGUI(fields)
       // POSITION
-      case "align"            => alignTag()
-      case "indent"           => indentTag()
+      case "align"            => parser.buildGUI(fields)
+      case "indent"           => parser.buildGUI(fields)
       case "rise"             => parser.buildGUI(fields)
       case "position"         => positionWithAngleTag()
       // DOCUMENT
-      case "document"         => documentTag()
+      case "document"         => parser.buildGUI(fields)
       case "page-size"        => pageSizeTag(parameters)
       case "orientation"      => parser.buildGUI(fields)
-      case "margins"          => marginsTag()
-      case "columns"          => columnsTag()
-      case "view"             => viewTag()
-      case "encrypt"          => encryptTag()
+      case "margins"          => parser.buildGUI(fields)
+      case "columns"          => parser.buildGUI(fields)
+      case "view"             => parser.buildGUI(fields)
+      case "encrypt"          => parser.buildGUI(fields)
       // IMAGE
       case "image"            => imageTag()
       case "scale-image"      => decoratedSize(List("%", "%P", "%M", "%C"))

@@ -413,7 +413,12 @@ class TagParser(
       val title = if (formalParameter.hideGuiTitle) "" else formalParameter.getName
       formalParameter match {
         case p: FormalString => fields.append(new TextType(title, false))	//FIXME: "large" text field in GUI
-        case p: FormalInt => fields.append(new NumberType(tagName, title, true))
+        case p: FormalInt => {
+          val it = new NumberType(tagName, title, true)
+          it.setDefaultValue(p.default)
+          if (!p.isMandatory) it.setNotMandatory()
+          fields.append(it)
+        }
         case p: FormalFloat => {
           val nt = new NumberType(tagName, title)
           nt.setDefaultValue(p.default)				//FIXME: extend setting default value to other types as necessary
@@ -433,6 +438,7 @@ class TagParser(
           booleanGroup.setNotMandatory()
           fields.append(booleanGroup)
         }
+        case _ => throw new Exception("Unknown type of parameter '" + formalName + "' for tag '" + tagName + "'.")
       }
     }
   }
