@@ -412,7 +412,8 @@ class TagParser(
         case p: FormalInt => fields.append(new NumberType(tagName, title, true))
         case p: FormalFloat => {
           val nt = new NumberType(tagName, title)
-          nt.setDefaultValue(p.default)		//FIXME: extend setting default value to other types as necessary
+          nt.setDefaultValue(p.default)				//FIXME: extend setting default value to other types as necessary
+          if (p.isMandatory) nt.setNotMandatory()	//FIXME: extend setting not mandatory to other types as necessary
           fields.append(nt)
         }
         case p: FormalDecNum => {
@@ -425,7 +426,7 @@ class TagParser(
         case p: FormalFlag => fields.append(new BooleanType(formalName, formalName))
         case p: FormalFlags => {
           val booleanGroup = new BooleanGroupType(p.flags, p.flags, title)
-          booleanGroup.SetNotMandatory
+          booleanGroup.setNotMandatory()
           fields.append(booleanGroup)
         }
       }

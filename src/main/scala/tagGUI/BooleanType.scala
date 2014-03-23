@@ -40,7 +40,7 @@ class BooleanType(representation: String, label: String) extends ParameterType {
   }
   AddToPanel(labeledField, true)
 
-  SetNotMandatory
+  setNotMandatory()
 
   def GetRepresentation = representation
 

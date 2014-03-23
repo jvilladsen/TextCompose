@@ -151,7 +151,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   private def newPlace() {
     fields.append(new ComboBoxType("", List("line", "paragraph", "column", "page"), true))
     val limit = new TextType("limit", false)
-    limit.SetNotMandatory
+    limit.setNotMandatory()
     fields.append(limit)
   }
 
@@ -177,7 +177,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new NumberType(tagName, "X", List("L", "C", "R")))
     fields.append(new NumberType(tagName, "Y", List("T", "C", "B")))
     val angle = new NumberType(tagName, "Angle")
-    angle.SetNotMandatory
+    angle.setNotMandatory()
     fields.append(angle)
     fields.append(new BooleanType("under", "under"))
   }
@@ -197,7 +197,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new TextType("Owner password", false))
     val rights = List("Print", "DegPrint", "Modify", "Assembly", "Copy", "Accessibility", "Annotate", "Fill")
     val rightsGroup = new BooleanGroupType(rights, rights, "Grant user rights")
-    rightsGroup.SetNotMandatory
+    rightsGroup.setNotMandatory()
     fields.append(rightsGroup)
   }
 
@@ -276,9 +276,9 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   private def cellTag() {
     fields.append(new NumberType(tagName, "Row span", true))
     fields.append(new NumberType(tagName, "Column span", true))
-    fields(0).SetNotMandatory
+    fields(0).setNotMandatory()
     fields(0).SetPostFix("R")
-    fields(1).SetNotMandatory
+    fields(1).setNotMandatory()
     fields(1).SetPostFix("C")
   }
 
@@ -287,7 +287,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     val directionsRepresentation = List("L", "R", "T", "B")
     val directionsLabel = List("Left", "Right", "Top", "Bottom")
     val directionsGroup = new BooleanGroupType(directionsRepresentation, directionsLabel, "Directions")
-    directionsGroup.SetNotMandatory
+    directionsGroup.setNotMandatory()
     directionsGroup.SetNoPadding
     fields.append(directionsGroup)
   }
@@ -305,7 +305,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new TextType("Title", true))
     fields.append(new NumberType(tagName, "Level", true))
     val name = new TextType("Name", false)
-    name.SetNotMandatory
+    name.setNotMandatory()
     fields.append(name)
   }
 
@@ -334,13 +334,13 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   private def defTag() {
     fields.append(new TextType("Tag Name", false))
     val parameter1 = new TextType("[Parameter 1]", false)
-    parameter1.SetNotMandatory
+    parameter1.setNotMandatory()
     fields.append(parameter1)
     val parameter2 = new TextType("[Parameter 2]", false)
-    parameter2.SetNotMandatory
+    parameter2.setNotMandatory()
     fields.append(parameter2)
     val parameter3 = new TextType("[Parameter 3]...", false)
-    parameter3.SetNotMandatory
+    parameter3.setNotMandatory()
     fields.append(parameter3)
   }
 
@@ -353,7 +353,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new ComboBoxType("Point", List("page", "before row", "after row", "before column", "after column"), true))
     fields.append(new ComboBoxType("Only", List("odd", "even"), false))
     fields.append(new NumberType(tagName, " or number", true))
-    fields(2).SetNotMandatory
+    fields(2).setNotMandatory()
     fields.append(new TextType("Injection", true))
   }
 

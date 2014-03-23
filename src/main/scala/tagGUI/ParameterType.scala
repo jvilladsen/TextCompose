@@ -30,7 +30,7 @@ abstract class ParameterType {
   }
 
   var mandatory = true
-  def SetNotMandatory { mandatory = false }
+  def setNotMandatory() { mandatory = false }
 
   // Post fix used from the cell tag.
   var postFix = ""
