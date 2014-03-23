@@ -99,11 +99,15 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
     for (f <- storage.FontCharacters.dataSet) {
       if (f(0) == fontFileName) {
         val enc = f(1)
-        val chars = f(2).mkString(" ")
+        val (chars, fontSize) = try {
+          (f(2).mkString(" "), 85)
+        } catch {
+          case e: Exception => ("Could not retrieve the characters of this font. It may be broken.", 14)
+        }
         panel.emptyRow
         panel.setFont(storage.GUIFonts.getStandardFontName, 18)
         panel.label("<b>Characters in " + enc + "</b>", "left", width)
-        panel.setFont(javaFontName, 85)
+        panel.setFont(javaFontName, fontSize)
         panel.label(chars, "left", width)
       }
     }
