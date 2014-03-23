@@ -132,7 +132,7 @@ class SourceProcessor(
 
   def includeTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    extensions.addNewExtension(parser.getNextString, processingUnit)
+    extensions.addNewExtension(parser.getNextOption, processingUnit)
     for ((message, unit) <- extensions.errorMessages) { showErrorMessage(message, unit) }
     /* If a 'main' was encountered in the extension, then we should throw it into the stream here.
 		 * Note that there may be more than one, since extension can use the include tag.

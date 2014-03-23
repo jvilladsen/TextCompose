@@ -323,10 +323,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new TextType("Name", false))
   }
 
-  private def tagWithComboBox(values: List[String]) {
-    fields.append(new ComboBoxType("", values, true))
-  }
-
   private def alignTag() {
     fields.append(new ComboBoxType("", List("text", "image", "cell"), true))
     fields.append(new ComboBoxType("", List("left", "right", "center", "full"), true))
@@ -438,7 +434,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       // FONT
       case "font"             => fontSelectionTag()
       case "size"             => parser.buildGUI(fields)
-      case "face"             => tagWithComboBox(List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic"))
+      case "face"             => parser.buildGUI(fields)
       case "color"            => colorSelectionTag("Choose color")
       case "underline"        => underlineTag(parameters)
       case "highlight"        => highlightTag(parameters)
@@ -458,7 +454,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       // DOCUMENT
       case "document"         => documentTag()
       case "page-size"        => pageSizeTag(parameters)
-      case "orientation"      => tagWithComboBox(List("portrait", "landscape"))
+      case "orientation"      => parser.buildGUI(fields)
       case "margins"          => marginsTag()
       case "columns"          => columnsTag()
       case "view"             => viewTag()
@@ -483,13 +479,13 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "border-color"     => colorSelectionTag("Choose color")
       // DRAW
       case "line-width"       => numberTag("points", 1)
-      case "line-cap"         => tagWithComboBox(List("butt", "round", "square"))
+      case "line-cap"         => parser.buildGUI(fields)
       case "line-dash"        => lineDashTag()
       case "move-to"          => positionTag()
       case "line-to"          => positionTag()
       case "draw"             => drawTag()
       // GRAPHICS MODE
-      case "blend"            => tagWithComboBox(List("normal", "compatible", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"))
+      case "blend"            => parser.buildGUI(fields)
       case "opacity"          => numberTag("percentage", 100)
       // INSERT
       case "insert"           => insertTag()
@@ -510,7 +506,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "/add"             => parser.buildGUI(fields)
       case "show"             => tagWithOneTextField("Variable")
       // EXTENSION
-      case "include"          => tagWithComboBox(storage.Configurations.getListOfExtensions)
+      case "include"          => parser.buildGUI(fields)
       case "extension"        => tagWithOneTextField("Name")
       case "def"              => defTag()
       case "sub"              => defTag()

@@ -38,7 +38,7 @@ object Parsers {
     addDecNum("font size", true, Sign.asDelta, optionalPercentage).noGuiTitle()
 
   parser("face") = (new TagParser("face", sp => sp.faceTag)).
-    addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic"))
+    addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic")).noGuiTitle()
 
   val colorScopes = List("text", "underline", "highlight", "page", "frame", "border", "cell", "draw")
 
@@ -173,7 +173,7 @@ object Parsers {
     addFloat("bottom margin", true)
 
   parser("orientation") = (new TagParser("orientation", sp => sp.orientationTag)).
-    addOptions("orientation", true, List("portrait", "landscape"))
+    addOptions("orientation", true, List("portrait", "landscape")).noGuiTitle()
 
   parser("columns") = (new TagParser("columns", sp => sp.columnsTag)).
     addInt("number of columns", true).
@@ -305,7 +305,7 @@ object Parsers {
 
   parser("blend") = (new TagParser("blend", sp => sp.blendModeTag)).
     addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
-      "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"))
+      "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion")).noGuiTitle()
 
   parser("char") = (new TagParser("char", sp => sp.charTag)).
     addInt("number", true).
@@ -369,8 +369,13 @@ object Parsers {
     addOptions("position", true, List("row", "column", "page-break", "all")).
     addInt("number", false).addString("content", true)
 
+  val nameOfExtension = "name of extension"
   parser("include") = (new TagParser("include", sp => sp.includeTag)).
-    addString("name of extension", true)
+    addOptions(nameOfExtension, true, writesetter.storage.Configurations.getListOfExtensions).noGuiTitle()
+  
+  def updateInclude() {
+    parser("include").updateOptions("", nameOfExtension, writesetter.storage.Configurations.getListOfExtensions)
+  }
 
   parser("encrypt") = (new TagParser("encrypt", sp => sp.encryptTag)).
     addString("user password", true).
@@ -382,7 +387,7 @@ object Parsers {
     addFloat("width", true)
 
   parser("line-cap") = (new TagParser("line-cap", sp => sp.lineCapTag)).
-    addOptions("shape", true, List("butt", "round", "square"))
+    addOptions("shape", true, List("butt", "round", "square")).noGuiTitle()
 
   parser("line-dash") = (new TagParser("line-dash", sp => sp.lineDashTag)).
     addString("numbers", true).

@@ -81,7 +81,9 @@ case class FormalDecNum(
 case class FormalOptions(
   val name: String,
   val mandatory: Boolean,
-  val options: List[String]) extends FormalParameter(name, mandatory) {
+  val newOptions: List[String]) extends FormalParameter(name, mandatory) {
+  
+  var options: List[String] = newOptions // some option lists can change: fonts, extensions.
 
   def formattedOptions = format(options)
 

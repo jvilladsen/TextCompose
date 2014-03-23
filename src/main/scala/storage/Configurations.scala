@@ -190,6 +190,8 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     extensionToFileName += extensionName -> fileName
     update(List("Extension", extensionName, fileName))
     store()
+    // Tag dialog for 'include' has combo box with list of extensions.
+    core.Parsers.updateInclude()
   }
 
   def isKnownExtensionFile(fileName: String): Boolean = {
@@ -210,6 +212,8 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
       remove(List("Extension", i, fileName))
     }
     store()
+    // Tag dialog for 'include' has combo box with list of extensions.
+    core.Parsers.updateInclude()
   }
 
   def registerNewTemplate(templateName: String, fileName: String) {

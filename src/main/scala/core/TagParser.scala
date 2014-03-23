@@ -124,6 +124,23 @@ class TagParser(
     formalParameters += FormalOptions(name, mandatory, options)
     this
   }
+  def updateOptions(syntaxName: String, parameterName: String, newOptions: List[String]) {
+    val syntaxIndex = syntaxAlternatives.indexWhere(s => s.name == syntaxName)
+    val parIndex = if (syntaxIndex >= 0) {
+      syntaxAlternatives(syntaxIndex).formalParameters.indexWhere(p => p.getName == parameterName)
+    } else {
+      throw new Exception("No syntax '" + syntaxName + "' found for tag '" + tagName)
+    }
+    val parameter = if (parIndex >= 0) {
+      syntaxAlternatives(syntaxIndex).formalParameters(parIndex)
+    } else {
+      throw new Exception("No parameter '" + parameterName + "' found in syntax '" + syntaxName + "' for tag '" + tagName)
+    }
+    parameter match {
+      case p: FormalOptions => p.options = newOptions
+      case _ => throw new Exception("Parameter '" + parameterName + "' in syntax '" + syntaxName + "' for tag '" + tagName + "' is not of type option")
+    }
+  }
   
   def addFlag(name: String) = {
     formalParameters += FormalFlag(name)
