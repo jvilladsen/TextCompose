@@ -417,14 +417,14 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   def Layout(se: writesetter.core.SourceElement, okAction: Action) {
     knownTag = true
     val parser = writesetter.core.Parsers.getParser(tagName)
-    var errorFound = false
-    var errorMessage = ""
+    var tagParserErrorFound = false
+    var tagParserErrorMessage = ""
     try {
       parser(se)
     } catch {
       case e: Exception => {
-        errorFound = true
-        errorMessage = e.getMessage
+        tagParserErrorFound = true
+        tagParserErrorMessage = e.getMessage
       }
     }
     
@@ -531,6 +531,14 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
     if (knownTag) {
       addAllToPanel(okAction)
+      if (tagParserErrorFound) {
+        val errorMessage = new EditorPane {
+          text = tagParserErrorMessage
+          background = editor.Colors.supportPane
+          editable = false
+        }
+        AddToPanel(errorMessage, false)
+      }
     } else {
       panel.contents.clear()
       val tagLabel = new LabelType("Unknown tag", "Error")
