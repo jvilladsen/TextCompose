@@ -208,11 +208,11 @@ object Parsers {
     se => se.NumberOfParameters == 1,
     "Variable name - followed by key in the case of Map variables",
     sp => sp.setTag)).
-    addString("name", true).
+    addString("variable", true).
     addSyntax(
       "Map",
       se => se.NumberOfParameters == 2).
-    addString("name", true).
+    addString("variable", true).
     addString("key", true)
 
   parser("/set") = (new TagParser("/set", sp => sp.defTag))	// Handled in handleCopying
@@ -367,7 +367,8 @@ object Parsers {
     addOptions("before/after", true, List("before", "after")).
     addOptions("odd/even", false, List("odd", "even")).
     addOptions("position", true, List("row", "column", "page-break", "all")).
-    addInt("number", false).addString("content", true)
+    addInt("number", false).setDefaultValue("0").
+    addString("content", true)
 
   val nameOfExtension = "name of extension"
   parser("include") = (new TagParser("include", sp => sp.includeTag)).
@@ -401,7 +402,8 @@ object Parsers {
     addDecNum("x position", true, Sign.allow, List("", "L", "LM", "C", "CM", "RM", "R")).
     addDecNum("y position", true, Sign.allow, List("", "T", "TM", "C", "CM", "BM", "B"))
   
-  parser("extension") = (new TagParser("extension", sp => sp.extensionTag))
+  parser("extension") = (new TagParser("extension", sp => sp.extensionTag)).
+    addString("name", true)
   
   parser("def") = (new TagParser("def", sp => sp.defTag))
   
@@ -415,6 +417,7 @@ object Parsers {
   
   parser("/main") = new TagParser("/main", sp => (p, s) => ())
   
-  parser("template") = new TagParser("template", sp => (p, s) => ())
+  parser("template") = new TagParser("template", sp => (p, s) => ()).
+    addString("name", true)
   
 }

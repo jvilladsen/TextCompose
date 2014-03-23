@@ -280,9 +280,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new BooleanType("converge", "converge"))
   }
 
-  private def tagWithOneTextField(label: String) {
-    fields.append(new TextType(label, false))
-  }
   private def defTag() {
     fields.append(new TextType("Tag Name", false))
     val parameter1 = new TextType("[Parameter 1]", false)
@@ -299,14 +296,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   private def lineDashTag() {
     fields.append(new TextType("Number sequence", false))
     fields.append(new NumberType(tagName, "Phase"))
-  }
-
-  private def injectTag() {
-    fields.append(new ComboBoxType("Point", List("page", "before row", "after row", "before column", "after column"), true))
-    fields.append(new ComboBoxType("Only", List("odd", "even"), false))
-    fields.append(new NumberType(tagName, " or number", true))
-    fields(2).setNotMandatory()
-    fields.append(new TextType("Injection", true))
   }
 
   private def replaceTag() {
@@ -334,11 +323,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       fields.append(new ComboBoxType("Sort by", List("key", "value"), true))
       fields.append(new TextType("Body ($1 key, $2 value)", true))
     }
-  }
-
-  private def whitespaceTag() {
-    val selection = new ComboBoxType("", List("keep", "trim"), true)
-    fields.append(selection)
   }
 
   private def userDefinedTag(extension: String, tagName: String) {
@@ -446,26 +430,26 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "reset"            => parser.buildGUI(fields)
       // VARIABLE
       case "var"              => varTag()
-      case "set"              => tagWithOneTextField("Variable")
+      case "set"              => parser.buildGUI(fields)
       case "/set"             => parser.buildGUI(fields)
-      case "add"              => tagWithOneTextField("Variable")
+      case "add"              => parser.buildGUI(fields)
       case "/add"             => parser.buildGUI(fields)
-      case "show"             => tagWithOneTextField("Variable")
+      case "show"             => parser.buildGUI(fields)
       // EXTENSION
       case "include"          => parser.buildGUI(fields)
-      case "extension"        => tagWithOneTextField("Name")
+      case "extension"        => parser.buildGUI(fields)
       case "def"              => defTag()
       case "sub"              => defTag()
       case "main"             => parser.buildGUI(fields)
       case "/def"             => parser.buildGUI(fields)
       case "/sub"             => parser.buildGUI(fields)
       case "/main"            => parser.buildGUI(fields)
-      case "template"         => tagWithOneTextField("Name")
+      case "template"         => parser.buildGUI(fields)
       // ADVANCED
-      case "inject"           => injectTag()
+      case "inject"           => parser.buildGUI(fields)
       case "replace"          => replaceTag()
       case "loop"             => loopTag(parameters)
-      case "whitespace"       => whitespaceTag()
+      case "whitespace"       => parser.buildGUI(fields)
       case _ => {
         val extension = core.LatestExtensions.GetExtensionDefiningTag(fileKey, tagName)
         if (extension != "") {
