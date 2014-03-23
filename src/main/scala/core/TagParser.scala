@@ -152,20 +152,24 @@ class TagParser(
     this
   }
   
+  /** Modify the parameter just added, to hide its title in the tag dialog. */
   def noGuiTitle() = {
     formalParameters.last.noGuiTitle()
     this
   }
   
-  def setGuiDefault(d: String) = {
-    formalParameters.last.setGuiDefault(d)
+  /** Modify the parameter just added, to set a default value. */
+  def setDefaultValue(d: String) = {
+    formalParameters.last.setDefaultValue(d)
     this
   }
   
+  /** Evaluate the source element after parsing, using the given "effect". */
   def evaluate(se: SourceElement, proc: SourceProcessor) {
     effect(proc)(this, se)
   }
   
+  /** Parse a "source element" that contains a tag using this parser. */
   def apply(se: SourceElement) {
 
     def ordinalNumber(n: Int): String = {
@@ -413,7 +417,7 @@ class TagParser(
         case p: FormalFloat => {
           val nt = new NumberType(tagName, title)
           nt.setDefaultValue(p.default)				//FIXME: extend setting default value to other types as necessary
-          if (p.isMandatory) nt.setNotMandatory()	//FIXME: extend setting not mandatory to other types as necessary
+          if (!p.isMandatory) nt.setNotMandatory()	//FIXME: extend setting not mandatory to other types as necessary
           fields.append(nt)
         }
         case p: FormalDecNum => {

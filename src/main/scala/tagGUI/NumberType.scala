@@ -143,13 +143,13 @@ class NumberType(
     return result
   }
 
-  private def IsZeroOrEmpty(text: String): Boolean = {
+  private def isEmptyOrDefault(text: String): Boolean = {
     if (text == "") {
       true
     } else {
       try {
-        val x = text.toFloat
-        return x.abs < 0.000001f
+        val x = text.toFloat - defaultValue
+        return x.abs < 0.0000001f
       } catch {
         case e: Exception => return true
       }
@@ -180,7 +180,7 @@ class NumberType(
       }
     }
 
-    if (mandatory || !IsZeroOrEmpty(valueField.text)) {
+    if (mandatory || !isEmptyOrDefault(valueField.text)) {
       val percentageSign = if (forcedPercentage || (percentageOption && percentageField.selected)) "%" else ""
       if (allowDelta) {
         deltaField.Get + valueMadeEasy + decoration.Get + percentageSign + postFix

@@ -26,7 +26,7 @@ abstract class FormalParameter(name: String, mandatory: Boolean) {
   def wrap(s: String) = if (mandatory) s else "[" + s + "]"
   def format(sl: List[String]): String = sl.map(s => "'" + s + "'").mkString(", ")
   def noGuiTitle() { hideGuiTitle = true }
-  def setGuiDefault(d: String)
+  def setDefaultValue(d: String)
 }
 
 case class FormalString(
@@ -35,7 +35,7 @@ case class FormalString(
   var default = ""
 
   override def toString = wrap(name + ": string")
-  override def setGuiDefault(d: String) { default = d }
+  override def setDefaultValue(d: String) { default = d }
 }
 
 case class FormalInt(
@@ -44,7 +44,7 @@ case class FormalInt(
   var default = 0
 
   override def toString = wrap(name + ": int")
-  override def setGuiDefault(d: String) { default = d.toInt }
+  override def setDefaultValue(d: String) { default = d.toInt }
 }
 
 case class FormalFloat(
@@ -53,7 +53,7 @@ case class FormalFloat(
   var default = 0f
   
   override def toString = wrap(name + ": float")
-  override def setGuiDefault(d: String) { default = d.toFloat }
+  override def setDefaultValue(d: String) { default = d.toFloat }
 }
 
 case class FormalDecNum(
@@ -84,7 +84,7 @@ case class FormalDecNum(
   override def toString =
     if (decor.size == 1) wrap(name + ": float decorated with " + decoration)
     else wrap(name + ": float decorated with one of " + decoration)
-  override def setGuiDefault(d: String) { default.parse(d) }
+  override def setDefaultValue(d: String) { default.parse(d) }
 }
 
 case class FormalOptions(
@@ -98,14 +98,14 @@ case class FormalOptions(
   def formattedOptions = format(options)
 
   override def toString = wrap(name + ": one of: " + formattedOptions)
-  override def setGuiDefault(d: String) { default = d }
+  override def setDefaultValue(d: String) { default = d }
 }
 
 case class FormalFlag(
   val name: String) extends FormalParameter(name, false) {
 
   override def toString = "[keyword '" + name + "']"
-  override def setGuiDefault(d: String) { throw new Exception("No default for flag type") }
+  override def setDefaultValue(d: String) { throw new Exception("No default for flag type") }
 }
 
 case class FormalFlags(
@@ -128,5 +128,5 @@ case class FormalFlags(
   } else {
     "[" + name + ": zero, one or more of: " + formattedFlags + ", without space inbetween]"
   }
-  override def setGuiDefault(d: String) { throw new Exception("No default for flags type") }
+  override def setDefaultValue(d: String) { throw new Exception("No default for flags type") }
 }

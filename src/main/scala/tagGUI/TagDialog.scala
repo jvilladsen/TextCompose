@@ -148,13 +148,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new NumberType(tagName, "Y", decor))
   }
 
-  private def newPlace() {
-    fields.append(new ComboBoxType("", List("line", "paragraph", "column", "page"), true))
-    val limit = new TextType("limit", false)
-    limit.setNotMandatory()
-    fields.append(limit)
-  }
-
   private def indentTag() {
     fields.append(new ComboBoxType("", List("left", "right"), true))
     fields.append(new NumberType(tagName, ""))
@@ -439,7 +432,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "height"           => parser.buildGUI(fields)
       case "paragraph-space"  => parser.buildGUI(fields) 
       case "paragraph-indent" => paragraphIndentTag(parameters)
-      case "new"              => newPlace()
+      case "new"              => parser.buildGUI(fields)
       // POSITION
       case "align"            => alignTag()
       case "indent"           => indentTag()
