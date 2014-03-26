@@ -274,12 +274,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new TextType("Name", false))
   }
 
-  private def varTag() {
-    fields.append(new TextType("Variable", false))
-    fields.append(new ComboBoxType("Type", List("Int", "Str"), true))
-    fields.append(new BooleanType("converge", "converge"))
-  }
-
   private def defTag() {
     fields.append(new TextType("Tag Name", false))
     val parameter1 = new TextType("[Parameter 1]", false)
@@ -296,33 +290,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   private def lineDashTag() {
     fields.append(new TextType("Number sequence", false))
     fields.append(new NumberType(tagName, "Phase"))
-  }
-
-  private def replaceTag() {
-    fields.append(new ComboBoxType("Level", List("source", "text"), true))
-    fields.append(new NumberType(tagName, "Priority", true))
-    fields.append(new TextType("Id", false))
-    fields.append(new TextType("Regular expression to find", true))
-    fields.append(new TextType("Replace by ($1 for group 1 etc.)", true))
-    fields.append(new BooleanType("i", "Case insensitive"))
-    fields.append(new BooleanType("t", "Even apply to tags"))
-  }
-
-  private def loopTag(parameters: ArrayBuffer[String]) {
-    val loopType = new ComboBoxType("Type", List("range", "map"), true)
-    loopType.SetLastValueSwitches
-    loopType.field.peer.addActionListener(updateOnSwitchingComboBox)
-    fields.append(loopType)
-    if (parameters.length > 0 && parameters(0) == "range") {
-      fields.append(new NumberType(tagName, "From", true))
-      fields.append(new NumberType(tagName, "To", true))
-      fields.append(new NumberType(tagName, "Step", true))
-      fields.append(new TextType("Body ($1 counter)", true))
-    } else {
-      fields.append(new TextType("Variable", false))
-      fields.append(new ComboBoxType("Sort by", List("key", "value"), true))
-      fields.append(new TextType("Body ($1 key, $2 value)", true))
-    }
   }
 
   private def userDefinedTag(extension: String, tagName: String) {
@@ -365,7 +332,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "font"             => fontSelectionTag()
       case "size"             => parser.buildGUI(fields)
       case "face"             => parser.buildGUI(fields)
-      case "color"            => colorSelectionTag("Choose color")
+      case "color"            => parser.buildGUI(fields) // colorSelectionTag("Choose color")
       case "underline"        => underlineTag(parameters)
       case "highlight"        => highlightTag(parameters)
       case "/highlight"       => parser.buildGUI(fields)
@@ -429,7 +396,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "restore"          => parser.buildGUI(fields)
       case "reset"            => parser.buildGUI(fields)
       // VARIABLE
-      case "var"              => varTag()
+      case "var"              => parser.buildGUI(fields)
       case "set"              => parser.buildGUI(fields)
       case "/set"             => parser.buildGUI(fields)
       case "add"              => parser.buildGUI(fields)
@@ -447,8 +414,8 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "template"         => parser.buildGUI(fields)
       // ADVANCED
       case "inject"           => parser.buildGUI(fields)
-      case "replace"          => replaceTag()
-      case "loop"             => loopTag(parameters)
+      case "replace"          => parser.buildGUI(fields)
+      case "loop"             => parser.buildGUI(fields)
       case "whitespace"       => parser.buildGUI(fields)
       case _ => {
         val extension = core.LatestExtensions.GetExtensionDefiningTag(fileKey, tagName)
@@ -496,14 +463,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     panel.reactions += {
       case KeyPressed(`panel`, Enter, _, _) => action.apply()
     }
-  }
-
-  def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
-    var index = offset
-    for (f <- fields) {
-      index += f.Set(parameters, index)
-    }
-    index
   }
 
   def grabFocus { if (fields.length > 0) { fields(0).grabFocus } }

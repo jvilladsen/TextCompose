@@ -65,16 +65,20 @@ object CaretPosition {
           }
         }
 
-        determineCurrentLine()
-        parseCurrentLine()
-        if (wellFormedLine) {
-          tagPane.updateFromEditor(fileEditor.file.getFileKey,
-            isInsideTag,
-            foundTagStartingAt,
-            foundTagEndingAt,
-            ElmStack.TagAtPosition)
-        } else {
-          tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
+        try {
+	        determineCurrentLine()
+	        parseCurrentLine()
+	        if (wellFormedLine) {
+	          tagPane.updateFromEditor(fileEditor.file.getFileKey,
+	            isInsideTag,
+	            foundTagStartingAt,
+	            foundTagEndingAt,
+	            ElmStack.TagAtPosition)
+	        } else {
+	          tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
+	        }
+        } catch {
+          case e: Exception => DialogBox.stackTrace("Failed in future to maintain tag dialog", e)
         }
         delayIsSpawned = false
       }

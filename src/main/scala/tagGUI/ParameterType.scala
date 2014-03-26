@@ -52,8 +52,6 @@ abstract class ParameterType {
     panel.contents += c
   }
 
-  def Set(parameters: ArrayBuffer[String], offset: Int): Int // Returns the number of parameters used.
-
   def grabFocus
 
   def IsValid: Boolean

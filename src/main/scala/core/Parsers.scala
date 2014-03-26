@@ -351,14 +351,16 @@ object Parsers {
   parser("loop") = (new TagParser(
     "loop",
     "range",
-    se => se.NumberOfParameters >= 4,
+    se => se.NumberOfParameters > 0 && se.Parameters(0) == "range",
     "either three numbers (from to step) and body, or map variable name followed by \"sort by\" 'key' or 'value' and body",
     sp => sp.loopTag)).
+    addOptions("iterator", true, List("range", "map")).noGuiTitle().
     addInt("from", true).
     addInt("to", true).
     addInt("step", true).
     addString("body", true).
-    addSyntax("map", se => se.NumberOfParameters < 4).
+    addSyntax("map", se => true).
+    addOptions("iterator", true, List("range", "map")).noGuiTitle().
     addString("variable", true).
     addOptions("sort", true, List("key", "value")).
     addString("body", true)

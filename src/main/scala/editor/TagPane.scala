@@ -68,7 +68,6 @@ class TagPane {
 
     if (dialog.IsKnownTag) {
       val par = dialog.preprocessParameters(se.TagName, se.Parameters)
-      dialog.Set(par, 0)
       addContent(dialog.panel)
       if (dialog.HasParameters) { addContent(new Button(okAction)) }
       panel.contents += Swing.VStrut(10000) // is there a nicer way to pack the content from the top?

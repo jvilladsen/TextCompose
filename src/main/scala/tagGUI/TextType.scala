@@ -67,8 +67,8 @@ class TextType(label: String, large: Boolean) extends ParameterType {
     }
   }
 
-  def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
-    if (parameters.length > offset) { field.text = parameters(offset); 1 } else { 0 }
+  def set(s: String) {
+    field.text = s
   }
 
   def grabFocus { field.peer.grabFocus }

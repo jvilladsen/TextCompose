@@ -61,6 +61,16 @@ class ComboBoxType(label: String,
     }
   }
 
+  def set(option: String): Int = {
+    if (values.contains(option)) {
+      field.peer.setSelectedIndex(availableValues.indexOf(option))
+      1
+    } else {
+      0
+    }
+  }
+  
+  // FIXME: not so easy to get rid off. Used in ColorType and NumberType.
   def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
     // Returns the number of parameters that were read.
     val numberOfParameters = parameters.length

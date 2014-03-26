@@ -29,8 +29,8 @@ class TagParser(
   effect: SourceProcessor => (TagParser, SourceElement) => Unit) {
 
   def this(
-      tagName: String,
-      effect: SourceProcessor => (TagParser, SourceElement) => Unit) = this(tagName, "", _ => true, "", effect)
+    tagName: String,
+    effect: SourceProcessor => (TagParser, SourceElement) => Unit) = this(tagName, "", _ => true, "", effect)
 
   /*
    * Some tags accept different kinds of parameter sets.
@@ -100,17 +100,17 @@ class TagParser(
     formalParameters += FormalString(name, mandatory)
     this
   }
-  
+
   def addInt(name: String, mandatory: Boolean) = {
     formalParameters += FormalInt(name, mandatory)
     this
   }
-  
+
   def addFloat(name: String, mandatory: Boolean) = {
     formalParameters += FormalFloat(name, mandatory)
     this
   }
-  
+
   def addDecNum(
     name: String,
     mandatory: Boolean,
@@ -119,11 +119,16 @@ class TagParser(
     formalParameters += FormalDecNum(name, mandatory, sign, decor)
     this
   }
-  
+
   def addOptions(name: String, mandatory: Boolean, options: List[String]) = {
     formalParameters += FormalOptions(name, mandatory, options)
     this
   }
+  
+  /** Some tags have options that may change namely the font tag and the include tag.
+    * Most of the work involved in the update is to navigate through the structure
+    * to find the option parameter.  
+    */
   def updateOptions(syntaxName: String, parameterName: String, newOptions: List[String]) {
     val syntaxIndex = syntaxAlternatives.indexWhere(s => s.name == syntaxName)
     val parIndex = if (syntaxIndex >= 0) {
@@ -138,37 +143,37 @@ class TagParser(
     }
     parameter match {
       case p: FormalOptions => p.options = newOptions
-      case _ => throw new Exception("Parameter '" + parameterName + "' in syntax '" + syntaxName + "' for tag '" + tagName + "' is not of type option")
+      case _                => throw new Exception("Parameter '" + parameterName + "' in syntax '" + syntaxName + "' for tag '" + tagName + "' is not of type option")
     }
   }
-  
+
   def addFlag(name: String) = {
     formalParameters += FormalFlag(name)
     this
   }
-  
+
   def addFlags(name: String, spaced: Boolean, flags: List[String]) = {
     formalParameters += FormalFlags(name, spaced, flags)
     this
   }
-  
+
   /** Modify the parameter just added, to hide its title in the tag dialog. */
   def noGuiTitle() = {
     formalParameters.last.noGuiTitle()
     this
   }
-  
+
   /** Modify the parameter just added, to set a default value. */
   def setDefaultValue(d: String) = {
     formalParameters.last.setDefaultValue(d)
     this
   }
-  
+
   /** Evaluate the source element after parsing, using the given "effect". */
   def evaluate(se: SourceElement, proc: SourceProcessor) {
     effect(proc)(this, se)
   }
-  
+
   /** Parse a "source element" that contains a tag using this parser. */
   def apply(se: SourceElement) {
 
@@ -401,42 +406,99 @@ class TagParser(
     } else {
       ""
     }
-  
+
   def buildGUI(fields: ArrayBuffer[ParameterType]) {
-    
+
     def isOptionalPercentage(op: List[String]) = op.length == 2 && op(0) == "" && op(1) == "%"
     def isForcedPercentage(op: List[String]) = op.length == 1 && op(0) == "%"
-    
+
+    var actualParIndex = 0
     val syntax = syntaxAlternatives(currentSyntaxIndex)
     for (formalParameter <- syntax.formalParameters) {
       val formalName = formalParameter.getName
       val title = if (formalParameter.hideGuiTitle) "" else formalParameter.getName
+
+      val actualPar =
+        if (numberOfActualParameters > actualParIndex && actualParameters.length > actualParIndex) {
+          actualParameters(actualParIndex)
+        } else {
+          ActualNull
+        }
+
       formalParameter match {
-        case p: FormalString => fields.append(new TextType(title, false))	//FIXME: "large" text field in GUI
+        case p: FormalString => {
+          val tt = new TextType(title, false) //FIXME: "large" text field in GUI
+          actualPar match {
+            case p: ActualString =>
+              tt.set(p.s); actualParIndex += 1
+            case _               => None
+          }
+          fields.append(tt)
+        }
         case p: FormalInt => {
           val it = new NumberType(tagName, title, true)
+          actualPar match {
+            case p: ActualInteger =>
+              it.set(p.i); actualParIndex += 1
+            case _                => None
+          }
           it.setDefaultValue(p.default)
           if (!p.isMandatory) it.setNotMandatory()
           fields.append(it)
         }
         case p: FormalFloat => {
-          val nt = new NumberType(tagName, title)
-          nt.setDefaultValue(p.default)				//FIXME: extend setting default value to other types as necessary
-          if (!p.isMandatory) nt.setNotMandatory()	//FIXME: extend setting not mandatory to other types as necessary
-          fields.append(nt)
+          val ft = new NumberType(tagName, title)
+          actualPar match {
+            case p: ActualFloat =>
+              ft.set(p.f); actualParIndex += 1
+            case _              => None
+          }
+          ft.setDefaultValue(p.default) //FIXME: extend setting default value to other types as necessary
+          if (!p.isMandatory) ft.setNotMandatory() //FIXME: extend setting not mandatory to other types as necessary
+          fields.append(ft)
         }
         case p: FormalDecNum => {
           val allowDelta = p.sign == Sign.asDelta || p.sign == Sign.allow
           val percentageOption = isOptionalPercentage(p.decor)
           val forcedPercentage = isForcedPercentage(p.decor)
-          fields.append(new NumberType(tagName, title, allowDelta, false, p.decor, percentageOption, forcedPercentage))
+          val dnt = new NumberType(tagName, title, allowDelta, false, p.decor, percentageOption, forcedPercentage)
+          actualPar match {
+            case p: ActualDecNum =>
+              dnt.set(p.dn); actualParIndex += 1
+            case _               => None
+          }
+          fields.append(dnt)
         }
-        case p: FormalOptions => fields.append(new ComboBoxType(title, p.options, p.mandatory))
-        case p: FormalFlag => fields.append(new BooleanType(formalName, formalName))
+        case p: FormalOptions => {
+          val ot = new ComboBoxType(title, p.options, p.mandatory)
+          actualPar match {
+            case act: ActualOption => actualParIndex += ot.set(act.option)
+            case _                 => None
+          }
+          fields.append(ot)
+        }
+        case p: FormalFlag => {
+          val bt = new BooleanType(formalName, formalName)
+          actualPar match {
+            case act: ActualFlag => {
+              if (act.getFormalName == p.getName) {
+                bt.set()
+                actualParIndex += 1
+              }
+            }
+            case _ => None
+          }
+          fields.append(bt)
+        }
         case p: FormalFlags => {
-          val booleanGroup = new BooleanGroupType(p.flags, p.flags, title)
-          booleanGroup.setNotMandatory()
-          fields.append(booleanGroup)
+          val bgt = new BooleanGroupType(p.flags, p.flags, title)
+          actualPar match {
+            case p: ActualFlags =>
+              bgt.set(p.flags); actualParIndex += 1
+            case _              => None
+          }
+          bgt.setNotMandatory()
+          fields.append(bgt)
         }
         case _ => throw new Exception("Unknown type of parameter '" + formalName + "' for tag '" + tagName + "'.")
       }

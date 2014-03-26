@@ -36,4 +36,5 @@ case class ActualFlag(formalName: String) extends ActualParameter(formalName)
 
 case class ActualFlags(formalName: String, flags: String) extends ActualParameter(formalName)
 
+case class ActualNull() extends ActualParameter("null")
 // 78522386

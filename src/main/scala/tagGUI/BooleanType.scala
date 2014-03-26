@@ -53,13 +53,8 @@ class BooleanType(representation: String, label: String) extends ParameterType {
     }
   }
 
-  def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
-    if (parameters.length > offset) {
-      field.selected = parameters(offset) == representation
-      if (field.selected) 1 else 0
-    } else {
-      0
-    }
+  def set() {
+    field.selected = true
   }
 
   def grabFocus { field.peer.grabFocus }

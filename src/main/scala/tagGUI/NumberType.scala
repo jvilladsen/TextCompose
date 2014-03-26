@@ -22,7 +22,8 @@ import scala.swing._
 import scala.collection.mutable.ArrayBuffer
 import event._
 import Key._
-import writesetter.{ core, editor }
+import writesetter.core._
+import writesetter.editor._
 
 class NumberType(
   tagName: String,
@@ -51,7 +52,7 @@ class NumberType(
 
   private val labelLabel = new Label {
     horizontalAlignment = Alignment.Right
-    foreground = editor.Colors.standard
+    foreground = Colors.standard
     text = label
   }
   private val deltaField = new ComboBoxType("", List("+", "-"), false)
@@ -65,7 +66,7 @@ class NumberType(
   }
   private val percentageLabel = new Label {
     text = "%"
-    foreground = editor.Colors.standard
+    foreground = Colors.standard
   }
 
   private var defaultValue = 0f
@@ -97,34 +98,25 @@ class NumberType(
     }
   }
 
-  def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
-
-    if (parameters.length > offset && parameters(offset) != "") {
-      var DN = new core.DecoratedNumber(tagName)
-      if (allowDelta) DN.doInterpretSignAsDelta
-      try {
-        DN.parse(parameters(offset))
-      } catch {
-        case e: Exception => return 0 // FIXME: pass on the message to the user.
-      }
-
-      if (allowDelta && DN.isDelta) {
-        val sign = if (DN.value > 0) "+" else if (DN.value < 0) "-" else ""
-        deltaField.Set(ArrayBuffer(sign), 0)
-      }
-
-      val valueForText = if (allowDelta) DN.value.abs else DN.value
-      valueField.text = if (integer) valueForText.toInt.toString else valueForText.toString
-
-      if (decor.contains(DN.decoration)) {
-        decoration.Set(ArrayBuffer(DN.decoration), 0)
-      }
-      percentageField.selected = percentageOption && DN.decoration == "%"
-      1
-    } else {
-      valueField.text = if (integer) defaultValue.toInt.toString else defaultValue.toString
-      0
+  def set(dn: DecoratedNumber) {
+    if (allowDelta && dn.isDelta) {
+      val sign = if (dn.value > 0) "+" else if (dn.value < 0) "-" else ""
+      deltaField.Set(ArrayBuffer(sign), 0)
     }
+
+    val valueForText = if (allowDelta) dn.value.abs else dn.value
+    valueField.text = if (integer) valueForText.toInt.toString else valueForText.toString
+
+    if (decor.contains(dn.decoration)) {
+      decoration.Set(ArrayBuffer(dn.decoration), 0)
+    }
+    percentageField.selected = percentageOption && dn.decoration == "%"
+  }
+  def set(i: Int) {
+    valueField.text = i.toString
+  }
+  def set(f: Float) {
+    valueField.text = f.toString
   }
 
   def grabFocus { valueField.peer.grabFocus }

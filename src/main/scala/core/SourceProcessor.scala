@@ -828,6 +828,7 @@ class SourceProcessor(
     parser(se)
     parser.getSyntax match {
       case "range" => {
+        assert(parser.getNextOption == "range")
         val start = parser.getNextInt
         val stop = parser.getNextInt
         val delta = parser.getNextInt
@@ -849,6 +850,7 @@ class SourceProcessor(
         }
       }
       case "map" => {
+        assert(parser.getNextOption == "map")
         val variableName = parser.getNextString
         val sortByValue = parser.getNextOption == "value"
 

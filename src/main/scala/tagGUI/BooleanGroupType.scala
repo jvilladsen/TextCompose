@@ -37,16 +37,11 @@ class BooleanGroupType(representations: List[String], labels: List[String], grou
   var usePadding = true
   def SetNoPadding { usePadding = false }
 
-  def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
-    if (parameters.length > offset) {
-      var splitter = if (usePadding) { " " } else { "" }
-      val repList = parameters(offset).split(splitter)
-      for (f <- fields) {
-        f.SetDirectly(repList.contains(f.GetRepresentation))
-      }
-      1
-    } else {
-      0
+  def set(flags: String) {
+    val splitter = if (usePadding) { " " } else { "" }
+    val repList = flags.split(splitter)
+    for (f <- fields) {
+      f.SetDirectly(repList.contains(f.GetRepresentation))
     }
   }
 
