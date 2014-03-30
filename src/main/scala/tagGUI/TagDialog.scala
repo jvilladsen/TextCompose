@@ -494,7 +494,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     val s = new writesetter.core.SourceElement
     s.SetTag(tagName)
     for (f <- fields) {
-      val text = f.Get
+      val text = f.GetUnwrapped
       if (text != "") { s.SetParameter(text) }
     }
     s
