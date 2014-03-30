@@ -68,23 +68,14 @@ class TagParser(
     this
   }
 
-  /* Questions:
+  /* FIXME:
    * 1. add control of the height parameter in 'underline' tag to the 'height' tag.
    * 2. new 'width' tag to control width parameter in 'underline' tag, image frame and cell border.
    * 3. new 'pad' tag to control padding in highlight and table cells.
-   * 4. BIGGER: start looking that the POTENTIAL below.
-   * 5. add direction flags to color tag - on condition that scope is border.
-   * 6. brush up the inject tag
-   * 7. brush up the replace tag
-   * 8. brush up position tag
-   */
-
-  /* POTENTIAL:
-   * The primary motivation is to generalize all the repetitive code in SourceProcessor.
-   * However, this work can potentially be used to solve more tasks:
-   * 1. Building the tag dialog, based on the syntax stored in the TagParser objects.
-   * 2. Parsing the tag for setting tag dialog widget values. Would allow earlier error report.
-   * 3. Forming string for source file from the tag dialog widget values.
+   * 4. extend scope options for color tag - apart from 'border' also 4 options with direction.
+   * 5. brush up the inject tag
+   * 6. brush up the replace tag
+   * 7. brush up position tag
    */
 
   var formalParameters: ArrayBuffer[FormalParameter] = syntaxAlternatives(0).formalParameters
