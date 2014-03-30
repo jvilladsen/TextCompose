@@ -31,7 +31,7 @@ class TagPane {
   var foundTagEndingAt = 0
   var result = ""
 
-  var panel = new BoxPanel(Orientation.Vertical) {
+  val panel = new BoxPanel(Orientation.Vertical) {
     background = Colors.supportPane
     border = Swing.EmptyBorder(1, 5, 1, 1)
     minimumSize = new Dimension(170, 200)
@@ -64,7 +64,7 @@ class TagPane {
         }
       }
     }
-    dialog.Layout(se, okAction)
+    dialog.Layout(se, okAction, updateDialogFromSelf)
 
     if (dialog.IsKnownTag) {
       val par = dialog.preprocessParameters(se.TagName, se.Parameters)
@@ -106,6 +106,10 @@ class TagPane {
     }
   }
 
+  /** Build the tag dialog based on data in the source code around the caret.
+    * This is triggered upon change of position of the caret in the text editor
+    * in a future with a 600ms delay.
+    */
   def updateFromEditor(
     givenKey: String,
     inside: Boolean,
@@ -121,7 +125,21 @@ class TagPane {
     refreshLayout(se)
   }
 
-  // FIXME: apart from presenting simple parser errors we could also parse tags and show error from that.
+  /** Rebuild the tag dialog based on data in the tag dialog itself.
+    * If, for example, you change 'color system' in 'color' tag from RGB to HSL,
+    * then the dialog is rebuilt to update the next three labels, 'red' to 'hue' etc.
+    * Other, example: different fonts have different lists of available code pages,
+    * so a change of font should trigger re-assignment of the code page combo-box.
+    */
+  val updateDialogFromSelf = new java.awt.event.ActionListener() {
+    def actionPerformed(event: java.awt.event.ActionEvent) {
+      print("action performed")
+      refreshLayout(dialog.getAsSourceElement)
+    }
+  }
+  //field.peer.addActionListener(dialogUpdate)
+  
+  
   def updateWithParserErrorFromEditor(message: String) {
     clearLayout()
 

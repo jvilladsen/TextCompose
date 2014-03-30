@@ -299,19 +299,30 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
   }
 
-  private def addAllToPanel(okAction: Action) {
+  private def addAllToPanel(
+      okAction: Action,
+      actionListener: java.awt.event.ActionListener) {
+    
     panel.contents.clear()
     val tagLabel = new LabelType(tagName, "")
     tagLabel.label.peer.setToolTipText(editor.Documentation.get(tagName))
     AddToPanel(tagLabel.label, false)
     for (f <- fields) {
       f.AddActionOnEnter(okAction)
+      f match {
+        case c: writesetter.tagGUI.ComboBoxType => c.field.peer.addActionListener(actionListener)
+        case _ => None
+      }
       AddToPanel(f.panel, false)
       fieldCount += 1
     }
   }
 
-  def Layout(se: writesetter.core.SourceElement, okAction: Action) {
+  def Layout(
+    se: writesetter.core.SourceElement,
+    okAction: Action,
+    actionListener: java.awt.event.ActionListener) {
+
     knownTag = true
     val parser = writesetter.core.Parsers.getParser(tagName)
     var tagParserErrorFound = false
@@ -324,7 +335,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
         tagParserErrorMessage = e.getMessage
       }
     }
-    
+
     val parameters = se.Parameters
 
     tagName match {
@@ -340,7 +351,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "scale-letter"     => parser.buildGUI(fields)
       // SPACE
       case "height"           => parser.buildGUI(fields)
-      case "paragraph-space"  => parser.buildGUI(fields) 
+      case "paragraph-space"  => parser.buildGUI(fields)
       case "paragraph-indent" => paragraphIndentTag(parameters)
       case "new"              => parser.buildGUI(fields)
       // POSITION
@@ -427,7 +438,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       }
     }
     if (knownTag) {
-      addAllToPanel(okAction)
+      addAllToPanel(okAction, actionListener)
       if (tagParserErrorFound) {
         val errorMessage = new EditorPane {
           text = tagParserErrorMessage
@@ -457,7 +468,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
     AddToPanel(errorMessage, false)
   }
-  
+
   override def AddActionOnEnter(action: Action) { // does not work or have any effect.
     panel.listenTo(panel.keys)
     panel.reactions += {
@@ -480,5 +491,15 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       if (text != "") { result += " " + text }
     }
     removeUnchangedOptional(result) + ">"
+  }
+
+  def getAsSourceElement: writesetter.core.SourceElement = {
+    val s = new writesetter.core.SourceElement
+    s.SetTag(tagName)
+    for (f <- fields) {
+      val text = f.Get
+      if (text != "") { s.SetParameter(text) }
+    }
+    s
   }
 }
