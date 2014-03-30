@@ -29,10 +29,16 @@ object Parsers {
 
   def getParser(tagName: String) = if (parser.isDefinedAt(tagName)) parser(tagName) else empty
 
+  // FIXME: the encoding for font tag should be a kind of level-2-option which takes a map string -> list of options... 
+  val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
-    addString("font name", true).
-    addInt("encoding", false).
+    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).
+    addString("encoding", false). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
     addFlag("local")
+    
+  def updateFont() {
+    parser("font").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)
+  }
 
   parser("size") = (new TagParser("size", sp => sp.sizeTag)).
     addDecNum("font size", true, Sign.asDelta, optionalPercentage).noGuiTitle()

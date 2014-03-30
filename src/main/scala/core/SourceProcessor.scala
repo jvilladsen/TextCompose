@@ -204,7 +204,7 @@ class SourceProcessor(
 
   def fontTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    val fontTitle = parser.getNextString
+    val fontTitle = parser.getNextOption
     val encoding = if (parser.isNextInt) "Cp" + parser.getNextInt.toString else ""
     DocumentFontRegister.addFont(fontTitle, encoding, !parser.getNextFlag)
     document.setFont(fontTitle)

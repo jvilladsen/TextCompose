@@ -185,6 +185,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
   def recalculate() {
     core.FontFileRegister.recalculate()
     updateStorage(true)
+    writesetter.core.Parsers.updateFont()
   }
 
   def getAllFontTitles: List[String] = {
