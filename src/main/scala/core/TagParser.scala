@@ -437,9 +437,8 @@ class TagParser(
         case p: FormalInt => {
           val it = new NumberType(tagName, title, true)
           actualPar match {
-            case p: ActualInteger =>
-              it.set(p.i); actualParIndex += 1
-            case _                => None
+            case a: ActualInteger => it.set(a.i); actualParIndex += 1
+            case _                => it.set(p.default)
           }
           it.setDefaultValue(p.default)
           if (!p.isMandatory) it.setNotMandatory()
@@ -448,9 +447,8 @@ class TagParser(
         case p: FormalFloat => {
           val ft = new NumberType(tagName, title)
           actualPar match {
-            case p: ActualFloat =>
-              ft.set(p.f); actualParIndex += 1
-            case _              => None
+            case a: ActualFloat => ft.set(a.f); actualParIndex += 1
+            case _              => ft.set(p.default)
           }
           ft.setDefaultValue(p.default) //FIXME: extend setting default value to other types as necessary
           if (!p.isMandatory) ft.setNotMandatory() //FIXME: extend setting not mandatory to other types as necessary
@@ -472,8 +470,9 @@ class TagParser(
           val ot = new ComboBoxType(title, p.options, p.mandatory)
           actualPar match {
             case act: ActualOption => actualParIndex += ot.set(act.option)
-            case _                 => None
+            case _                 => ot.set(p.default)
           }
+          ot.setDefaultValue(p.default)
           fields.append(ot)
         }
         case p: FormalFlag => {

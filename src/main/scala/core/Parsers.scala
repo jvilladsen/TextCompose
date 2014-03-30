@@ -167,7 +167,7 @@ object Parsers {
     se => se.NumberOfParameters == 1,
     "Standard page size (Letter, Leagal, A4,...) or page width and height",
     sp => sp.pageSizeTag)).
-    addOptions("standard size", true, standardPageSizes).
+    addOptions("standard size", true, standardPageSizes).setDefaultValue("A4").
     addSyntax("custom", se => se.NumberOfParameters > 1).
     addFloat("width", true).
     addFloat("height", true)
