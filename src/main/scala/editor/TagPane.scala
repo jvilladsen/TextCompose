@@ -52,7 +52,24 @@ class TagPane {
 
   private def addContent(c: scala.swing.Component) { panel.contents += c }
 
-  private def assembleDialog(se: writesetter.core.SourceElement) {
+  private def addSyntaxSelector(syntaxes: List[String], currentSyntax: Int) {
+    val syntaxAlternatives =
+      new writesetter.tagGUI.ComboBoxType("form", syntaxes, true)
+
+    syntaxAlternatives.field.peer.setSelectedIndex(currentSyntax)
+
+    val updateDialogFromSelf = new java.awt.event.ActionListener() {
+      def actionPerformed(event: java.awt.event.ActionEvent) {
+        val forcedSyntax = syntaxAlternatives.field.peer.getSelectedIndex
+        refreshLayout(dialog.getAsSourceElement, forcedSyntax)
+      }
+    }
+    syntaxAlternatives.field.peer.addActionListener(updateDialogFromSelf)
+
+    addContent(syntaxAlternatives.panel)
+  }
+
+  private def assembleDialog(se: writesetter.core.SourceElement, forcedSyntax: Int) {
 
     dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, se.TagName)
     val okAction = new Action("OK") {
@@ -64,12 +81,19 @@ class TagPane {
         }
       }
     }
-    dialog.Layout(se, okAction, updateDialogFromSelf)
+    dialog.layout(se, okAction, updateDialogFromSelf, forcedSyntax)
 
     if (dialog.IsKnownTag) {
       val par = dialog.preprocessParameters(se.TagName, se.Parameters)
       addContent(dialog.panel)
-      if (dialog.HasParameters) { addContent(new Button(okAction)) }
+      
+      val multipleSyntaxes = dialog.syntaxes.length > 1
+      if (dialog.HasParameters || multipleSyntaxes) {
+        addContent(new Button(okAction))
+      }
+      if (multipleSyntaxes) {
+        addSyntaxSelector(dialog.syntaxes.toList, dialog.currentSyntax)
+      }
       panel.contents += Swing.VStrut(10000) // is there a nicer way to pack the content from the top?
       if (triggeredFromTagTree) dialog.grabFocus
 
@@ -82,7 +106,7 @@ class TagPane {
           } else {
             par.append(newSelectedValue)
           }
-          refreshLayout(se)
+          refreshLayout(se, -1)
         }
       }
       dialog.fakeAction.peer.addPropertyChangeListener(setSwitcherAndRefresh)
@@ -91,9 +115,9 @@ class TagPane {
     }
   }
 
-  private def refreshLayout(se: writesetter.core.SourceElement) {
+  private def refreshLayout(se: writesetter.core.SourceElement, forcedSyntax: Int) {
     clearLayout()
-    if (isInsideTag) { assembleDialog(se) }
+    if (isInsideTag) { assembleDialog(se, forcedSyntax) }
     panel.revalidate()
     panel.repaint()
     triggeredFromTagTree = false
@@ -107,6 +131,7 @@ class TagPane {
   }
 
   /** Build the tag dialog based on data in the source code around the caret.
+    *  
     * This is triggered upon change of position of the caret in the text editor
     * in a future with a 600ms delay.
     */
@@ -122,10 +147,11 @@ class TagPane {
     foundTagStartingAt = start
     foundTagEndingAt = end
 
-    refreshLayout(se)
+    refreshLayout(se, -1)
   }
 
   /** Rebuild the tag dialog based on data in the tag dialog itself.
+    *  
     * If, for example, you change 'color system' in 'color' tag from RGB to HSL,
     * then the dialog is rebuilt to update the next three labels, 'red' to 'hue' etc.
     * Other, example: different fonts have different lists of available code pages,
@@ -133,13 +159,10 @@ class TagPane {
     */
   val updateDialogFromSelf = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {
-      print("action performed")
-      refreshLayout(dialog.getAsSourceElement)
+      refreshLayout(dialog.getAsSourceElement, -1)
     }
   }
-  //field.peer.addActionListener(dialogUpdate)
-  
-  
+
   def updateWithParserErrorFromEditor(message: String) {
     clearLayout()
 

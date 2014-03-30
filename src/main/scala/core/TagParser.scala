@@ -22,7 +22,7 @@ import scala.collection.mutable.ArrayBuffer
 import writesetter.tagGUI._
 
 class TagParser(
-  tagName: String,
+  val tagName: String,
   firstSyntaxName: String,
   firstSyntaxCondition: SourceElement => Boolean,
   descriptionOfAlternatives: String,
@@ -86,6 +86,9 @@ class TagParser(
   var indexActual = 0
 
   def getSyntaxDescription: String = formalParameters.map(p => p.toString).mkString("", ", ", ".")
+  
+  def getSyntaxes: ArrayBuffer[String] = syntaxAlternatives.map(s => s.name)
+  def getCurrentSyntax: Integer = currentSyntaxIndex
 
   def addString(name: String, mandatory: Boolean) = {
     formalParameters += FormalString(name, mandatory)
@@ -398,13 +401,18 @@ class TagParser(
       ""
     }
 
-  def buildGUI(fields: ArrayBuffer[ParameterType]) {
+  def buildGUI(fields: ArrayBuffer[ParameterType], forcedSyntax: Int) {
 
     def isOptionalPercentage(op: List[String]) = op.length == 2 && op(0) == "" && op(1) == "%"
     def isForcedPercentage(op: List[String]) = op.length == 1 && op(0) == "%"
 
     var actualParIndex = 0
-    val syntax = syntaxAlternatives(currentSyntaxIndex)
+    val syntax = if (forcedSyntax == -1) {
+      syntaxAlternatives(currentSyntaxIndex)
+    } else {
+      syntaxAlternatives(forcedSyntax)
+    }
+    
     for (formalParameter <- syntax.formalParameters) {
       val formalName = formalParameter.getName
       val title = if (formalParameter.hideGuiTitle) "" else formalParameter.getName

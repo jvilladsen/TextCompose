@@ -40,6 +40,10 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
 
   def HasParameters = fieldCount > 0
 
+  var syntaxes = new ArrayBuffer[String]
+  var currentSyntax = 0
+
+  //FIXME: get rid of this crazy s___
   private var switchingSelectedValue = ""
   private var oldSwitchingSelectedValue = ""
   val fakeAction = new Action("<signal to tag pane to re-layout>") {
@@ -47,6 +51,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     def apply() { None }
   }
 
+  //FIXME: get rid of this crazy s___
   def GetSwitchingSelectedValue: String = { return switchingSelectedValue }
 
   def signalUpdate() {
@@ -54,6 +59,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fakeAction.enabled = !fakeAction.enabled // toggle to trigger a re-layout of TagPane (hack)
   }
 
+  //FIXME: get rid of this crazy s___
   private val updateOnSwitchingComboBox = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {
       if (fields.length > 0) {
@@ -98,38 +104,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
 
   private def colorSelectionTag(title: String) {
     fields.append(new ColorType(panel.peer, title))
-  }
-
-  private def underlineTag(parameters: ArrayBuffer[String]) {
-    val modus = new ComboBoxType("", List("on", "off", "setup..."), true)
-    modus.SetLastValueSwitches
-    modus.field.peer.addActionListener(updateOnSwitchingComboBox)
-    fields.append(modus)
-    // We should listen to this field - and in case of switch to/from setup mode - re-layout somehow
-    // Maybe by a direct change in the parameters (the ArrayBuffer).
-
-    if (parameters.length > 0 && parameters(0) != "on" && parameters(0) != "off") {
-      fields.append(new TextType("Thickness", false))
-      fields.append(new TextType("Height", false))
-      fields.append(new ComboBoxType("Cap", List("Butt", "Round", "Square"), true))
-    }
-  }
-
-  private def highlightTag(parameters: ArrayBuffer[String]) {
-    val modus = new ComboBoxType("", List("on", "off", "setup..."), true)
-    modus.SetLastValueSwitches
-    modus.field.peer.addActionListener(updateOnSwitchingComboBox)
-    fields.append(modus)
-    // We should listen to this field - and in case of switch to/from setup mode - re-layout somehow
-    // Maybe by a direct change in the parameters (the ArrayBuffer).
-
-    if (parameters.length > 0 && parameters(0) != "on" && parameters(0) != "off") {
-      fields.append(new ColorType(panel.peer, "Choose color"))
-      fields.append(new TextType("Left", false))
-      fields.append(new TextType("Right", false))
-      fields.append(new TextType("Top", false))
-      fields.append(new TextType("Bottom", false))
-    }
   }
 
   private def paragraphIndentTag(parameters: ArrayBuffer[String]) {
@@ -300,9 +274,9 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   }
 
   private def addAllToPanel(
-      okAction: Action,
-      actionListener: java.awt.event.ActionListener) {
-    
+    okAction: Action,
+    actionListener: java.awt.event.ActionListener) {
+
     panel.contents.clear()
     val tagLabel = new LabelType(tagName, "")
     tagLabel.label.peer.setToolTipText(editor.Documentation.get(tagName))
@@ -311,17 +285,18 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       f.AddActionOnEnter(okAction)
       f match {
         case c: writesetter.tagGUI.ComboBoxType => c.field.peer.addActionListener(actionListener)
-        case _ => None
+        case _                                  => None
       }
       AddToPanel(f.panel, false)
       fieldCount += 1
     }
   }
 
-  def Layout(
+  def layout(
     se: writesetter.core.SourceElement,
     okAction: Action,
-    actionListener: java.awt.event.ActionListener) {
+    actionListener: java.awt.event.ActionListener,
+    forcedSyntax: Int) {
 
     knownTag = true
     val parser = writesetter.core.Parsers.getParser(tagName)
@@ -335,17 +310,32 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
         tagParserErrorMessage = e.getMessage
       }
     }
+    syntaxes = parser.getSyntaxes
+    currentSyntax = parser.getCurrentSyntax
 
     val parameters = se.Parameters
 
+    if (parser.tagName != "empty") {
+
+      parser.buildGUI(fields, forcedSyntax)
+
+    } else {
+      val extension = core.LatestExtensions.GetExtensionDefiningTag(fileKey, tagName)
+      if (extension != "") {
+        userDefinedTag(extension, tagName)
+      } else {
+        knownTag = false
+      }
+    }
+    /*
     tagName match {
       // FONT
       case "font"             => fontSelectionTag()
       case "size"             => parser.buildGUI(fields)
       case "face"             => parser.buildGUI(fields)
       case "color"            => parser.buildGUI(fields) // colorSelectionTag("Choose color")
-      case "underline"        => underlineTag(parameters)
-      case "highlight"        => highlightTag(parameters)
+      case "underline"        => parser.buildGUI(fields)
+      case "highlight"        => parser.buildGUI(fields)
       case "/highlight"       => parser.buildGUI(fields)
       case "letter-spacing"   => parser.buildGUI(fields)
       case "scale-letter"     => parser.buildGUI(fields)
@@ -437,9 +427,16 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
         }
       }
     }
+    */
+
     if (knownTag) {
       addAllToPanel(okAction, actionListener)
-      if (tagParserErrorFound) {
+      /** If errors were found during parse of tag parameters, we show them.
+        * However, when the choice of syntax is forced away from what was
+        * found by the parser, one should expect errors, but they are artificial
+        * in that new context. Maybe a bit flaky, but often useful way to keep values. 
+        */
+      if (tagParserErrorFound && forcedSyntax == -1) {
         val errorMessage = new EditorPane {
           text = tagParserErrorMessage
           background = editor.Colors.supportPane
