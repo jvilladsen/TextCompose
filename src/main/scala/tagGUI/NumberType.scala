@@ -107,7 +107,7 @@ class NumberType(
     val valueForText = if (allowDelta) dn.value.abs else dn.value
     valueField.text = if (integer) valueForText.toInt.toString else valueForText.toString
 
-    if (decor.contains(dn.decoration)) {
+    if (useDecor && decor.contains(dn.decoration)) {
       decoration.Set(ArrayBuffer(dn.decoration), 0)
     }
     percentageField.selected = percentageOption && dn.decoration == "%"
@@ -175,6 +175,7 @@ class NumberType(
     if (mandatory || !isEmptyOrDefault(valueField.text)) {
       val percentageSign = if (forcedPercentage || (percentageOption && percentageField.selected)) "%" else ""
       if (allowDelta) {
+        print(deltaField.Get, valueMadeEasy, decoration.Get, percentageSign, postFix)
         deltaField.Get + valueMadeEasy + decoration.Get + percentageSign + postFix
       } else {
         valueMadeEasy + decoration.Get + percentageSign + postFix
