@@ -160,23 +160,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
   }
 
-  private def imageTag() {
-    val fileField = new FileType("Choose file")
-    fileField.SetIsImage
-    fields.append(fileField)
-    fields.append(new BooleanType("cache", "cache"))
-    fields.append(new BooleanType("under", "under"))
-    positionTag()
-    val opacity = new NumberType(tagName, "Opacity %", false, false, List(), false, true)
-    opacity.setDefaultValue(100f)
-    fields.append(opacity)
-
-    def skipDefaultPosition(p: String): String = {
-      p.replace(" 0 0", "").replace(" 100%", "")
-    }
-    removeUnchangedOptional = skipDefaultPosition
-  }
-
   private def imageBorderTag(parameters: ArrayBuffer[String]) {
     val modus = new ComboBoxType("", List("on", "off", "setup..."), true)
     modus.SetLastValueSwitches
@@ -217,10 +200,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     directionsGroup.setNotMandatory()
     directionsGroup.SetNoPadding
     fields.append(directionsGroup)
-  }
-
-  private def insertTag() {
-    fields.append(new FileType("Choose file"))
   }
 
   private def romanTag() {
@@ -356,7 +335,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "view"             => parser.buildGUI(fields)
       case "encrypt"          => parser.buildGUI(fields)
       // IMAGE
-      case "image"            => imageTag()
+      case "image"            => parser.buildGUI(fields)
       case "scale-image"      => decoratedSize(List("%", "%P", "%M", "%C"))
       case "fit-image"        => decoratedSize(List("%P", "%M", "%C"))
       case "rotate-image"     => parser.buildGUI(fields)
@@ -383,7 +362,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "blend"            => parser.buildGUI(fields)
       case "opacity"          => parser.buildGUI(fields)
       // INSERT
-      case "insert"           => insertTag()
+      case "insert"           => parser.buildGUI(fields)
       case "Roman"            => romanTag()
       case "bookmark"         => bookmarkTag()
       case "label"            => labelTag()
