@@ -18,34 +18,33 @@
 
 package writesetter.tagGUI
 
-import java.awt.{ Component, FileDialog, Frame }
 import writesetter.{ editor, storage }
 
-object FileChooser extends TagAction("Choose file") {
+class OpenFile(isImage: Boolean) extends TagAction("Open") {
 
   enabled = true
 
-  private def proposedDirectory: String = {
+  def apply() {
     val fileName = fields(offset).getUnwrapped
     if (storage.FileMethods.IsFile(fileName)) {
-      storage.FileMethods.GetDirectory(fileName)
-    } else {
-      storage.Configurations.GetLatestDirectory("Chooser")
-    }
-  }
-
-  def apply() {
-    var openFileChooser = new java.awt.FileDialog(editor.Application.top.peer, "Choose File", FileDialog.LOAD)
-    openFileChooser.setDirectory(proposedDirectory)
-    openFileChooser.setVisible(true)
-
-    if (openFileChooser.getFile != null) {
-      fields(offset) match {
-        case f: TextType => f.set(openFileChooser.getDirectory + openFileChooser.getFile)
-        case _ =>
+      try {
+        if (isImage) {
+          editor.DesktopInteraction.OpenPDF(fileName, false, "", 0) // fileTitle only used for preview
+        } else {
+          editor.Application.openNamedFile(fileName)
+        }
+      } catch {
+        case e: Exception => {
+          editor.DialogBox.error(
+            "Could not open '" + fileName + "': " + e.getMessage)
+        }
       }
-      storage.Configurations.updateLatestDirectory(openFileChooser.getDirectory, "Chooser")
+    } else {
+      editor.DialogBox.error("Unknown file '" + fileName + "'.")
     }
-    openFileChooser.dispose
   }
 }
+
+object OpenTextFile extends OpenFile(false)
+
+object OpenImageFile extends OpenFile(true)

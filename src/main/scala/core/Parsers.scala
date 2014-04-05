@@ -19,7 +19,7 @@
 package writesetter.core
 
 import scala.collection.mutable.HashMap
-import writesetter.tagGUI.FileChooser
+import writesetter.tagGUI._
 
 object Parsers {
 
@@ -253,12 +253,12 @@ object Parsers {
     addString("key", true)
 
   parser("image") = (new TagParser("image", sp => sp.imageTag)).
-    addString("image file name", true).
+    addString("file name", true).addGuiAction(FileChooser, 0).addGuiAction(OpenImageFile, 0).
     addFlag("cache").
     addFlag("under").
-    addDecNum("image x-position", false, Sign.allow, List("", "L", "C", "R", "LM", "CM", "RM")).
-    addDecNum("image y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM")).
-    addDecNum("image opacity percentage", false, Sign.disallow, List("%")).setDefaultValue("100")
+    addDecNum("x-position", false, Sign.allow, List("", "L", "C", "R", "LM", "CM", "RM")).
+    addDecNum("y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM")).
+    addDecNum("opacity %", false, Sign.disallow, List("%")).setDefaultValue("100")
 
   parser("scale-image") = (new TagParser("scale-image", sp => sp.scaleImageTag)).
     addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C")).
@@ -325,7 +325,7 @@ object Parsers {
     addInt("number", true)
 
   parser("insert") = (new TagParser("insert", sp => sp.insertTag)).
-    addString("file name", true).addGuiAction(FileChooser, 0)
+    addString("file name", true).addGuiAction(FileChooser, 0).addGuiAction(OpenTextFile, 0)
 
   parser("bookmark") = (new TagParser("bookmark", sp => sp.bookmarkTag)).
     addString("title", true).
