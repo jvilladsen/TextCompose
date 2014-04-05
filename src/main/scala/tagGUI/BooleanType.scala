@@ -53,9 +53,7 @@ class BooleanType(representation: String, label: String) extends ParameterType {
     }
   }
 
-  def set() {
-    field.selected = true
-  }
+  def set() { field.selected = true }
 
   def grabFocus { field.peer.grabFocus }
 

@@ -32,6 +32,8 @@ abstract class ParameterType {
   var mandatory = true
   def setNotMandatory() { mandatory = false }
 
+  var actions = new ArrayBuffer[TagAction]
+
   // Post fix used from the cell tag.
   var postFix = ""
   def SetPostFix(pf: String) { postFix = pf }
@@ -52,6 +54,29 @@ abstract class ParameterType {
     panel.contents += c
   }
 
+  def setActions(a: ArrayBuffer[TagAction]) { actions = a }
+
+  def setOffset(i: Int) {
+    for (a <- actions) { a.setFieldOffset(i) }
+  }
+  
+  def setFields(f: ArrayBuffer[ParameterType]) {
+    for (a <- actions) { a.setFields(f) }
+  }
+  
+  def addActionButtons() {
+    if (!actions.isEmpty) {
+      val buttonPanel = new BoxPanel(Orientation.Vertical) {
+        for (a <- actions) {
+          val button = new Button(a)
+          button.peer.setAlignmentX(Component.LEFT_ALIGNMENT)
+          contents += button
+        }
+      }
+      AddToPanel(buttonPanel, true)
+    }
+  }
+
   def grabFocus
 
   def IsValid: Boolean
@@ -65,6 +90,6 @@ abstract class ParameterType {
   }
 
   def getUnwrapped: String
-  
+
   def Get: String
 }

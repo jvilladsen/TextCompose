@@ -19,6 +19,7 @@
 package writesetter.core
 
 import scala.collection.mutable.HashMap
+import writesetter.tagGUI.FileChooser
 
 object Parsers {
 
@@ -324,7 +325,7 @@ object Parsers {
     addInt("number", true)
 
   parser("insert") = (new TagParser("insert", sp => sp.insertTag)).
-    addString("file name", true)
+    addString("file name", true).addGuiAction(FileChooser, 0)
 
   parser("bookmark") = (new TagParser("bookmark", sp => sp.bookmarkTag)).
     addString("title", true).

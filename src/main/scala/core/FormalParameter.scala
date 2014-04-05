@@ -18,14 +18,23 @@
 
 package writesetter.core
 
+import scala.collection.mutable.ArrayBuffer
+import writesetter.tagGUI.TagAction
+
 abstract class FormalParameter(name: String, mandatory: Boolean) {
   var hideGuiTitle = false
+  val guiActions = new ArrayBuffer[TagAction]
+  var guiActionFieldOffset = 0
   
   def isMandatory: Boolean = mandatory
   def getName: String = name
   def wrap(s: String) = if (mandatory) s else "[" + s + "]"
   def format(sl: List[String]): String = sl.map(s => "'" + s + "'").mkString(", ")
   def noGuiTitle() { hideGuiTitle = true }
+  def addGuiAction(a: TagAction, offset: Int) {
+    guiActions += a
+    guiActionFieldOffset = offset
+  } 
   def setDefaultValue(d: String)
 }
 

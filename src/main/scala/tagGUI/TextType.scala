@@ -67,9 +67,7 @@ class TextType(label: String, large: Boolean) extends ParameterType {
     }
   }
 
-  def set(s: String) {
-    field.text = s
-  }
+  def set(s: String) { field.text = s }
 
   def grabFocus { field.peer.grabFocus }
 

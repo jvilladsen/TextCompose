@@ -156,6 +156,11 @@ class TagParser(
     formalParameters.last.noGuiTitle()
     this
   }
+  
+  def addGuiAction(a: TagAction, offset: Int) = {
+    formalParameters.last.addGuiAction(a, offset)
+    this
+  }
 
   /** Modify the parameter just added, to set a default value. */
   def setDefaultValue(d: String) = {
@@ -401,6 +406,17 @@ class TagParser(
       ""
     }
 
+  /** Build the GUI for the "tag dialog" shown in the "tag pane".
+    * 
+    * When we get here, we have already parsed the tag so that we
+    * have both formal and actual parameters.
+    * 
+    * @fields is the array of parameters that should be displayed in the dialog.
+    * 
+    * @forcedSyntax is used for redoing the layout after a change in the
+    * combo-box for choosing alternative syntax, "form", and -1 means that it
+    * should follow the result found by the parser. 
+    */
   def buildGUI(fields: ArrayBuffer[ParameterType], forcedSyntax: Int) {
 
     def isOptionalPercentage(op: List[String]) = op.length == 2 && op(0) == "" && op(1) == "%"
@@ -427,6 +443,8 @@ class TagParser(
       formalParameter match {
         case p: FormalString => {
           val tt = new TextType(title, false) //FIXME: "large" text field in GUI
+          tt.setActions(formalParameter.guiActions)
+          tt.setOffset(formalParameter.guiActionFieldOffset)
           actualPar match {
             case p: ActualString =>
               tt.set(p.s); actualParIndex += 1

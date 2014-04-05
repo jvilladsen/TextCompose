@@ -283,6 +283,8 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
         case c: writesetter.tagGUI.ComboBoxType => c.field.peer.addActionListener(actionListener)
         case _                                  => None
       }
+      f.setFields(fields)
+      f.addActionButtons()
       AddToPanel(f.panel, false)
       fieldCount += 1
     }
