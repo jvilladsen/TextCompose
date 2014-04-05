@@ -28,11 +28,12 @@ class DecoratedNumber(purpose: String) extends Cloneable {
   var decoration = ""
   var isDelta = false // Is set to true if the number starts with + or - and we should interpret this as a delta.
   var value = 0f
+  var hasSign = false
   private var interpretSignAsDelta = false
 
   override def clone: this.type = super.clone.asInstanceOf[this.type]
 
-  def doInterpretSignAsDelta { interpretSignAsDelta = true }
+  def doInterpretSignAsDelta() { interpretSignAsDelta = true }
 
   def parse(element: String) {
     var firstCharacter = true
@@ -45,8 +46,10 @@ class DecoratedNumber(purpose: String) extends Cloneable {
     for (C <- element) {
       if (firstCharacter && C == '+') {
         isDelta = interpretSignAsDelta
+        hasSign = true
       } else if (firstCharacter && C == '-') {
         isDelta = interpretSignAsDelta
+        hasSign = true
         negative = true
       } else if (!alfaPartStarted && (C >= '0' && C <= '9' || C == '.')) {
         numberFound = true

@@ -222,9 +222,9 @@ class TagParser(
           case p: FormalDecNum => { // FIXME: maybe this block should be a method on FormalDecNum???
             try {
               val d = new DecoratedNumber(p.name)
-              if (p.sign == Sign.asDelta) d.doInterpretSignAsDelta
+              if (p.sign == Sign.asDelta) d.doInterpretSignAsDelta()
               d.parse(parameter)
-              if (p.sign == Sign.disallow && d.isDelta) {
+              if (p.sign == Sign.disallow && d.hasSign) {
                 throw new TagError(p.name + " cannot be specified with a '+' or '-' sign.")
               }
               if (!p.decor.contains(d.decoration)) {
@@ -455,7 +455,7 @@ class TagParser(
           fields.append(ft)
         }
         case p: FormalDecNum => {
-          val allowDelta = p.sign == Sign.asDelta || p.sign == Sign.allow
+          val allowDelta = p.sign == Sign.asDelta
           val percentageOption = isOptionalPercentage(p.decor)
           val forcedPercentage = isForcedPercentage(p.decor)
           val dnt = new NumberType(tagName, title, allowDelta, false, p.decor, percentageOption, forcedPercentage)

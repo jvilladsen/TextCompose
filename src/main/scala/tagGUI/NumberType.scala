@@ -25,10 +25,19 @@ import Key._
 import writesetter.core._
 import writesetter.editor._
 
+/** Numbers (integer or float) with or without decoration.
+  * 
+  * @allowDelta flag to specify that +/- should be interpreted as +/- on existing value.
+  * Used for 'size' tag. E.g. 12 means font size 12. 150% means 150% of existing font size.
+  * +50% means add 50% to existing font size: multiply by 1.5. -50% means divide by 1.5.
+  * This interpretation of - has the advantage that +X% and -X% together cancel out.
+  * @forcedPercentage flag to specify that syntax has a mandatory (decoration) '%'.
+  * Mostly used as a trick to give a unique parsing when such fields are optional.
+  */
 class NumberType(
   tagName: String,
   label: String,
-  allowDelta: Boolean,
+  allowDelta: Boolean, // Only for the size tag! +5% != 5% (one adds 5% to font size, the other sets it to 5% of the current font size)
   integer: Boolean,
   decor: List[String],
   percentageOption: Boolean,
