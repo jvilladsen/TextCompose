@@ -163,6 +163,8 @@ class FontType extends ParameterType {
 
   def IsValid = true
 
+  def getUnwrapped: String = "FIXME: NO LONGER USED!" 
+  
   def Get: String = {
     var result = Wrap(fontList(fontField.peer.getSelectedIndex))
     if (codePageField.peer.getSelectedIndex > 0) {

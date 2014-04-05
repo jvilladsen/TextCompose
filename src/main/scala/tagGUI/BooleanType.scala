@@ -63,5 +63,7 @@ class BooleanType(representation: String, label: String) extends ParameterType {
 
   // def IsEmpty = !field.selected
 
-  def Get = if (field.selected) { Wrap(representation) } else { "" }
+  def getUnwrapped: String = if (field.selected) { representation } else { "" }
+  
+  def Get = Wrap(getUnwrapped)
 }

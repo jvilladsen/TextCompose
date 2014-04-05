@@ -104,17 +104,7 @@ class ComboBoxType(label: String,
 
   def setDefaultValue(v: String) { defaultValue = v }
 
-  def Get: String = {
-    val index = field.peer.getSelectedIndex
-    if (lastValueSwitches && index == lastIndex) {
-      ""
-    } else {
-      val selectedText = availableValues(index)
-      Wrap(selectedText)
-    }
-  }
-
-  override def GetUnwrapped: String = {
+  override def getUnwrapped: String = {
     val index = field.peer.getSelectedIndex
     if (lastValueSwitches && index == lastIndex) {
       ""
@@ -122,4 +112,7 @@ class ComboBoxType(label: String,
       availableValues(index)
     }
   }
+  
+  def Get: String = Wrap(getUnwrapped)
+
 }

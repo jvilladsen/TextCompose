@@ -233,9 +233,10 @@ class ColorType(frame: JPanel, title: String) extends ParameterType {
 
   def IsValid: Boolean = colorSystem.IsValid
 
-  def Get: String = {
+  def getUnwrapped: String =
     scope.Get + " " + colorSystem.Get + " " + firstField.text + " " + secondField.text + " " + thirdField.text
-  }
+    
+  def Get: String = getUnwrapped
 
   var updateOnChangedColorSystem = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {

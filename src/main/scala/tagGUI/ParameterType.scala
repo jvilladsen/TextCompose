@@ -64,7 +64,7 @@ abstract class ParameterType {
     }
   }
 
+  def getUnwrapped: String
+  
   def Get: String
-
-  def GetUnwrapped: String = ""
 }

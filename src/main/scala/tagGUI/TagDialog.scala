@@ -63,7 +63,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   private val updateOnSwitchingComboBox = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {
       if (fields.length > 0) {
-        switchingSelectedValue = fields(0).GetUnwrapped
+        switchingSelectedValue = fields(0).getUnwrapped
         if (switchingSelectedValue == "" || oldSwitchingSelectedValue == "") { signalUpdate() }
         oldSwitchingSelectedValue = switchingSelectedValue
       }
@@ -476,6 +476,8 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     result
   }
 
+  def getUnwrapped: String = "NOT USED"
+  
   def Get: String = {
     var result = "<" + tagName
     for (f <- fields) {
@@ -486,10 +488,11 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   }
 
   def getAsSourceElement: writesetter.core.SourceElement = {
+    println("#fields="+fields.length.toString)
     val s = new writesetter.core.SourceElement
     s.SetTag(tagName)
     for (f <- fields) {
-      val text = f.GetUnwrapped
+      val text = f.getUnwrapped
       if (text != "") { s.SetParameter(text) }
     }
     s

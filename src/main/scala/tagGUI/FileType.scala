@@ -105,5 +105,7 @@ class FileType(title: String) extends ParameterType {
 
   def IsValid: Boolean = field.text != ""
 
-  def Get: String = Wrap(field.text)
+  def getUnwrapped: String = field.text
+  
+  def Get: String = Wrap(getUnwrapped)
 }

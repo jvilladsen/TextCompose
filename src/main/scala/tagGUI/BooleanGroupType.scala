@@ -49,13 +49,15 @@ class BooleanGroupType(representations: List[String], labels: List[String], grou
 
   def IsValid = true
 
-  def Get = {
+  def getUnwrapped: String = {
     var result = ""
     for (f <- fields) {
       val r = f.Get
       if (usePadding && result != "" && r != "") { result += " " }
       result += r
     }
-    Wrap(result)
+    result
   }
+    
+  def Get = Wrap(getUnwrapped)
 }

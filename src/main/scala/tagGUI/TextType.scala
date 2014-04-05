@@ -77,5 +77,7 @@ class TextType(label: String, large: Boolean) extends ParameterType {
 
   def IsEmpty = field.text == ""
 
+  def getUnwrapped: String = field.text
+  
   def Get = Wrap(field.text)
 }

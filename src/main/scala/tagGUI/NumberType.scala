@@ -157,8 +157,8 @@ class NumberType(
     }
   }
 
-  def Get: String = {
-
+  def getUnwrapped: String = {
+    
     def valueMadeEasy = {
       /*
        * If the type is "integer" this is the value before the decimal point.
@@ -193,6 +193,9 @@ class NumberType(
       ""
     }
   }
+
+  def Get: String = getUnwrapped
+
 
   def setDefaultValue(v: Float) { defaultValue = v }
 }
