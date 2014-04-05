@@ -46,7 +46,7 @@ object Parsers {
   parser("face") = (new TagParser("face", sp => sp.faceTag)).
     addOptions("face", true, List("normal", "bold", "italic", "bold-italic", "+bold", "-bold", "+italic", "-italic", "+bold-italic", "-bold-italic")).noGuiTitle()
 
-  val colorScopes = List("text", "underline", "highlight", "page", "frame", "border", "cell", "draw")
+  val colorScopes = List("text", "underline", "highlight", "page", "frame", "draw", "cell", "border", "border-left", "border-right", "border-top", "border-bottom")
 
   parser("color") = (new TagParser(
     "color",

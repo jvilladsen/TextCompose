@@ -479,19 +479,6 @@ class SourceProcessor(
     document.directlyAddPhrase(x, y, angle, under)
   }
 
-  def borderColorTag(se: SourceElement) {
-    ColorFunctions.DetermineRGB(se, 0)
-    DirectionFunctions.Initialize
-    if (se.NumberOfParameters == ColorFunctions.NextIndex + 1) {
-      DirectionFunctions.Parse(se.Parameters(ColorFunctions.NextIndex))
-    }
-    try {
-      document.setCellBorderColor
-    } catch {
-      case e: Exception => throw new TagError(e.getMessage)
-    }
-  }
-
   def borderWidthTag(se: SourceElement) {
     // Border-width (0=no border)
     se.hasNumberOfParameters(1, 2, "The 'border-width' tag takes 1 or 2 parameters, namely the width of the border of " +
@@ -1039,7 +1026,6 @@ class SourceProcessor(
       case "/table"           => parser.evaluate(element, this)
       case "cell-padding"     => cellPaddingTag(element)
       case "border-width"     => borderWidthTag(element)
-      case "border-color"     => borderColorTag(element)
       // DRAW
       case "line-width"       => parser.evaluate(element, this)
       case "line-cap"         => parser.evaluate(element, this)

@@ -187,7 +187,10 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
   def setColor(scope: String) {
     scope match {
-      case "text"      => stateStack.top.setFontColor()
+      case "text"      => {
+        stateStack.top.setFontColor()
+        stateStack.top.setUnderlineColor()
+      }
       case "underline" => stateStack.top.setUnderlineColor()
       case "highlight" => stateStack.top.setBckgColor()
       case "page" => {
@@ -196,15 +199,31 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
         iTextDoc.setPageSize(stateStack.top.actualOrientedPageRect)
       }
       case "frame" => stateStack.top.setImgBdrColor()
+      case "draw" => stateStack.top.setActualLineColor()
+      case "cell" => stateStack.top.setActualCellBckgColor()
       case "border" => {
-        if (DirectionFunctions.Left) stateStack.top.setActualCellColorLeft()
-        if (DirectionFunctions.Right) stateStack.top.setActualCellColorRight()
-        if (DirectionFunctions.Top) stateStack.top.setActualCellColorTop()
-        if (DirectionFunctions.Bottom) stateStack.top.setActualCellColorBottom()
+        stateStack.top.setActualCellColorLeft()
+        stateStack.top.setActualCellColorRight()
+        stateStack.top.setActualCellColorTop()
+        stateStack.top.setActualCellColorBottom()
         stateStack.top.updateCellBorderUniqueColor()
       }
-      case "cell" => stateStack.top.setActualCellBckgColor()
-      case "draw" => stateStack.top.setActualLineColor()
+      case "border-left" => {
+        stateStack.top.setActualCellColorLeft()
+        stateStack.top.updateCellBorderUniqueColor()
+      }
+      case "border-right" => {
+        stateStack.top.setActualCellColorRight()
+        stateStack.top.updateCellBorderUniqueColor()
+      }
+      case "border-top" => {
+        stateStack.top.setActualCellColorTop()
+        stateStack.top.updateCellBorderUniqueColor()
+      }
+      case "border-bottom" => {
+        stateStack.top.setActualCellColorBottom()
+        stateStack.top.updateCellBorderUniqueColor()
+      }
     }
   }
   def setFontColor = stateStack.top.setFontColor

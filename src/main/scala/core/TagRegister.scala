@@ -78,7 +78,6 @@ object TagRegister {
     TagNames += "cell"
     TagNames += "cell-padding"
     TagNames += "border-width"
-    TagNames += "border-color"
     TagNames += "move-to"
     TagNames += "line-width"
     TagNames += "line-cap"

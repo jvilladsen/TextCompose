@@ -102,10 +102,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     fields.append(new FontType)
   }
 
-  private def colorSelectionTag(title: String) {
-    fields.append(new ColorType(panel.peer, title))
-  }
-
   private def paragraphIndentTag(parameters: ArrayBuffer[String]) {
     val modus = new ComboBoxType("", List("on", "off", "setup..."), true)
     modus.SetLastValueSwitches
@@ -333,7 +329,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "font"             => fontSelectionTag()
       case "size"             => parser.buildGUI(fields)
       case "face"             => parser.buildGUI(fields)
-      case "color"            => parser.buildGUI(fields) // colorSelectionTag("Choose color")
+      case "color"            => parser.buildGUI(fields)
       case "underline"        => parser.buildGUI(fields)
       case "highlight"        => parser.buildGUI(fields)
       case "/highlight"       => parser.buildGUI(fields)
@@ -374,7 +370,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
       case "/table"           => parser.buildGUI(fields)
       case "cell-padding"     => tagWithNumberAndDirections("Padding")
       case "border-width"     => tagWithNumberAndDirections("Width")
-      case "border-color"     => colorSelectionTag("Choose color")
       // DRAW
       case "line-width"       => parser.buildGUI(fields)
       case "line-cap"         => parser.buildGUI(fields)

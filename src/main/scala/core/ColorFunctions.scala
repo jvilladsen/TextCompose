@@ -125,49 +125,6 @@ object ColorFunctions {
 
   private def outOfRange(a: Int, from: Int, to: Int) = a < from || a > to
 
-  def DetermineRGB(se: SourceElement, startIndex: Int) {
-    SetSchema(se, startIndex)
-    Validate(se, startIndex)
-
-    var colorParameter1 = 0
-    var colorParameter2 = 0
-    var colorParameter3 = 0
-    if (se.Parameters(startIndex + 1)(0) == '#') {
-      NextIndex = startIndex + 2
-      val number = se.Parameters(startIndex + 1)
-      try {
-        colorParameter1 = Integer.valueOf(number.substring(1, 3), 16).intValue
-        colorParameter2 = Integer.valueOf(number.substring(3, 5), 16).intValue
-        colorParameter3 = Integer.valueOf(number.substring(5, 7), 16).intValue
-      } catch {
-        case e: Exception => throw new TagError("The parameter for the color does not consist of three hexadecimal numbers.")
-      }
-    } else {
-      NextIndex = startIndex + 4
-      colorParameter1 = NumberFunctions.getFloat(se.Parameters(startIndex + 1), ParName(scheme, 1) + " for 'color' tag").toInt
-      colorParameter2 = NumberFunctions.getFloat(se.Parameters(startIndex + 2), ParName(scheme, 2) + " for 'color' tag").toInt
-      colorParameter3 = NumberFunctions.getFloat(se.Parameters(startIndex + 3), ParName(scheme, 3) + " for 'color' tag").toInt
-    }
-    Text = se.ConcatParameters(startIndex, NextIndex - 1)
-    scheme match {
-      case "RGB" => {
-        if (outOfRange(colorParameter1, 0, 255)) { throw new TagError("Red in a RGB color should be between 0 and 255.") }
-        if (outOfRange(colorParameter2, 0, 255)) { throw new TagError("Green in a RGB color should be between 0 and 255.") }
-        if (outOfRange(colorParameter3, 0, 255)) { throw new TagError("Blue in a RGB color should be between 0 and 255.") }
-        Red = colorParameter1; Green = colorParameter2; Blue = colorParameter3
-      }
-      case "HSL" => {
-        if (outOfRange(colorParameter1, 0, 360)) { throw new TagError("Hue in a HSL color should be between 0 and 360.") }
-        if (outOfRange(colorParameter2, 0, 100)) { throw new TagError("Saturation in a HSL color should be between 0 and 100.") }
-        if (outOfRange(colorParameter3, 0, 100)) { throw new TagError("Lightness in a HSL color should be between 0 and 100.") }
-        HSL_to_RGB(colorParameter1, colorParameter2, colorParameter3)
-      }
-      case _ => throw new TagError("The first parameter when you specify color should be 'RGB' (Red-Green-Blue) or 'HSL' (Hue-Saturation-Lightness).")
-    }
-  }
-
-  // Some new functions - along with new TagParser for color - could make some of the above obsolete later on.
-
   def setHex(system: String, hex: String) {
     def getHex(offset: Int): Int = {
       try {
@@ -179,6 +136,7 @@ object ColorFunctions {
       }
     }
     setDec(system, getHex(0), getHex(2), getHex(4))
+    Text = system + " #" + hex
   }
 
   def setDec(system: String, a: Int, b: Int, c: Int) {
@@ -198,5 +156,6 @@ object ColorFunctions {
       }
       case _ => throw new TagError("The first parameter when you specify color should be 'RGB' (Red-Green-Blue) or 'HSL' (Hue-Saturation-Lightness).")
     }
+    Text = system + " " + a.toString + " " + b.toString + " " + c.toString
   }
 }
