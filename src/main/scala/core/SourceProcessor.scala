@@ -350,17 +350,17 @@ class SourceProcessor(
     val under = parser.getNextFlag("under")
     var xPosDN: DecoratedNumber = null
     var yPosDN: DecoratedNumber = null
-    val usePosition = parser.getFormalName == "image x-position" // FIXME: this technique is a hack.
+    val usePosition = parser.getFormalName == "x-position" // FIXME: this technique is a hack.
     if (usePosition) {
       xPosDN = parser.getNextDecNum
-      if (parser.getFormalName != "image y-position") {
-        throw new TagError("Since you have specified image x-position (" +
+      if (parser.getFormalName != "y-position") {
+        throw new TagError("Since you have specified x-position (" +
           xPosDN.toString + "), the y-position must also be specified.")
       }
       yPosDN = parser.getNextDecNum
     }
     var opacity = 100f
-    if (parser.getFormalName == "image opacity percentage") {
+    if (parser.getFormalName == "opacity %") {
       opacity = parser.getNextDecNum.value
       if (opacity < 0f || opacity > 100f) {
         throw new TagError("The image opacity must be between 0 and 100 percent. You wrote " + opacity.toString + ".")

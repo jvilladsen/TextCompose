@@ -187,7 +187,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
   def setColor(scope: String) {
     scope match {
-      case "text"      => {
+      case "text" => {
         stateStack.top.setFontColor()
         stateStack.top.setUnderlineColor()
       }
@@ -199,8 +199,8 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
         iTextDoc.setPageSize(stateStack.top.actualOrientedPageRect)
       }
       case "frame" => stateStack.top.setImgBdrColor()
-      case "draw" => stateStack.top.setActualLineColor()
-      case "cell" => stateStack.top.setActualCellBckgColor()
+      case "draw"  => stateStack.top.setActualLineColor()
+      case "cell"  => stateStack.top.setActualCellBckgColor()
       case "border" => {
         stateStack.top.setActualCellColorLeft()
         stateStack.top.setActualCellColorRight()
@@ -910,7 +910,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     iTextDoc.setPageSize(stateStack.top.actualOrientedPageRect)
     iTextDoc.setMargins(stateStack.top.marginLeft, stateStack.top.marginRight, stateStack.top.marginTop, stateStack.top.marginBottom)
   }
-  
+
   def resetState() {
     stateStack.pop()
     stateStack.push(new State)
