@@ -43,33 +43,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
   var syntaxes = new ArrayBuffer[String]
   var currentSyntax = 0
 
-  //FIXME: get rid of this crazy s___
-  private var switchingSelectedValue = ""
-  private var oldSwitchingSelectedValue = ""
-  val fakeAction = new Action("<signal to tag pane to re-layout>") {
-    enabled = false
-    def apply() { None }
-  }
-
-  //FIXME: get rid of this crazy s___
-  def GetSwitchingSelectedValue: String = { return switchingSelectedValue }
-
-  def signalUpdate() {
-    // TagPane listens to changes in this "fake action".
-    fakeAction.enabled = !fakeAction.enabled // toggle to trigger a re-layout of TagPane (hack)
-  }
-
-  //FIXME: get rid of this crazy s___
-  private val updateOnSwitchingComboBox = new java.awt.event.ActionListener() {
-    def actionPerformed(event: java.awt.event.ActionEvent) {
-      if (fields.length > 0) {
-        switchingSelectedValue = fields(0).getUnwrapped
-        if (switchingSelectedValue == "" || oldSwitchingSelectedValue == "") { signalUpdate() }
-        oldSwitchingSelectedValue = switchingSelectedValue
-      }
-    }
-  }
-
   def preprocessParameters(tagName: String, parameters: ArrayBuffer[String]): ArrayBuffer[String] = {
 
     if (tagName == "image") {
@@ -102,17 +75,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     fields.append(new FontType)
   }
 
-  private def paragraphIndentTag(parameters: ArrayBuffer[String]) {
-    val modus = new ComboBoxType("", List("on", "off", "setup..."), true)
-    modus.SetLastValueSwitches
-    modus.field.peer.addActionListener(updateOnSwitchingComboBox)
-    fields.append(modus)
-    if (parameters.length > 0 && parameters(0) != "on" && parameters(0) != "off") {
-      fields.append(new NumberType(tagName, ""))
-      fields.append(new BooleanType("delay", "delay"))
-    }
-  }
-
   private def decoratedSize(decor: List[String]) {
     fields.append(new NumberType(tagName, "X", decor))
     fields.append(new NumberType(tagName, "Y", decor))
@@ -138,26 +100,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     angle.setNotMandatory()
     fields.append(angle)
     fields.append(new BooleanType("under", "under"))
-  }
-
-  private def pageSizeTag(parameters: ArrayBuffer[String]) {
-
-    val pageSizes = List("A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
-      "Letter", "Half Letter", "Legal", "Ledger", "Tabloid", "Executive", "Postcard",
-      "Arch A", "Arch B", "Arch C", "Arch D", "Arch E",
-      "Crown Quarto", "Crown Octavo", "Large Crown Quarto", "Large Crown Octavo", "Demy Quarto", "Demy Octavo", "Royal Quarto", "Royal Octavo",
-      "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "ID-1", "ID-2", "ID-3",
-      "FLSA", "FLSE", "Small Paperback", "Penguin Small Paperback", "Penguin Large Paperback", "Note", "Custom...")
-    val sizesBox = new ComboBoxType("", pageSizes, true)
-    sizesBox.SetLastValueSwitches
-    sizesBox.setDefaultValue("A4")
-    sizesBox.field.peer.addActionListener(updateOnSwitchingComboBox)
-
-    fields.append(sizesBox)
-    if (parameters.length > 0 && (!pageSizes.contains(parameters(0)) || parameters(0) == "Custom...")) {
-      fields.append(new NumberType(tagName, "Width"))
-      fields.append(new NumberType(tagName, "Height"))
-    }
   }
 
   private def listFormatTag() {
@@ -189,19 +131,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     directionsGroup.setNotMandatory()
     directionsGroup.SetNoPadding
     fields.append(directionsGroup)
-  }
-
-  private def romanTag() {
-    fields.append(new ComboBoxType("Casing", List("U", "L"), true))
-    fields.append(new NumberType(tagName, "Number", true))
-  }
-
-  private def bookmarkTag() {
-    fields.append(new TextType("Title", true))
-    fields.append(new NumberType(tagName, "Level", true))
-    val name = new TextType("Name", false)
-    name.setNotMandatory()
-    fields.append(name)
   }
 
   private def labelTag() {
@@ -308,7 +237,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
       // SPACE
       case "height"           => parser.buildGUI(fields)
       case "paragraph-space"  => parser.buildGUI(fields)
-      case "paragraph-indent" => paragraphIndentTag(parameters)
+      case "paragraph-indent" => parser.buildGUI(fields)
       case "new"              => parser.buildGUI(fields)
       // POSITION
       case "align"            => parser.buildGUI(fields)
@@ -317,7 +246,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
       case "position"         => positionWithAngleTag()
       // DOCUMENT
       case "document"         => parser.buildGUI(fields)
-      case "page-size"        => pageSizeTag(parameters)
+      case "page-size"        => parser.buildGUI(fields)
       case "orientation"      => parser.buildGUI(fields)
       case "margins"          => parser.buildGUI(fields)
       case "columns"          => parser.buildGUI(fields)

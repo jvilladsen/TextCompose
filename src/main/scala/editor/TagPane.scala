@@ -96,20 +96,6 @@ class TagPane {
       }
       panel.contents += Swing.VStrut(10000) // is there a nicer way to pack the content from the top?
       if (triggeredFromTagTree) dialog.grabFocus
-
-      // Here, we can set up a listener on some fake action inside dialog object - listener calls refreshLayout
-      val setSwitcherAndRefresh = new PropertyChangeListener() {
-        def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-          val newSelectedValue = dialog.GetSwitchingSelectedValue
-          if (par.length > 0) {
-            par(0) = newSelectedValue
-          } else {
-            par.append(newSelectedValue)
-          }
-          refreshLayout(se, -1)
-        }
-      }
-      dialog.fakeAction.peer.addPropertyChangeListener(setSwitcherAndRefresh)
     } else {
       addContent(dialog.panel)
     }
@@ -125,9 +111,7 @@ class TagPane {
 
   def updateColors() {
     panel.background = Colors.supportPane
-    if (dialog != null) {
-      dialog.signalUpdate() // instead of updating color on each single label, field, panel...
-    }
+    refreshLayout(dialog.getAsSourceElement, -1)
   }
 
   /** Build the tag dialog based on data in the source code around the caret.
