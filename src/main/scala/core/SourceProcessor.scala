@@ -1081,7 +1081,7 @@ class SourceProcessor(
         if (extensions.UserDefinedTag(element.TagName)) {
           handleUserTag(element)
         } else {
-          val suggestion = TagRegister.GetSuggestions(element.TagName)
+          val suggestion = NameSuggestion.getSuggestions(element.TagName, TagRegister.getNames)
           throw new TagError("Unknown tag '" + element.TagName + "'." + suggestion)
         }
       }

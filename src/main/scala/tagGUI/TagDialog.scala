@@ -342,7 +342,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
       panel.contents.clear()
       val tagLabel = new LabelType("Unknown tag", "Error")
       AddToPanel(tagLabel.label, false)
-      val suggestions = core.TagRegister.GetSuggestions(tagName)
+      val suggestions = core.NameSuggestion.getSuggestions(tagName, core.TagRegister.getNames)
       val sugLabel = new LabelType(suggestions, "Small")
       AddToPanel(sugLabel.label, false)
     }

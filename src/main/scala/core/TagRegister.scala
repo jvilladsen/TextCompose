@@ -106,71 +106,8 @@ object TagRegister {
   }
 
   def AddNewTag(t: String) { TagNames += t }
+  
+  def getNames: List[String] = TagNames.toList
+  
 
-  /*
-	 * This general purpose distance function should not hide here!
-	 */
-  private def LevenshteinDistance(a: String, b: String): Int = {
-
-    def min(x1: Int, x2: Int, x3: Int): Int = {
-      if (x1 < x2) { if (x1 < x3) x1 else x3 } else { x2 }
-    }
-
-    val aTop = a.length - 1
-    val bTop = b.length - 1
-    var d = Array.ofDim[Int](aTop + 1, bTop + 1)
-
-    for (i <- 0 to aTop) d(i)(0) = i // deletion
-    for (j <- 0 to bTop) d(0)(j) = j // deletion
-    for (j <- 1 to bTop) {
-      for (i <- 1 to aTop) {
-        if (a(i) == b(j)) {
-          d(i)(j) = d(i - 1)(j - 1)
-        } else {
-          d(i)(j) = min(d(i - 1)(j) + 1, // deletion
-            d(i)(j - 1) + 1, // insertion
-            d(i - 1)(j - 1) + 1) // substitution
-        }
-      }
-    }
-    d(aTop)(bTop)
-  }
-
-  /*
-	 * This function could be generalized to compare a string to a given list - not just the list of tags.
-	 * It could also be used for the list of fonts.
-	 */
-  def GetSuggestions(a: String): String = {
-    var Candidates = new ArrayBuffer[String]
-    var minDistance = 0
-    for (t <- TagNames) {
-      val d = LevenshteinDistance(a, t)
-      if (d < minDistance || minDistance == 0) {
-        if (minDistance > 0) Candidates.clear()
-        minDistance = d
-      }
-      if (d == minDistance) {
-        Candidates += t
-      }
-    }
-    val count = Candidates.size
-
-    if (count > 0 && minDistance < a.length / 2 + 1) {
-      var result = ""
-      var index = 1
-      for (c <- Candidates) {
-        if (index == 1) {
-          result = c
-        } else if (index < count) {
-          result += ", " + c
-        } else {
-          result += " or " + c
-        }
-        index += 1
-      }
-      return " Did you mean " + result + "?"
-    } else {
-      return ""
-    }
-  }
 }

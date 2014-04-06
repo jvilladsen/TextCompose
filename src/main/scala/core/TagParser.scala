@@ -257,9 +257,9 @@ class TagParser(
             if (p.options.contains(parameter)) {
               actualParameters += ActualOption(formalName, parameter); index += 1
             } else if (p.mandatory) {
-              throw new TagError("The parameter '" + p.name + "' for the '" +
-                tagName + "' tag must be one of: " + p.formattedOptions +
-                ", not '" + parameter + "'.")
+              val suggestion = NameSuggestion.getSuggestions(parameter, p.options)
+              throw new TagError("'" + parameter + "' is not an option for '" + p.name +
+                  "'. " + suggestion + " Must be one of " + p.formattedOptions)
             }
           }
           case p: FormalFlag => {
