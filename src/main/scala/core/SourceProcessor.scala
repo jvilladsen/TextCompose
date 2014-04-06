@@ -212,7 +212,6 @@ class SourceProcessor(
       ""
     }
     val local = parser.getNextFlag
-    println("font tag:", fontTitle, encoding, local)
     DocumentFontRegister.addFont(fontTitle, encoding, !local)
     document.setFont(fontTitle)
   }

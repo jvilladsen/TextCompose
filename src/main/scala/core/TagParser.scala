@@ -500,7 +500,7 @@ class TagParser(
           fields.append(dnt)
         }
         case p: FormalOptions => {
-          val ot = new ComboBoxType(title, p.options, p.mandatory)
+          val ot = new ComboBoxType(title, p.options, p.mandatory, p.isFontName)
           actualPar match {
             case act: ActualOption => actualParIndex += ot.set(act.option)
             case _                 => ot.set(p.default)

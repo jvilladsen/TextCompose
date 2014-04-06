@@ -24,12 +24,20 @@ import scala.collection.mutable.ArrayBuffer
 import event._
 import Key._
 import writesetter.editor.Colors
+import writesetter.storage
 
-class ComboBoxType(label: String,
-  values: List[String],
-  isMandatory: Boolean) extends ParameterType {
 
-  private var lastValueSwitches = false // e.g. "Custom..." pagesize.
+class ComboBoxType(
+    label: String,
+    values: List[String],
+    isMandatory: Boolean,
+    isFontName: Boolean) extends ParameterType {
+
+  def this(
+    label: String,
+    values: List[String],
+    isMandatory: Boolean) = this(label, values, isMandatory, false)
+  
   private var defaultValue = ""
   mandatory = isMandatory
 
@@ -37,7 +45,28 @@ class ComboBoxType(label: String,
   if (!mandatory) { availableValues = "" :: values }
   private val lastIndex = availableValues.length - 1
 
-  val field = new ComboBox(availableValues)
+  val field = if (isFontName) {
+    new ComboBox(availableValues) {
+      renderer = new ListView.AbstractRenderer[String, Label](new Label) {
+        def configure(list: ListView[_], isSelected: Boolean, focused: Boolean, fontTitle: String, index: Int) {
+          if (storage.StoredFontAnalysis.hasJavaFont(fontTitle)) {
+            component.font = storage.StoredFontAnalysis.getJavaFont(fontTitle).deriveFont(40f)
+          } else {
+            component.font = storage.GUIFonts.getStandardFont(40)
+          }
+          component.text = fontTitle
+          component.xAlignment = Alignment.Left
+          if (isSelected) {
+            component.border = Swing.LineBorder(list.selectionBackground, 3)
+          } else {
+            component.border = Swing.EmptyBorder(3)
+          }
+        }
+      }
+    }
+  } else {
+    new ComboBox(availableValues)
+  }
   field.peer.setAlignmentX(Component.LEFT_ALIGNMENT)
 
   if (label == "") {
@@ -80,13 +109,8 @@ class ComboBoxType(label: String,
         field.peer.setSelectedIndex(availableValues.indexOf(value))
         1
       } else {
-        if (lastValueSwitches) {
-          field.peer.setSelectedIndex(lastIndex)
-          0
-        } else {
-          field.peer.setSelectedIndex(0)
-          1
-        }
+        field.peer.setSelectedIndex(0)
+        1
       }
     } else {
       if (values.contains(defaultValue)) {
@@ -100,17 +124,11 @@ class ComboBoxType(label: String,
 
   def IsValid = true
 
-  def SetLastValueSwitches { lastValueSwitches = true }
-
   def setDefaultValue(v: String) { defaultValue = v }
 
   override def getUnwrapped: String = {
     val index = field.peer.getSelectedIndex
-    if (lastValueSwitches && index == lastIndex) {
-      ""
-    } else {
-      availableValues(index)
-    }
+    availableValues(index)
   }
   
   def Get: String = Wrap(getUnwrapped)
