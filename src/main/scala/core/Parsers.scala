@@ -35,7 +35,7 @@ object Parsers {
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).
     addString("encoding", false). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
-    addFlag("local")
+    addFlag("local").addGuiAction(FontInformation, 0)
     
   def updateFont() {
     parser("font").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)

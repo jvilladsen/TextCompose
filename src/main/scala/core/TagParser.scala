@@ -497,6 +497,8 @@ class TagParser(
         }
         case p: FormalFlag => {
           val bt = new BooleanType(formalName, formalName)
+          bt.setActions(formalParameter.guiActions)
+          bt.setOffset(formalParameter.guiActionFieldOffset)
           actualPar match {
             case act: ActualFlag => {
               if (act.getFormalName == p.getName) {
