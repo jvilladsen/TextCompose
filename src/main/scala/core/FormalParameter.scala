@@ -93,6 +93,7 @@ case class FormalDecNum(
   override def toString =
     if (decor.size == 1) wrap(name + ": float decorated with " + decoration)
     else wrap(name + ": float decorated with one of " + decoration)
+  
   override def setDefaultValue(d: String) { default.parse(d) }
 }
 

@@ -483,7 +483,7 @@ class TagParser(
           actualPar match {
             case p: ActualDecNum =>
               dnt.set(p.dn); actualParIndex += 1
-            case _ => None
+            case _               => dnt.set(p.default)
           }
           fields.append(dnt)
         }
