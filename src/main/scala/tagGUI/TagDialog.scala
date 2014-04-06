@@ -160,17 +160,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     }
   }
 
-  private def imageBorderTag(parameters: ArrayBuffer[String]) {
-    val modus = new ComboBoxType("", List("on", "off", "setup..."), true)
-    modus.SetLastValueSwitches
-    modus.field.peer.addActionListener(updateOnSwitchingComboBox)
-    fields.append(modus)
-    if (parameters.length > 0 && parameters(0) != "on" && parameters(0) != "off") {
-      fields.append(new NumberType(tagName, "Width"))
-      fields.append(new ColorType(panel.peer, "Choose color"))
-    }
-  }
-
   private def listFormatTag() {
     fields.append(new NumberType(tagName, "Outer indent", false, false, List(), true, false))
     fields.append(new NumberType(tagName, "Inner indent", false, false, List(), true, false))
@@ -339,7 +328,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
       case "scale-image"      => decoratedSize(List("%", "%P", "%M", "%C"))
       case "fit-image"        => decoratedSize(List("%P", "%M", "%C"))
       case "rotate-image"     => parser.buildGUI(fields)
-      case "frame"            => imageBorderTag(parameters)
+      case "frame"            => parser.buildGUI(fields)
       // LIST
       case "format-list"      => listFormatTag()
       case "list"             => listTag()

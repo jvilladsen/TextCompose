@@ -70,7 +70,7 @@ class ComboBoxType(label: String,
     }
   }
   
-  // FIXME: not so easy to get rid off. Used in ColorType and NumberType.
+  // FIXME: not so easy to get rid off. Used in NumberType.
   def Set(parameters: ArrayBuffer[String], offset: Int): Int = {
     // Returns the number of parameters that were read.
     val numberOfParameters = parameters.length
