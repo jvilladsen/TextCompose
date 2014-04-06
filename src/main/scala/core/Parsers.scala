@@ -57,19 +57,19 @@ object Parsers {
     sp => sp.colorTag)).
     addOptions("scope", true, colorScopes).
     addOptions("color system", true, List("RGB", "HSL")).
-    addString("hexadecimal", true). // FIXME: temporary hack? - should be some new type?
+    addString("hexadecimal", true).addGuiAction(ColorChooser, 1).
     addSyntax("RGB", se => se.NumberOfParameters > 1 && se.Parameters(1) == "RGB").
     addOptions("scope", true, colorScopes).
     addOptions("color system", true, List("RGB", "HSL")). // Looks clunky in this context, but gives simple model.
     addInt("red", true).
     addInt("green", true).
-    addInt("blue", true).
+    addInt("blue", true).addGuiAction(ColorChooser, 1).
     addSyntax("HSL", se => se.NumberOfParameters > 1 && se.Parameters(1) == "HSL").
     addOptions("scope", true, colorScopes).
     addOptions("color system", true, List("RGB", "HSL")).
     addInt("hue", true).
     addInt("saturation", true).
-    addInt("lightness", true)
+    addInt("lightness", true).addGuiAction(ColorChooser, 1)
   // FIXME: add some direction flags for the 'border' as scope - consider extending the parser with notion of function to evaluate if a parameter is included or not.
 
   parser("underline") = (new TagParser(

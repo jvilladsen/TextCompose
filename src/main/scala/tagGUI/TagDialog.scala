@@ -26,7 +26,7 @@ import event._
 import Key._
 import writesetter.{ core, editor, storage }
 
-class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends ParameterType {
+class TagDialog(fileKey: String, tagName: String) extends ParameterType {
 
   private var fields = new ArrayBuffer[ParameterType]
 
@@ -248,7 +248,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     }
   }
 
-  private def addAllToPanel(
+  private def addFieldsToPanel(
     okAction: Action,
     actionListener: java.awt.event.ActionListener) {
 
@@ -406,7 +406,7 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
     */
 
     if (knownTag) {
-      addAllToPanel(okAction, actionListener)
+      addFieldsToPanel(okAction, actionListener)
       /** If errors were found during parse of tag parameters, we show them.
         * However, when the choice of syntax is forced away from what was
         * found by the parser, one should expect errors, but they are artificial
@@ -469,7 +469,6 @@ class TagDialog(fileKey: String, frame: JPanel, tagName: String) extends Paramet
   }
 
   def getAsSourceElement: writesetter.core.SourceElement = {
-    println("#fields="+fields.length.toString)
     val s = new writesetter.core.SourceElement
     s.SetTag(tagName)
     for (f <- fields) {

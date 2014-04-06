@@ -61,7 +61,9 @@ abstract class ParameterType {
   }
   
   def setFields(f: ArrayBuffer[ParameterType]) {
-    for (a <- actions) { a.setFields(f) }
+    for (a <- actions) {
+      a.prepareFromDialog(f, panel.peer)
+    }
   }
   
   def addActionButtons() {

@@ -40,9 +40,7 @@ class SourceViewFactory extends Object with ViewFactory {
   def create(element: Element): View = return new SourceView(element)
 }
 
-/*
- * Syntax highlighting.
- */
+/** Syntax highlighting */
 class SourceView(element: Element) extends PlainView(element) {
 
   override def drawUnselectedText(graphics: Graphics, x: Int, y: Int, p0: Int, p1: Int): Int = {

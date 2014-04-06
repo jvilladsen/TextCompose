@@ -20,13 +20,20 @@ package writesetter.tagGUI
 
 import scala.swing.Action
 import scala.collection.mutable.ArrayBuffer
+import javax.swing.JPanel
 
 abstract class TagAction(title: String) extends Action(title) {
 
   var fields: ArrayBuffer[ParameterType] = null
   var offset = 0
+  var parentComponent: JPanel = null
   
   def setFieldOffset(i: Int) { offset = i }
 
-  def setFields(f: ArrayBuffer[ParameterType]) { fields = f }
+  def prepareFromDialog(
+      f: ArrayBuffer[ParameterType],
+      component: JPanel) {
+    fields = f
+    parentComponent = component
+  }
 }

@@ -125,17 +125,28 @@ object ColorFunctions {
 
   private def outOfRange(a: Int, from: Int, to: Int) = a < from || a > to
 
-  def setHex(system: String, hex: String) {
-    def getHex(offset: Int): Int = {
-      try {
-        val subString = hex.substring(1 + offset, 3 + offset)
-        Integer.valueOf(subString, 16).intValue
-      } catch {
-        case e: Exception => throw new TagError("The hexadecimal color specification " +
-          "does not consist of six hexadecimals. Example: #A0325F.")
-      }
+  def hexToInt(hex: String, offset: Int): Int = {
+    try {
+      val subString = hex.substring(1 + offset, 3 + offset)
+      Integer.valueOf(subString, 16).intValue
+    } catch {
+      case e: Exception => throw new TagError("The hexadecimal color specification " +
+        "does not consist of six hexadecimals. Example: #A0325F.")
     }
-    setDec(system, getHex(0), getHex(2), getHex(4))
+  }
+  
+  // No exceptions
+  def hexToIntTriple(hex: String): (Int, Int, Int) = {
+    def tryHexToInt(hex: String, offset: Int): Int = try {
+      hexToInt(hex, offset)
+    } catch {
+      case e: Exception => 0
+    }
+    (tryHexToInt(hex, 0), tryHexToInt(hex, 2), tryHexToInt(hex, 4))
+  }
+  
+  def setHex(system: String, hex: String) {
+    setDec(system, hexToInt(hex, 0), hexToInt(hex, 2), hexToInt(hex, 4))
     Text = system + " #" + hex
   }
 

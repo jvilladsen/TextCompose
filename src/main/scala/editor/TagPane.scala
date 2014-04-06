@@ -71,7 +71,7 @@ class TagPane {
 
   private def assembleDialog(se: writesetter.core.SourceElement, forcedSyntax: Int) {
 
-    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, se.TagName)
+    dialog = new writesetter.tagGUI.TagDialog(fileKey, se.TagName)
     val okAction = new Action("OK") {
       enabled = true
       def apply() {
@@ -166,7 +166,7 @@ class TagPane {
   def updateWithParserErrorFromEditor(message: String) {
     clearLayout()
 
-    dialog = new writesetter.tagGUI.TagDialog(fileKey, panel.peer, "")
+    dialog = new writesetter.tagGUI.TagDialog(fileKey, "")
     dialog.layoutParserError(message)
     addContent(dialog.panel)
 

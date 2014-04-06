@@ -226,17 +226,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       }
     }
   }
-  def setFontColor = stateStack.top.setFontColor
-
   def setUnderlineUse = stateStack.top.setUnderlineUse _
-
-  def setUnderlineColor() = stateStack.top.setUnderlineColor()
 
   def setUnderlineSizing = stateStack.top.setUnderlineSizing(_, _, _)
 
   def setUseTextBackgroundColor = stateStack.top.setBckgColorUse _
-
-  def setTextBackgroundColor = stateStack.top.setBckgColor
 
   def setHighlightSize(l: Float, r: Float, t: Float, b: Float) {
     stateStack.top.setHighlightSize(l, r, t, b)

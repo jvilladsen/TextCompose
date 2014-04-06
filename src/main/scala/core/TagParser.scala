@@ -454,6 +454,8 @@ class TagParser(
         }
         case p: FormalInt => {
           val it = new NumberType(tagName, title, true)
+          it.setActions(formalParameter.guiActions)
+          it.setOffset(formalParameter.guiActionFieldOffset)
           actualPar match {
             case a: ActualInteger => it.set(a.i); actualParIndex += 1
             case _                => it.set(p.default)
