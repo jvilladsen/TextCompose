@@ -78,7 +78,7 @@ object Parsers {
     se => se.NumberOfParameters == 0,
     "Use no parameters to turn on underlining, or set up width, height and cap of the line.",
     sp => sp.underlineTag)).
-    addSyntax("setup", se => se.NumberOfParameters == 3).
+    addSyntax("setup", se => se.NumberOfParameters > 0).
     addDecNum("width", true, Sign.disallow, optionalPercentage).
     addDecNum("height", true, Sign.allow, optionalPercentage).
     addOptions("cap", true, List("Butt", "Round", "Square"))

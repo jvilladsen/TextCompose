@@ -86,7 +86,7 @@ class TagParser(
   var indexActual = 0
 
   def getSyntaxDescription: String = formalParameters.map(p => p.toString).mkString("", ", ", ".")
-  
+
   def getSyntaxes: ArrayBuffer[String] = syntaxAlternatives.map(s => s.name)
   def getCurrentSyntax: Integer = currentSyntaxIndex
 
@@ -118,10 +118,11 @@ class TagParser(
     formalParameters += FormalOptions(name, mandatory, options)
     this
   }
-  
-  /** Some tags have options that may change namely the font tag and the include tag.
+
+  /**
+    * Some tags have options that may change namely the font tag and the include tag.
     * Most of the work involved in the update is to navigate through the structure
-    * to find the option parameter.  
+    * to find the option parameter.
     */
   def updateOptions(syntaxName: String, parameterName: String, newOptions: List[String]) {
     val syntaxIndex = syntaxAlternatives.indexWhere(s => s.name == syntaxName)
@@ -156,7 +157,7 @@ class TagParser(
     formalParameters.last.noGuiTitle()
     this
   }
-  
+
   def addGuiAction(a: TagAction, offset: Int) = {
     formalParameters.last.addGuiAction(a, offset)
     this
@@ -371,8 +372,7 @@ class TagParser(
     }
   def getNextOption: String =
     actualParameters(indexActual) match {
-      case p: ActualOption =>
-        indexActual += 1; p.option
+      case p: ActualOption => indexActual += 1; p.option
       case _ => throw new Exception("Asking parser for option from " + tagName + " but fails.")
     }
 
@@ -388,9 +388,8 @@ class TagParser(
   def getNextFlag: Boolean =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
-        case ActualFlag(f) =>
-          indexActual += 1; true
-        case _ => false
+        case f: ActualFlag => indexActual += 1; true
+        case _             => false
       }
     } else {
       false
@@ -398,24 +397,24 @@ class TagParser(
   def getNextFlags: String =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
-        case p: ActualFlags =>
-          indexActual += 1; p.flags
+        case p: ActualFlags => indexActual += 1; p.flags
         case _ => ""
       }
     } else {
       ""
     }
 
-  /** Build the GUI for the "tag dialog" shown in the "tag pane".
-    * 
+  /**
+    * Build the GUI for the "tag dialog" shown in the "tag pane".
+    *
     * When we get here, we have already parsed the tag so that we
     * have both formal and actual parameters.
-    * 
+    *
     * @fields is the array of parameters that should be displayed in the dialog.
-    * 
+    *
     * @forcedSyntax is used for redoing the layout after a change in the
     * combo-box for choosing alternative syntax, "form", and -1 means that it
-    * should follow the result found by the parser. 
+    * should follow the result found by the parser.
     */
   def buildGUI(fields: ArrayBuffer[ParameterType], forcedSyntax: Int) {
 
@@ -428,7 +427,7 @@ class TagParser(
     } else {
       syntaxAlternatives(forcedSyntax)
     }
-    
+
     for (formalParameter <- syntax.formalParameters) {
       val formalName = formalParameter.getName
       val title = if (formalParameter.hideGuiTitle) "" else formalParameter.getName
@@ -448,7 +447,7 @@ class TagParser(
           actualPar match {
             case p: ActualString =>
               tt.set(p.s); actualParIndex += 1
-            case _               => None
+            case _ => None
           }
           fields.append(tt)
         }
@@ -457,7 +456,8 @@ class TagParser(
           it.setActions(formalParameter.guiActions)
           it.setOffset(formalParameter.guiActionFieldOffset)
           actualPar match {
-            case a: ActualInteger => it.set(a.i); actualParIndex += 1
+            case a: ActualInteger =>
+              it.set(a.i); actualParIndex += 1
             case _                => it.set(p.default)
           }
           it.setDefaultValue(p.default)
@@ -467,7 +467,8 @@ class TagParser(
         case p: FormalFloat => {
           val ft = new NumberType(tagName, title)
           actualPar match {
-            case a: ActualFloat => ft.set(a.f); actualParIndex += 1
+            case a: ActualFloat =>
+              ft.set(a.f); actualParIndex += 1
             case _              => ft.set(p.default)
           }
           ft.setDefaultValue(p.default) //FIXME: extend setting default value to other types as necessary
@@ -482,7 +483,7 @@ class TagParser(
           actualPar match {
             case p: ActualDecNum =>
               dnt.set(p.dn); actualParIndex += 1
-            case _               => None
+            case _ => None
           }
           fields.append(dnt)
         }
@@ -515,7 +516,7 @@ class TagParser(
           actualPar match {
             case p: ActualFlags =>
               bgt.set(p.flags); actualParIndex += 1
-            case _              => None
+            case _ => None
           }
           bgt.setNotMandatory()
           fields.append(bgt)
