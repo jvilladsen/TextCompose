@@ -22,9 +22,12 @@ import scala.collection.mutable.ArrayBuffer
 import writesetter.tagGUI.TagAction
 
 abstract class FormalParameter(name: String, mandatory: Boolean) {
+  
   var hideGuiTitle = false
   val guiActions = new ArrayBuffer[TagAction]
   var guiActionFieldOffset = 0
+  var isFontName = false // Set this flag to render font name in the corresponding font.
+  var useFontOffset = -1 // Set this field offset to renter content in font at that field.
   
   def isMandatory: Boolean = mandatory
   def getName: String = name
@@ -36,6 +39,8 @@ abstract class FormalParameter(name: String, mandatory: Boolean) {
     guiActionFieldOffset = offset
   } 
   def setDefaultValue(d: String)
+  def setIsFontName() { isFontName = true }
+  def setFontOffset(offset: Int) { useFontOffset = offset }
 }
 
 case class FormalString(

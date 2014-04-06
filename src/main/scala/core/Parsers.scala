@@ -33,13 +33,23 @@ object Parsers {
   // FIXME: the encoding for font tag should be a kind of level-2-option which takes a map string -> list of options... 
   val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
-    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).
+    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
     addString("encoding", false). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
     addFlag("local").addGuiAction(FontInformation, 0)
     
+  parser("glyph") = (new TagParser("glyph", sp => sp.glyphTag)).
+    addInt("number", true).setFontOffset(1).
+    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addString("encoding", false). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
+    addFlag("local").addGuiAction(FontInformation, 1)
+
   def updateFont() {
     parser("font").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)
+    parser("glyph").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)
   }
+
+  parser("char") = (new TagParser("char", sp => sp.charTag)).
+    addInt("number", true)
 
   parser("size") = (new TagParser("size", sp => sp.sizeTag)).
     addDecNum("font size", true, Sign.asDelta, optionalPercentage).noGuiTitle()
@@ -313,12 +323,6 @@ object Parsers {
   parser("blend") = (new TagParser("blend", sp => sp.blendModeTag)).
     addOptions("blend mode", true, List("normal", "compatible", "multiply", "screen", "overlay",
       "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion")).noGuiTitle()
-
-  parser("char") = (new TagParser("char", sp => sp.charTag)).
-    addInt("number", true).
-    addString("font name", false).
-    addInt("encoding", false).
-    addFlag("local")
 
   parser("Roman") = (new TagParser("Roman", sp => sp.romanTag)).
     addOptions("upper or lower case", true, List("U", "L")).

@@ -67,6 +67,7 @@ object TagRegister {
     TagNames += "new"
     TagNames += "paragraph-space"
     TagNames += "paragraph-indent"
+    TagNames += "glyph"
     TagNames += "char"
     TagNames += "Roman"
     TagNames += "format-list"

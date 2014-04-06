@@ -391,11 +391,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     }
     if (stateStack.top.actualLetterspacing != 0f) {
       /* FIXME: It should not be necessary to only set character spacing when non-zero. 
-			 * Actually, it is just a patch, to make full alignment work!
-			 * The real problem is that full alignment fails when we add multiple chunks
-			 * and set character spacing on each individual chunk.
-			 * MAYBE FIXED with latest version of iText?
-			 */
+	   * Actually, it is just a patch, to make full alignment work!
+	   * The real problem is that full alignment fails when we add multiple chunks
+       * and set character spacing on each individual chunk.
+       * MAYBE FIXED with latest version of iText?
+       */
       chunk.setCharacterSpacing(stateStack.top.actualLetterspacing)
     }
     chunk.setHorizontalScaling(stateStack.top.letterscaling / 100f)

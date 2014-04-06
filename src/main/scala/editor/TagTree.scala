@@ -129,7 +129,7 @@ class TagTree {
   builtInTags += "LIST" -> "format-list list item /list"
   builtInTags += "TABLE" -> "table cell /table cell-padding border-width color"
   builtInTags += "DRAW" -> "line-width line-cap line-dash move-to line-to draw blend opacity color"
-  builtInTags += "INSERT" -> "insert char image Roman bookmark label ref /ref"
+  builtInTags += "INSERT" -> "insert glyph char image Roman bookmark label ref /ref"
   builtInTags += "GRAPHICS" -> "color blend opacity image draw"
   builtInTags += "STATE" -> "store restore reset"
   builtInTags += "VARIABLE" -> "var set /set add /add show"

@@ -169,6 +169,18 @@ class TagParser(
     this
   }
 
+  /** Modify the parameter just added, to set the flag that it is a font name. */
+  def setIsFontName() = {
+    formalParameters.last.setIsFontName()
+    this
+  }
+
+  /** Modify the parameter just added, to set the offset for font name field. */
+  def setFontOffset(offset: Int) = {
+    formalParameters.last.setFontOffset(offset)
+    this
+  }
+
   /** Evaluate the source element after parsing, using the given "effect". */
   def evaluate(se: SourceElement, proc: SourceProcessor) {
     effect(proc)(this, se)

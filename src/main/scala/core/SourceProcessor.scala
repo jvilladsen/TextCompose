@@ -217,6 +217,29 @@ class SourceProcessor(
     document.setFont(fontTitle)
   }
 
+  def glyphTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val number = parser.getNextInt
+    val fontTitle = parser.getNextOption
+    val encoding = if (parser.isNextString) {
+      val e = parser.getNextString
+      if (e == "") "" else "Cp" + e
+    } else {
+      ""
+    }
+    document.storeStateToStack()
+    DocumentFontRegister.addFont(fontTitle, encoding, !parser.getNextFlag)
+    document.setFont(fontTitle)
+    document.AddText((number).toChar.toString)
+    document.restoreStateFromStack()
+  }
+
+  def charTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val number = parser.getNextInt
+    document.AddText((number).toChar.toString)
+  }
+
   def sizeTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setFontSize(parser.getNextDecNum)
@@ -576,23 +599,6 @@ class SourceProcessor(
     val withLimit = parser.isNextFloat
     val limit = if (withLimit) parser.getNextFloat else 0f
     document.newTag(level, withLimit, limit)
-  }
-
-  def charTag(parser: TagParser, se: SourceElement) {
-    parser(se)
-    val number = parser.getNextInt
-    val setFont = parser.isNextString
-    if (setFont) {
-      val fontTitle = parser.getNextString
-      val encoding = if (parser.isNextInt) "Cp" + parser.getNextInt.toString else ""
-      document.storeStateToStack()
-      DocumentFontRegister.addFont(fontTitle, encoding, !parser.getNextFlag)
-      document.setFont(fontTitle)
-    }
-    document.AddText((number).toChar.toString)
-    if (setFont) {
-      document.restoreStateFromStack()
-    }
   }
 
   def romanTag(parser: TagParser, se: SourceElement) {
@@ -1046,6 +1052,7 @@ class SourceProcessor(
       // INSERT
       case "insert"           => parser.evaluate(element, this)
       case "char"             => parser.evaluate(element, this)
+      case "glyph"            => parser.evaluate(element, this)
       case "Roman"            => parser.evaluate(element, this)
       case "bookmark"         => parser.evaluate(element, this)
       case "label"            => parser.evaluate(element, this)
