@@ -183,9 +183,17 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
   }
 
   def recalculate() {
-    core.FontFileRegister.recalculate()
-    updateStorage(true)
-    writesetter.core.Parsers.updateFont()
+    try {
+      core.FontFileRegister.recalculate()
+      updateStorage(true)
+    } catch {
+      case e: Exception => editor.DialogBox.stackTrace("Failed recalculating fonts", e)
+    }
+    try {
+      writesetter.core.Parsers.updateFont()
+    } catch {
+      case e: Exception => editor.DialogBox.stackTrace("Failed updating parsers", e)
+    }
   }
 
   def getAllFontTitles: List[String] = {
