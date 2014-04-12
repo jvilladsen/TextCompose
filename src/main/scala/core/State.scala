@@ -86,10 +86,10 @@ class State extends Cloneable {
   var columnGutterSize = 15f
   var pageBckgColor = "RGB 255 255 255"
   var pageColorUse = false
-  var marginLeft = 36f
-  var marginRight = 36f
-  var marginTop = 36f
-  var marginBottom = 36f
+  var marginLeft = 70f
+  var marginRight = 70f
+  var marginTop = 50f
+  var marginBottom = 50f
 
   var cellBckgColor = "RGB 255 255 255"
   var cellColorLeft = "RGB 0 0 0"
