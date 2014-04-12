@@ -72,10 +72,9 @@ class TagParser(
    * 1. add control of the height parameter in 'underline' tag to the 'height' tag.
    * 2. new 'width' tag to control width parameter in 'underline' tag, image frame and cell border.
    * 3. new 'pad' tag to control padding in highlight and table cells.
-   * 4. extend scope options for color tag - apart from 'border' also 4 options with direction.
-   * 5. brush up the inject tag
-   * 6. brush up the replace tag
-   * 7. brush up position tag
+   * 4. brush up the inject tag
+   * 5. brush up the replace tag
+   * 6. brush up position tag
    */
 
   var formalParameters: ArrayBuffer[FormalParameter] = syntaxAlternatives(0).formalParameters
@@ -120,7 +119,7 @@ class TagParser(
   }
 
   /**
-    * Some tags have options that may change namely the font tag and the include tag.
+    * Some tags have options that may change, e.g. the font tag and the include tag.
     * Most of the work involved in the update is to navigate through the structure
     * to find the option parameter.
     */
@@ -158,8 +157,14 @@ class TagParser(
     this
   }
 
-  def addGuiAction(a: TagAction, offset: Int) = {
-    formalParameters.last.addGuiAction(a, offset)
+  /** Add an action such as opening font information window or file chooser.
+    * 
+    * @action is the action invoked by the button added to the tag dialog.
+    * @offset is used for specifying an offset in the list of fields for actions that
+    *         read from the fields in the dialog.  
+    */
+  def addGuiAction(action: TagAction, offset: Int) = {
+    formalParameters.last.addGuiAction(action, offset)
     this
   }
 
@@ -169,15 +174,36 @@ class TagParser(
     this
   }
 
-  /** Modify the parameter just added, to set the flag that it is a font name. */
+  /** Modify the parameter just added, to set the flag that it is a font name.
+    *
+    * This has the effect that the values in the combo-box are rendered in the
+    * font with that name, e.g. "Georgia" is rendered in the font Georgia.  
+    */
   def setIsFontName() = {
     formalParameters.last.setIsFontName()
     this
   }
 
-  /** Modify the parameter just added, to set the offset for font name field. */
-  def setFontOffset(offset: Int) = {
-    formalParameters.last.setFontOffset(offset)
+  /** Modify the parameter just added, to set a dependency.
+    * 
+    * The dependency is expressed as getting list of values depending 
+    * on current values in other fields. Example: the list of available
+    * font encodings depends on the chosen font. Other example is the
+    * 'glyph' tag where the available characters depend on the chosen
+    * font and encoding.
+    */
+  def setDependency(d: ParameterDependency) = {
+    formalParameters.last.setDependency(d)
+    this
+  }
+
+  /** Modify the parameter just added, to set option mapping.
+    * 
+    * The mapping is used for converting values shown in combo-box to the
+    * values expected by the parser, e.g. encoding "1252 Latin 1" -> "1252". 
+    */
+  def setOptionMapping(m: String => String) = {
+    formalParameters.last.setOptionMapping(m)
     this
   }
 
@@ -266,10 +292,16 @@ class TagParser(
             }
           }
           case p: FormalOptions => {
-            if (p.options.contains(parameter)) {
+            val currentOptions = if (p.hasDependency) {
+              // The available options depends on other parameters.
+              p.dependency.getOptions(se.Parameters).map(p.optionMapping)
+            } else {
+              p.options.map(p.optionMapping)
+            }
+            if (currentOptions.contains(parameter)) {
               actualParameters += ActualOption(formalName, parameter); index += 1
             } else if (p.mandatory) {
-              val suggestion = NameSuggestion.getSuggestions(parameter, p.options)
+              val suggestion = NameSuggestion.getSuggestions(parameter, currentOptions)
               throw new TagError("'" + parameter + "' is not an option for '" + p.name +
                   "'. " + suggestion + " Must be one of " + p.formattedOptions)
             }
@@ -500,7 +532,13 @@ class TagParser(
           fields.append(dnt)
         }
         case p: FormalOptions => {
-          val ot = new ComboBoxType(title, p.options, p.mandatory, p.isFontName)
+          val currentOptions = if (p.hasDependency) {
+            p.dependency.getOptions(fields.map(x => x.getUnwrapped)) // FIXME: get rid of getRaw
+          } else {
+            p.options
+          }
+          val ot = new ComboBoxType(title, currentOptions, p.mandatory, p.isFontName)
+          ot.setOptionMapping(p.optionMapping)
           actualPar match {
             case act: ActualOption => actualParIndex += ot.set(act.option)
             case _                 => ot.set(p.default)
