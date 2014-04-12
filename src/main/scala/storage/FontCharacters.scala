@@ -23,8 +23,8 @@ import writesetter.core
 object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
   /* FORMAT:
-   * font file name	primary key 
-   * encoding			primary key
+   * font file name  primary key 
+   * encoding        primary key
    * characters
    */
 
@@ -39,7 +39,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
   def addNewFont(fontName: String, encoding: String): Boolean = {
 
-    def getCharacters(encoding: String) = {
+    def getCharacters(encoding: String): String = {
       
       val font = new core.DocumentFont(fontName, false, false, encoding)
       
@@ -57,5 +57,30 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
       }
     }
     success
+  }
+  
+  /** Given string of the form <font name>#<encoding> returns string
+    * containing all the available characters. Here, <encoding> is
+    * in the short from such as "1252". 
+    */
+  def getCharacters(fontAndEncoding: String): List[String] = {
+    val decomposed = fontAndEncoding.split('#')
+    val fontTitle = decomposed(0)
+    val encoding = if (decomposed.length == 2) decomposed(1) else ""
+    val shortFontId = StoredFontAnalysis.getShortFontId(fontTitle)
+    
+    val allFontEncodings = StoredFontAnalysis.getEncodingsOfFont(fontTitle)
+    val foundEncoding = allFontEncodings.find(x => x.startsWith(encoding))
+    val longEncoding = foundEncoding match {
+      case Some(e) => e
+      case None => if (allFontEncodings.length > 0) allFontEncodings(0) else "1252 Latin 1"
+    }
+    println(">>>", fontTitle, encoding, shortFontId, longEncoding)
+    val index = getIndexOf(List(shortFontId, longEncoding))
+    if (index > 0) {
+      dataSet(index)(2).map(c => c.intValue.toHexString).toList
+    } else {
+      List()
+    }
   }
 }

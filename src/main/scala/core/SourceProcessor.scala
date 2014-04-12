@@ -186,7 +186,7 @@ class SourceProcessor(
         processingUnit.addErrorMessage(message + location)
         val textForWritesetter = messageForWritesetter + location
         processingUnit.update("<store><reset><new paragraph><font Helvetica>" +
-          "<highlight RGB 245 240 144 3 3 5 4><highlight on><size 11><height 125%>" +
+          "<color highlight RGB 245 240 144><highlight 3 3 5 4><highlight><size 11><height 125%>" +
           "<align text left>" + textForWritesetter + "<new paragraph><restore>")
         processSourceLine()
         processingUnit.popElement()
@@ -205,8 +205,8 @@ class SourceProcessor(
   def fontTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val fontTitle = parser.getNextOption
-    val encoding = if (parser.isNextString) {
-      val e = parser.getNextString
+    val encoding = if (parser.isNextOption) {
+      val e = parser.getNextOption
       if (e == "") "" else "Cp" + e
     } else {
       ""
@@ -218,16 +218,19 @@ class SourceProcessor(
 
   def glyphTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    val number = parser.getNextInt
     val fontTitle = parser.getNextOption
-    val encoding = if (parser.isNextString) {
-      val e = parser.getNextString
+    val hexNumber = parser.getNextOption
+    val encoding = if (parser.isNextOption) {
+      val e = parser.getNextOption
       if (e == "") "" else "Cp" + e
     } else {
       ""
     }
+    val local = parser.getNextFlag
+    val number = Integer.valueOf(hexNumber, 16).intValue
+    
     document.storeStateToStack()
-    DocumentFontRegister.addFont(fontTitle, encoding, !parser.getNextFlag)
+    DocumentFontRegister.addFont(fontTitle, encoding, !local)
     document.setFont(fontTitle)
     document.AddText((number).toChar.toString)
     document.restoreStateFromStack()

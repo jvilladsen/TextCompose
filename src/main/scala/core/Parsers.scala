@@ -34,14 +34,14 @@ object Parsers {
   val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addString("encoding", false). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
+    addOptions("encoding", false, List()).setDependency(Dependency.encoding).setOptionMapping(Dependency.encodingMap). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
     addFlag("local").addGuiAction(FontInformation, 0)
     
   parser("glyph") = (new TagParser("glyph", sp => sp.glyphTag)).
-    addInt("number", true).setFontOffset(1).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addString("encoding", false). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
-    addFlag("local").addGuiAction(FontInformation, 1)
+    addOptions("number", true, List()).setDependency(Dependency.character).
+    addOptions("encoding", false, List()).setDependency(Dependency.encoding).setOptionMapping(Dependency.encodingMap). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
+    addFlag("local").addGuiAction(FontInformation, 0)
 
   def updateFont() {
     parser("font").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)

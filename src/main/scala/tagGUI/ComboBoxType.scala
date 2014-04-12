@@ -44,6 +44,9 @@ class ComboBoxType(
   private var availableValues = values
   if (!mandatory) { availableValues = "" :: values }
   private val lastIndex = availableValues.length - 1
+  
+  var optionMapping: String => String = x => x
+  def setOptionMapping(m: String => String) { optionMapping = m }
 
   val field = if (isFontName) {
     new ComboBox(availableValues) {
@@ -91,8 +94,9 @@ class ComboBoxType(
   }
 
   def set(option: String): Int = {
-    if (values.contains(option)) {
-      field.peer.setSelectedIndex(availableValues.indexOf(option))
+    val index = values.map(optionMapping).indexOf(option) + (if (mandatory) 0 else 1)
+    if (mandatory && index >= 0 || !mandatory && index > 0) {
+      field.peer.setSelectedIndex(index)
       1
     } else {
       0
@@ -128,7 +132,11 @@ class ComboBoxType(
 
   override def getUnwrapped: String = {
     val index = field.peer.getSelectedIndex
-    availableValues(index)
+    if (index >= 0) {
+      optionMapping(availableValues(index))
+    } else {
+      ""
+    }
   }
   
   def Get: String = Wrap(getUnwrapped)

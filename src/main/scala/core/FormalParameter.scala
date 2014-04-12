@@ -27,7 +27,9 @@ abstract class FormalParameter(name: String, mandatory: Boolean) {
   val guiActions = new ArrayBuffer[TagAction]
   var guiActionFieldOffset = 0
   var isFontName = false // Set this flag to render font name in the corresponding font.
-  var useFontOffset = -1 // Set this field offset to renter content in font at that field.
+  var hasDependency = false
+  var dependency: ParameterDependency = null
+  var optionMapping: String => String = x => x
   
   def isMandatory: Boolean = mandatory
   def getName: String = name
@@ -40,7 +42,8 @@ abstract class FormalParameter(name: String, mandatory: Boolean) {
   } 
   def setDefaultValue(d: String)
   def setIsFontName() { isFontName = true }
-  def setFontOffset(offset: Int) { useFontOffset = offset }
+  def setDependency(d: ParameterDependency) { hasDependency = true; dependency = d }
+  def setOptionMapping(m: String => String) { optionMapping = m }
 }
 
 case class FormalString(
@@ -108,7 +111,7 @@ case class FormalOptions(
   val newOptions: List[String]) extends FormalParameter(name, mandatory) {
   
   var options: List[String] = newOptions // some option lists can change: fonts, extensions.
-  var default = newOptions(0)
+  var default = if (newOptions.isEmpty) "" else newOptions(0)
   
   def formattedOptions = {
     val examples = 7
@@ -117,7 +120,9 @@ case class FormalOptions(
       (if (options.length > examples) ",...(" + more.toString + " more)" else "")
   }
 
-  override def toString = wrap(name + ": one of: " + formattedOptions)
+  override def toString =
+    if (hasDependency) wrap(name + ": <depends on other parameters>") 
+    else wrap(name + ": one of: " + formattedOptions) 
   override def setDefaultValue(d: String) { default = d }
 }
 
