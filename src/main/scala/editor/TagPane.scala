@@ -81,12 +81,17 @@ class TagPane {
         }
       }
     }
-    dialog.layout(se, okAction, updateDialogFromSelf, forcedSyntax)
+
+    try {
+      dialog.layout(se, okAction, updateDialogFromSelf, forcedSyntax)
+    } catch {
+      case e: Exception => DialogBox.stackTrace("Failed laying out tag dialog", e)
+    }
 
     if (dialog.IsKnownTag) {
       val par = dialog.preprocessParameters(se.TagName, se.Parameters)
       addContent(dialog.panel)
-      
+
       val multipleSyntaxes = dialog.syntaxes.length > 1
       if (dialog.HasParameters || multipleSyntaxes) {
         addContent(new Button(okAction))
@@ -114,8 +119,9 @@ class TagPane {
     refreshLayout(dialog.getAsSourceElement, -1)
   }
 
-  /** Build the tag dialog based on data in the source code around the caret.
-    *  
+  /**
+    * Build the tag dialog based on data in the source code around the caret.
+    *
     * This is triggered upon change of position of the caret in the text editor
     * in a future with a 600ms delay.
     */
@@ -134,8 +140,9 @@ class TagPane {
     refreshLayout(se, -1)
   }
 
-  /** Rebuild the tag dialog based on data in the tag dialog itself.
-    *  
+  /**
+    * Rebuild the tag dialog based on data in the tag dialog itself.
+    *
     * If, for example, you change 'color system' in 'color' tag from RGB to HSL,
     * then the dialog is rebuilt to update the next three labels, 'red' to 'hue' etc.
     * Other, example: different fonts have different lists of available code pages,
