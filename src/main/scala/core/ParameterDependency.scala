@@ -37,7 +37,7 @@ object Dependency {
 
   val encodingOnFont = new ParameterDependency(fontToEncodings, List(0))
 
-  def encodingMap(s: String): String =
+  def getFirstWord(s: String): String =
     if (s == "") "" else s.split(" ")(0)
 
   private val fontEncodingToChars: String => List[String] =

@@ -184,6 +184,15 @@ class TagParser(
     this
   }
 
+  /** Modify the parameter just added, to force font on GUI widget
+    * 
+    * Used for setting font name for use in combo-box with glyphs.  
+    */
+  def setUseFontOffset(offset: Int) = {
+    formalParameters.last.setUseFontOffset(offset)
+    this
+  }
+
   /** Modify the parameter just added, to set a dependency.
     * 
     * The dependency is expressed as getting list of values depending 
@@ -533,11 +542,12 @@ class TagParser(
         }
         case p: FormalOptions => {
           val currentOptions = if (p.hasDependency) {
-            p.dependency.getOptions(fields.map(x => x.getUnwrapped)) // FIXME: get rid of getRaw
+            p.dependency.getOptions(fields.map(x => x.getUnwrapped))
           } else {
             p.options
           }
-          val ot = new ComboBoxType(title, currentOptions, p.mandatory, p.isFontName)
+          val useFontName = if (p.useFontOffset < 0) "" else fields(p.useFontOffset).getUnwrapped
+          val ot = new ComboBoxType(title, currentOptions, p.mandatory, p.isFontName, useFontName)
           ot.setOptionMapping(p.optionMapping)
           actualPar match {
             case act: ActualOption => actualParIndex += ot.set(act.option)

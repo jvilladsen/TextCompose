@@ -31,12 +31,13 @@ class ComboBoxType(
     label: String,
     values: List[String],
     isMandatory: Boolean,
-    isFontName: Boolean) extends ParameterType {
+    isFontName: Boolean,
+    useFontName: String) extends ParameterType {
 
   def this(
     label: String,
     values: List[String],
-    isMandatory: Boolean) = this(label, values, isMandatory, false)
+    isMandatory: Boolean) = this(label, values, isMandatory, false, "")
   
   private var defaultValue = ""
   mandatory = isMandatory
@@ -48,16 +49,17 @@ class ComboBoxType(
   var optionMapping: String => String = x => x
   def setOptionMapping(m: String => String) { optionMapping = m }
 
-  val field = if (isFontName) {
+  val field = if (isFontName || useFontName != "") {
     new ComboBox(availableValues) {
       renderer = new ListView.AbstractRenderer[String, Label](new Label) {
-        def configure(list: ListView[_], isSelected: Boolean, focused: Boolean, fontTitle: String, index: Int) {
-          if (storage.StoredFontAnalysis.hasJavaFont(fontTitle)) {
-            component.font = storage.StoredFontAnalysis.getJavaFont(fontTitle).deriveFont(40f)
+        def configure(list: ListView[_], isSelected: Boolean, focused: Boolean, displayText: String, index: Int) {
+          val displayFont = if (useFontName != "") useFontName else displayText
+          if (storage.StoredFontAnalysis.hasJavaFont(displayFont)) {
+            component.font = storage.StoredFontAnalysis.getJavaFont(displayFont).deriveFont(40f)
           } else {
             component.font = storage.GUIFonts.getStandardFont(40)
           }
-          component.text = fontTitle
+          component.text = displayText
           component.xAlignment = Alignment.Left
           if (isSelected) {
             component.border = Swing.LineBorder(list.selectionBackground, 3)

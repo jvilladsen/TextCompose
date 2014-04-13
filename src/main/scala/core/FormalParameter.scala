@@ -27,6 +27,7 @@ abstract class FormalParameter(name: String, mandatory: Boolean) {
   val guiActions = new ArrayBuffer[TagAction]
   var guiActionFieldOffset = 0
   var isFontName = false // Set this flag to render font name in the corresponding font.
+  var useFontOffset = -1
   var hasDependency = false
   var dependency: ParameterDependency = null
   var optionMapping: String => String = x => x
@@ -42,6 +43,7 @@ abstract class FormalParameter(name: String, mandatory: Boolean) {
   } 
   def setDefaultValue(d: String)
   def setIsFontName() { isFontName = true }
+  def setUseFontOffset(offset: Int) { useFontOffset = offset }
   def setDependency(d: ParameterDependency) { hasDependency = true; dependency = d }
   def setOptionMapping(m: String => String) { optionMapping = m }
 }

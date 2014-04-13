@@ -34,7 +34,8 @@ object Parsers {
   val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).setOptionMapping(Dependency.encodingMap).
+    addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
+      setOptionMapping(Dependency.getFirstWord).
     addFlag("local").addGuiAction(FontInformation, 0)
     
   parser("glyph") = (new TagParser(
@@ -44,12 +45,15 @@ object Parsers {
       "Font name, encoding (optional), Unicode (hexadecimal) and 'local' (optional).",
       sp => sp.glyphTag)).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFont).  // hexadecimal
+    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFont).
+      setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0).
     addSyntax("specify encoding", se => true).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).setOptionMapping(Dependency.encodingMap).
-    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFontAndEncoding).  // hexadecimal
+    addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
+      setOptionMapping(Dependency.getFirstWord).
+    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFontAndEncoding).
+      setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0)
 
   def updateFont() {

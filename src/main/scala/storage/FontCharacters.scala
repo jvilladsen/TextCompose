@@ -59,9 +59,13 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     success
   }
   
-  /** Given string of the form <font name>#<encoding> returns string
-    * containing all the available characters. Here, <encoding> is
-    * in the short from such as "1252". 
+  /** Get list of characters available in a given font.
+    *  
+    * @fontAndEncoding is string of the form "<font name>#<encoding>" where
+    *                  <encoding> is on the short from such as "1252".
+    * 
+    * Returns list containing all the available characters in the form 
+    * "<Unicode> <character>" with Unicode in hexadecimal notation. 
     */
   def getCharacters(fontAndEncoding: String): List[String] = {
     val decomposed = fontAndEncoding.split('#')
@@ -77,7 +81,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     }
     val index = getIndexOf(List(shortFontId, longEncoding))
     if (index > 0) {
-      dataSet(index)(2).map(c => c.intValue.toHexString).toList
+      dataSet(index)(2).map(c => c.intValue.toHexString + " " + c).toList
     } else {
       List()
     }
