@@ -24,7 +24,7 @@ import java.beans.{ PropertyChangeEvent, PropertyChangeListener }
 
 class TagPane {
 
-  private var triggeredFromTagTree = false
+  private var doGrabFocus = false
   private var fileKey = ""
   private var isInsideTag = false
   var foundTagStartingAt = 0
@@ -100,7 +100,7 @@ class TagPane {
         addSyntaxSelector(dialog.syntaxes.toList, dialog.currentSyntax)
       }
       panel.contents += Swing.VStrut(10000) // is there a nicer way to pack the content from the top?
-      if (triggeredFromTagTree) dialog.grabFocus
+      if (doGrabFocus) dialog.grabFocus
     } else {
       addContent(dialog.panel)
     }
@@ -111,7 +111,7 @@ class TagPane {
     if (isInsideTag) { assembleDialog(se, forcedSyntax) }
     panel.revalidate()
     panel.repaint()
-    triggeredFromTagTree = false
+    doGrabFocus = false
   }
 
   def updateColors() {
@@ -150,6 +150,7 @@ class TagPane {
     */
   val updateDialogFromSelf = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {
+      doGrabFocus = true
       refreshLayout(dialog.getAsSourceElement, -1)
     }
   }
@@ -163,9 +164,9 @@ class TagPane {
 
     panel.revalidate()
     panel.repaint()
-    triggeredFromTagTree = false
+    doGrabFocus = false
   }
 
-  def setTriggeredFromTagTree() { triggeredFromTagTree = true }
+  def setGrabFocus() { doGrabFocus = true }
 
 }
