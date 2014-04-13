@@ -212,8 +212,7 @@ The second parameter allows you to select outline view, page thumbnails or full 
 
 Encrypt the document
 
-You can specify "user password" and "owner password". The strength of the encryption
-depends entirely on you choice of password! The longer the safer.
+You can specify "user password" and "owner password".
 
 A user entering the user password can read the document. You can specify which other
 possibilities the user should be granted, such as allowing the user to copy from
@@ -438,6 +437,23 @@ same directory/folder.
 
 ### char
 
+Insert character
+
+Insert character in the current font. The parameter is hexadecimal Unicode.
+Note that the rendering of the character, i.e. the "graphic symbol" (glyph)
+that you will see in the PDF document will depend not only on the parameter
+but also the current font and font encoding (code page) at that position in
+the document. See also the 'glyph' tag.
+
+
+### glyph
+
+Insert glyph
+
+Insert a glyph. This is similar to the 'char' tag but here you also specify
+font apart from the hexadecimal Unicode. The dialog for this tag allows you
+to see the available glyphs in the chosen font and encoding (font code page).
+
 
 ### Roman
 
@@ -445,6 +461,7 @@ Format number as Roman number
 
 The first parameter, U or L, allows you to choose between upper and lower case (IV or iv).
 The second parameter is that number to present as a Roman number.
+
 
 ### bookmark
 
