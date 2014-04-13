@@ -71,10 +71,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
 
   // --------------------------------------- //
 
-  private def fontSelectionTag() {
-    fields.append(new FontType)
-  }
-
   private def decoratedSize(decor: List[String]) {
     fields.append(new NumberType(tagName, "X", decor))
     fields.append(new NumberType(tagName, "Y", decor))
@@ -225,7 +221,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     /*
     tagName match {
       // FONT
-      case "font"             => fontSelectionTag()
+      case "font"             => parser.buildGUI(fields)
       case "size"             => parser.buildGUI(fields)
       case "face"             => parser.buildGUI(fields)
       case "color"            => parser.buildGUI(fields)
