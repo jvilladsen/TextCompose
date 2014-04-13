@@ -75,7 +75,6 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
       case Some(e) => e
       case None => if (allFontEncodings.length > 0) allFontEncodings(0) else "1252 Latin 1"
     }
-    println(">>>", fontTitle, encoding, shortFontId, longEncoding)
     val index = getIndexOf(List(shortFontId, longEncoding))
     if (index > 0) {
       dataSet(index)(2).map(c => c.intValue.toHexString).toList

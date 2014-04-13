@@ -65,7 +65,8 @@ class DocumentFont(
   private def updateNameEntriesForFont {
 
     def normalize(s: String): String = {
-      val withoutNewlines = """\n""".r.replaceAllIn(s, " ")
+      val withoutTabs = """\t""".r.replaceAllIn(s, " ")
+      val withoutNewlines = """\n""".r.replaceAllIn(withoutTabs, " ")
       val withoutCarriageReturn = """\r""".r.replaceAllIn(withoutNewlines, " ")
       withoutCarriageReturn
     }
