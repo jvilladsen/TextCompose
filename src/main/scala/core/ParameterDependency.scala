@@ -21,9 +21,9 @@ package writesetter.core
 import scala.collection.mutable.ArrayBuffer
 
 class ParameterDependency(
-    options: String => List[String],
-    offsets: List[Int]) {
-  
+  options: String => List[String],
+  offsets: List[Int]) {
+
   def getOptions(parameters: ArrayBuffer[String]): List[String] = {
     val length = parameters.length
     options(offsets.map(i => if (length > i) parameters(i) else "").mkString("#"))
@@ -31,17 +31,23 @@ class ParameterDependency(
 }
 
 object Dependency {
-  
-  private val fontToEncodings: String => List[String] = 
+
+  private val fontToEncodings: String => List[String] =
     font => writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(font)
-  
-  val encoding = new ParameterDependency(fontToEncodings, List(0))
-    
+
+  val encodingOnFont = new ParameterDependency(fontToEncodings, List(0))
+
   def encodingMap(s: String): String =
     if (s == "") "" else s.split(" ")(0)
-  
+
   private val fontEncodingToChars: String => List[String] =
     fontAndEncoding => writesetter.storage.FontCharacters.getCharacters(fontAndEncoding)
-  
-  val character = new ParameterDependency(fontEncodingToChars, List(0, 2))
+
+  val characterOnFont = new ParameterDependency(fontEncodingToChars, List(0))
+
+  private val fontToChars: String => List[String] =
+    font => writesetter.storage.FontCharacters.getCharacters(font + "#")
+
+  val characterOnFontAndEncoding = new ParameterDependency(fontEncodingToChars, List(0, 1))
+
 }

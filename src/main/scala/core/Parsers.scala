@@ -34,13 +34,22 @@ object Parsers {
   val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addOptions("encoding", false, List()).setDependency(Dependency.encoding).setOptionMapping(Dependency.encodingMap). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
+    addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).setOptionMapping(Dependency.encodingMap).
     addFlag("local").addGuiAction(FontInformation, 0)
     
-  parser("glyph") = (new TagParser("glyph", sp => sp.glyphTag)).
+  parser("glyph") = (new TagParser(
+      "glyph",
+      "default encoding",
+      se => se.NumberOfParameters <= 2 || se.Parameters(2) == "local",
+      "Font name, encoding (optional), Unicode (hexadecimal) and 'local' (optional).",
+      sp => sp.glyphTag)).
     addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addOptions("number", true, List()).setDependency(Dependency.character).
-    addOptions("encoding", false, List()).setDependency(Dependency.encoding).setOptionMapping(Dependency.encodingMap). // addOptions("encoding", false, writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(fontList(fontField.peer.getSelectedIndex))).
+    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFont).  // hexadecimal
+    addFlag("local").addGuiAction(FontInformation, 0).
+    addSyntax("specify encoding", se => true).
+    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).setOptionMapping(Dependency.encodingMap).
+    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFontAndEncoding).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0)
 
   def updateFont() {
@@ -49,7 +58,7 @@ object Parsers {
   }
 
   parser("char") = (new TagParser("char", sp => sp.charTag)).
-    addInt("number", true)
+    addString("Unicode", true)  // hexadecimal
 
   parser("size") = (new TagParser("size", sp => sp.sizeTag)).
     addDecNum("font size", true, Sign.asDelta, optionalPercentage).noGuiTitle()

@@ -219,27 +219,28 @@ class SourceProcessor(
   def glyphTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val fontTitle = parser.getNextOption
-    val hexNumber = parser.getNextOption
-    val encoding = if (parser.isNextOption) {
-      val e = parser.getNextOption
-      if (e == "") "" else "Cp" + e
-    } else {
-      ""
-    }
+    val encoding =
+      parser.getSyntax match {
+        case "default encoding" => ""
+        case "specify encoding" => parser.getNextOption
+      }
+    val hexUnicode = parser.getNextOption
+    val codePage = if (encoding != "") "Cp" + encoding else ""
     val local = parser.getNextFlag
-    val number = Integer.valueOf(hexNumber, 16).intValue
-    
+    val intUnicode = Integer.valueOf(hexUnicode, 16).intValue
+
     document.storeStateToStack()
-    DocumentFontRegister.addFont(fontTitle, encoding, !local)
+    DocumentFontRegister.addFont(fontTitle, codePage, !local)
     document.setFont(fontTitle)
-    document.AddText((number).toChar.toString)
+    document.AddText((intUnicode).toChar.toString)
     document.restoreStateFromStack()
   }
 
   def charTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    val number = parser.getNextInt
-    document.AddText((number).toChar.toString)
+    val hexUnicode = parser.getNextString
+    val intUnicode = Integer.valueOf(hexUnicode, 16).intValue
+    document.AddText((intUnicode).toChar.toString)
   }
 
   def sizeTag(parser: TagParser, se: SourceElement) {
@@ -540,12 +541,12 @@ class SourceProcessor(
     parser(se)
     document.setLineWidth(parser.getNextFloat)
   }
-  
+
   def lineCapTag(parser: TagParser, se: SourceElement) {
     parser(se)
     document.setLineCap(parser.getNextOption)
   }
-  
+
   def lineDashTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val pattern = ArrayBuffer(parser.getNextString.trim.split(' '): _*)
@@ -780,13 +781,13 @@ class SourceProcessor(
 
   def injectTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    
+
     val beforeOrAfter = parser.getNextOption
     val oddOrEven = if (parser.getFormalName == "odd/even") parser.getNextOption else ""
     val point = parser.getNextOption
     val number = if (parser.isNextInt) parser.getNextInt else 0
     val content = parser.getNextString
-    
+
     document.injectionRegister.addInjection(beforeOrAfter, oddOrEven, point, number, content, "yet to come", 1)
   }
 
