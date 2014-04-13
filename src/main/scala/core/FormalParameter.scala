@@ -113,16 +113,16 @@ case class FormalOptions(
   var options: List[String] = newOptions // some option lists can change: fonts, extensions.
   var default = if (newOptions.isEmpty) "" else newOptions(0)
   
-  def formattedOptions = {
+  def formattedOptions(op: List[String]) = {
     val examples = 7
-    val more = options.length - examples
-    format(options.take(examples)) +
-      (if (options.length > examples) ",...(" + more.toString + " more)" else "")
+    val more = op.length - examples
+    format(op.take(examples)) +
+      (if (op.length > examples) ",...(" + more.toString + " more)" else "")
   }
 
   override def toString =
     if (hasDependency) wrap(name + ": <depends on other parameters>") 
-    else wrap(name + ": one of: " + formattedOptions) 
+    else wrap(name + ": one of: " + formattedOptions(options)) 
   override def setDefaultValue(d: String) { default = d }
 }
 
