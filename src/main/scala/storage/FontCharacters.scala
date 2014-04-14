@@ -19,6 +19,7 @@
 package writesetter.storage
 
 import writesetter.core
+import com.itextpdf.text.pdf.BaseFont
 
 object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
@@ -37,21 +38,21 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     }
   }
 
-  def addNewFont(fontName: String, encoding: String): Boolean = {
+  def addNewFont(fontName: String, encodingTitle: String): Boolean = {
 
-    def getCharacters(encoding: String): String = {
+    def getCharacters(codePage: String): String = {
       
-      val font = new core.DocumentFont(fontName, false, false, encoding)
+      val font = new core.DocumentFont(fontName, false, false, codePage)
       
       font.register(false) // without caching
       font.getListOfCharacters
     }
 
     var success = true
-    val enc = "Cp" + encoding.split(" ")(0) // e.g. "866 MS-DOS Russian" -> "Cp866"
-    if (getIndexOf(List(fontName, encoding)) == -1) {
+    if (getIndexOf(List(fontName, encodingTitle)) == -1) {
       try {
-        update(List(fontName, encoding, getCharacters(enc)))
+        val codePage = core.FontEncoding.titleToCodePage(encodingTitle)
+        update(List(fontName, encodingTitle, getCharacters(codePage)))
       } catch {
         case e: Exception => success = false
       }
@@ -73,14 +74,14 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     val encoding = if (decomposed.length == 2) decomposed(1) else ""
     val shortFontId = StoredFontAnalysis.getShortFontId(fontTitle)
     
-    val allFontEncodings = StoredFontAnalysis.getEncodingsOfFont(fontTitle)
+    val allFontEncodings = StoredFontAnalysis.getEncodingTitlesOfFont(fontTitle)
     val foundEncoding = allFontEncodings.find(x => x.startsWith(encoding))
     val longEncoding = foundEncoding match {
       case Some(e) => e
       case None => if (allFontEncodings.length > 0) allFontEncodings(0) else "1252 Latin 1"
     }
     val index = getIndexOf(List(shortFontId, longEncoding))
-    if (index > 0) {
+    if (index > 0 && dataSet(index).length > 2) {
       dataSet(index)(2).map(c => c.intValue.toHexString + " " + c).toList
     } else {
       List()

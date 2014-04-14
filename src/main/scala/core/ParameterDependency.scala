@@ -33,7 +33,7 @@ class ParameterDependency(
 object Dependency {
 
   private val fontToEncodings: String => List[String] =
-    font => writesetter.storage.StoredFontAnalysis.getEncodingsOfFont(font)
+    font => writesetter.storage.StoredFontAnalysis.getEncodingTitlesOfFont(font)
 
   val encodingOnFont = new ParameterDependency(fontToEncodings, List(0))
 

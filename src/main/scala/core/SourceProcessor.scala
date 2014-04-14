@@ -205,27 +205,23 @@ class SourceProcessor(
   def fontTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val fontTitle = parser.getNextOption
-    val encoding = if (parser.isNextOption) {
-      val e = parser.getNextOption
-      if (e == "") "" else "Cp" + e
-    } else {
-      ""
-    }
+    val shortCodePageId = if (parser.isNextOption) parser.getNextOption else ""
+    val codePage = FontEncoding.shortIdToCodePage(shortCodePageId)
     val local = parser.getNextFlag
-    DocumentFontRegister.addFont(fontTitle, encoding, !local)
+    DocumentFontRegister.addFont(fontTitle, codePage, !local)
     document.setFont(fontTitle)
   }
 
   def glyphTag(parser: TagParser, se: SourceElement) {
     parser(se)
     val fontTitle = parser.getNextOption
-    val encoding =
+    val shortCodePageId =
       parser.getSyntax match {
         case "default encoding" => ""
         case "specify encoding" => parser.getNextOption
       }
     val hexUnicode = parser.getNextOption
-    val codePage = if (encoding != "") "Cp" + encoding else ""
+    val codePage = FontEncoding.shortIdToCodePage(shortCodePageId)
     val local = parser.getNextFlag
     val intUnicode = Integer.valueOf(hexUnicode, 16).intValue
 

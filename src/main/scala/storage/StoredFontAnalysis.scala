@@ -95,14 +95,14 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         if (index > -1) {
           val canBeInstalled = dataSet(index)(1)
           if (canBeInstalled == "true") {
-            var encodings = dataSet(index)(20)
-            if (encodings == "") encodings = "1252 Latin 1" // FIXME: What is the correct solution?
+            val encodings = dataSet(index)(20)
+            //if (encodings == "") encodings = "1252 Latin 1" // FIXME: What is the correct solution?
             var successFullEncodings = ""
             var updateRequired = false
-            for (encoding <- unpackEncodingsString(encodings)) {
-              val success = FontCharacters.addNewFont(shortFontId, encoding)
+            for (encodingTitle <- unpackEncodingsString(encodings)) {
+              val success = FontCharacters.addNewFont(shortFontId, encodingTitle)
               if (success) {
-                successFullEncodings += (if (successFullEncodings == "") "" else "#") + encoding
+                successFullEncodings += (if (successFullEncodings == "") "" else "#") + encodingTitle
               } else {
                 updateRequired = true
               }
@@ -206,17 +206,10 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     result.toList.sortWith((a, b) => a < b)
   }
 
-  private def unpackEncodingsString(encodings: String): List[String] = {
-    def isInt(s: String): Boolean = try {
-      s.toInt; true
-    } catch {
-      case e: Exception => false
-    }
-    def startsWithInt(enc: String): Boolean = isInt(enc.split(" ")(0))
-    encodings.split("#").toList.filter(startsWithInt(_))
-  }
+  private def unpackEncodingsString(encodings: String): List[String] =
+    encodings.split("#").toList
 
-  def getEncodingsOfFont(fontTitle: String): List[String] = {
+  def getEncodingTitlesOfFont(fontTitle: String): List[String] = {
     val index = getIndexOf(List(fontTitleToShortId(fontTitle)))
     val encodings = dataSet(index)(20)
     unpackEncodingsString(encodings)
