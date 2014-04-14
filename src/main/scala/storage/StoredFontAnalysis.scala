@@ -96,7 +96,6 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
           val canBeInstalled = dataSet(index)(1)
           if (canBeInstalled == "true") {
             val encodings = dataSet(index)(20)
-            //if (encodings == "") encodings = "1252 Latin 1" // FIXME: What is the correct solution?
             var successFullEncodings = ""
             var updateRequired = false
             for (encodingTitle <- unpackEncodingsString(encodings)) {

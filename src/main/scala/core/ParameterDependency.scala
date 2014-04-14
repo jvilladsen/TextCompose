@@ -19,6 +19,7 @@
 package writesetter.core
 
 import scala.collection.mutable.ArrayBuffer
+import writesetter.storage.FontCharacters.getCharacters
 
 class ParameterDependency(
   options: String => List[String],
@@ -41,12 +42,12 @@ object Dependency {
     if (s == "") "" else s.split(" ")(0)
 
   private val fontEncodingToChars: String => List[String] =
-    fontAndEncoding => writesetter.storage.FontCharacters.getCharacters(fontAndEncoding)
+    fontAndEncoding => getCharacters(fontAndEncoding)
 
   val characterOnFont = new ParameterDependency(fontEncodingToChars, List(0))
 
   private val fontToChars: String => List[String] =
-    font => writesetter.storage.FontCharacters.getCharacters(font + "#")
+    font => getCharacters(font + "#")
 
   val characterOnFontAndEncoding = new ParameterDependency(fontEncodingToChars, List(0, 1))
 

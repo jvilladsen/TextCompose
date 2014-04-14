@@ -30,6 +30,8 @@ class TagPane {
   var foundTagStartingAt = 0
   var foundTagEndingAt = 0
   var result = ""
+  
+  var latestForcedSyntax = -1
 
   val panel = new BoxPanel(Orientation.Vertical) {
     background = Colors.supportPane
@@ -112,6 +114,7 @@ class TagPane {
     panel.revalidate()
     panel.repaint()
     doGrabFocus = false
+    latestForcedSyntax = forcedSyntax
   }
 
   def updateColors() {
@@ -151,7 +154,7 @@ class TagPane {
   val updateDialogFromSelf = new java.awt.event.ActionListener() {
     def actionPerformed(event: java.awt.event.ActionEvent) {
       doGrabFocus = true
-      refreshLayout(dialog.getAsSourceElement, -1)
+      refreshLayout(dialog.getAsSourceElement, latestForcedSyntax)
     }
   }
 

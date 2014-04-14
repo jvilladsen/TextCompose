@@ -24,8 +24,9 @@ object FontEncoding {
 
   val macShortName = "mac"
   val symbolShortName = "sym"
-    
-  /** Convert font encoding description to font code page (with a bias towards CP1252). 
+  val oemShortName = "oem"
+
+  /** Convert font encoding description to font code page (with a bias towards CP1252).
     *
     * Used when registering (new) fonts with each available encoding to get list of characters.
     */
@@ -33,7 +34,7 @@ object FontEncoding {
     shortIdToCodePage(titleToShortId(encodingTitle))
 
   /** Convert font encoding description to short font code page id as used in the source.
-    * 
+    *
     * Examples:
     *   1250 Latin 2: Eastern Europe -> 1250
     *   1251 Cyrillic -> 1251
@@ -42,21 +43,23 @@ object FontEncoding {
     *   737 Greek; former 437 G -> 737
     *   Macintosh Character Set (US Roman) -> mac
     *   Symbol Character Set -> sym
-    *   
+    *
     * Used as mapping in parser from the title shown in the tag dialog to the short form.
     */
   def titleToShortId(encodingTitle: String): String = {
     val firstWord = encodingTitle.split(" ")(0)
-    if (firstWord == "" || firstWord == "OEM") {
-      "1252"
-    } else if (firstWord == "Macintosh") {
+    if (firstWord == "Macintosh") {
       macShortName
     } else if (firstWord == "Symbol") {
       symbolShortName
+    } else if (firstWord == "OEM") {
+      oemShortName
+    } else if (firstWord == "") {
+      ""
     } else {
       try {
         firstWord.toInt
-        firstWord       // The most common case.
+        firstWord // The most common case.
       } catch {
         case e: Exception => "1252"
       }
@@ -64,13 +67,37 @@ object FontEncoding {
   }
 
   /** Convert short code page id to code page
-    * 
-    * Used when processing font and glyph tag to get font code page from short form.  
+    *
+    * Used when processing font and glyph tag to get font code page from short form.
     */
   def shortIdToCodePage(shortId: String): String = {
     if (shortId == macShortName) MACROMAN
     else if (shortId == symbolShortName) WINANSI // good choice?
-    else if (shortId == "") CP1252
+    else if (shortId == oemShortName) WINANSI // good choice?
+    else if (shortId == "") ""
     else "CP" + shortId
+  }
+
+  /** Find first encoding title in list which matches a given short id.
+    *
+    * Used for getting font encoding title to look up the list of Unicodes
+    * for the glyph tag. This is used in both the parser of the tag and for
+    * the Unicode combo-box in the tag dialog.
+    */
+  def getMatchingEncodingTitle(encodingTitles: List[String], shortId: String): String = {
+
+    def matchingTitle(title: String): Boolean = {
+      val firstWord = title.split(" ")(0)
+      firstWord.toLowerCase() == shortId.toLowerCase()
+    }
+    
+    if (encodingTitles.isEmpty) {
+      ""
+    } else {
+      encodingTitles.find(matchingTitle) match {
+        case Some(title) => title
+        case None => encodingTitles(0)
+      }
+    }
   }
 }

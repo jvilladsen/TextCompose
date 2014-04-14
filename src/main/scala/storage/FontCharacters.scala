@@ -40,7 +40,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
   def addNewFont(fontName: String, encodingTitle: String): Boolean = {
 
-    def getCharacters(codePage: String): String = {
+    def getFontCharacters(codePage: String): String = {
       
       val font = new core.DocumentFont(fontName, false, false, codePage)
       
@@ -52,7 +52,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     if (getIndexOf(List(fontName, encodingTitle)) == -1) {
       try {
         val codePage = core.FontEncoding.titleToCodePage(encodingTitle)
-        update(List(fontName, encodingTitle, getCharacters(codePage)))
+        update(List(fontName, encodingTitle, getFontCharacters(codePage)))
       } catch {
         case e: Exception => success = false
       }
@@ -71,17 +71,15 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
   def getCharacters(fontAndEncoding: String): List[String] = {
     val decomposed = fontAndEncoding.split('#')
     val fontTitle = decomposed(0)
-    val encoding = if (decomposed.length == 2) decomposed(1) else ""
+    val shortEncodingId = if (decomposed.length == 2) decomposed(1) else ""
+
     val shortFontId = StoredFontAnalysis.getShortFontId(fontTitle)
+
+    val encodingTitles = StoredFontAnalysis.getEncodingTitlesOfFont(fontTitle)
+    val encodingTitle = core.FontEncoding.getMatchingEncodingTitle(encodingTitles, shortEncodingId)
     
-    val allFontEncodings = StoredFontAnalysis.getEncodingTitlesOfFont(fontTitle)
-    val foundEncoding = allFontEncodings.find(x => x.startsWith(encoding))
-    val longEncoding = foundEncoding match {
-      case Some(e) => e
-      case None => if (allFontEncodings.length > 0) allFontEncodings(0) else "1252 Latin 1"
-    }
-    val index = getIndexOf(List(shortFontId, longEncoding))
-    if (index > 0 && dataSet(index).length > 2) {
+    val index = getIndexOf(List(shortFontId, encodingTitle))
+    if (index >= 0 && dataSet(index).length > 2) {
       dataSet(index)(2).map(c => c.intValue.toHexString + " " + c).toList
     } else {
       List()
