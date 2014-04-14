@@ -139,7 +139,6 @@ class DocumentFont(
       description, vendorURL, designerURL, license, licenseURL, sampleText, encodings)
   }
 
-  // Developed January 1, 2013 - intended for use in tag dialog for the 'char' tag.
   def getListOfCharacters: String = {
     def existsAndNotControl(c: Char): Boolean = !c.isControl && baseFont.charExists(c.toInt)
     baseFont.getUnicodeDifferences.toList.filter(existsAndNotControl).sortWith((a, b) => a.toInt < b.toInt).mkString
