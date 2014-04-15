@@ -45,6 +45,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
    * licenseURL
    * sampleText
    * encodings
+   * font file name (including full path and extension)
    */
 
   private val fontTitleToShortId = new HashMap[String, String] // Only for fonts that can be installed.
@@ -90,7 +91,9 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     }
 
     def updateCharacterStorage(shortFontId: String) {
-      if (!core.FontFileRegister.isBuiltIn(shortFontId)) {
+      if (core.FontFileRegister.isBuiltIn(shortFontId)) {
+        FontCharacters.addBuiltInFont(shortFontId)
+      } else {
         val index = getIndexOf(List(shortFontId))
         if (index > -1) {
           val canBeInstalled = dataSet(index)(1)
@@ -103,6 +106,9 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
               if (success) {
                 successFullEncodings += (if (successFullEncodings == "") "" else "#") + encodingTitle
               } else {
+                /** Mostly seen for True Type Fonts with the encodings
+                  * '708 Arabic; ASMO 708', '1361 Korean Johab', and' 932 JIS/Japan'.
+                  */
                 updateRequired = true
               }
             }
@@ -113,7 +119,6 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
           }
         }
       }
-      // FIXME: Find a way to include the built in fonts, such as Times and Symbol.
     }
 
     val numberOfFonts = countNewFonts
@@ -150,6 +155,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         fontTitleToShortId(fontTitle) = shortFontId
         val (hasJavaFont, javaFont) = GUIFonts.getFontWithMatchingName(fontName, fontTitle, shortFontId)
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
+        else println("no java font for", fontTitle)
       }
     }
 

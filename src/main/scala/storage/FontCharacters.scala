@@ -50,14 +50,19 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
     var success = true
     if (getIndexOf(List(fontName, encodingTitle)) == -1) {
+      val codePage = core.FontEncoding.titleToCodePage(encodingTitle)
       try {
-        val codePage = core.FontEncoding.titleToCodePage(encodingTitle)
         update(List(fontName, encodingTitle, getFontCharacters(codePage)))
       } catch {
         case e: Exception => success = false
       }
     }
     success
+  }
+  
+  def addBuiltInFont(fontName: String) {
+    val characters = (32 to 127).map(_.toChar).mkString + (160 to 255).map(_.toChar).mkString
+    update(List(fontName, "", characters))
   }
   
   /** Get list of characters available in a given font.

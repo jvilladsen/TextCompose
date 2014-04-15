@@ -28,7 +28,7 @@ object GUIFonts {
   /* Map from "keyed name" to the Java font filled up with all available fonts.
    * This is not directly fonts for the PDF but for the GUI.
    * The point with the key is to homogenize the font titles in order to
-   * match it against the iText fonts for the PDF (DocumentFont class).
+   * match against the iText fonts for the PDF (DocumentFont class).
    */
   private val keyedNameToFont = new HashMap[String, Font]
 
@@ -64,7 +64,8 @@ object GUIFonts {
 
     def getFontFromMap(name: String): (Boolean, Font) = {
       val key = makeKeyedName(name)
-      if (keyedNameToFont.contains(key)) (true, keyedNameToFont(key)) else (false, null)
+      if (keyedNameToFont.contains(key)) (true, keyedNameToFont(key))
+      else (false, null)
     }
 
     def getAsSubstring(name: String): (Boolean, Font) = {

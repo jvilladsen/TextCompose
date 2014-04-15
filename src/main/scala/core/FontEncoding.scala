@@ -72,10 +72,10 @@ object FontEncoding {
     */
   def shortIdToCodePage(shortId: String): String = {
     if (shortId == macShortName) MACROMAN
-    else if (shortId == symbolShortName) WINANSI // good choice?
-    else if (shortId == oemShortName) WINANSI // good choice?
+    else if (shortId == symbolShortName) WINANSI
+    else if (shortId == oemShortName) WINANSI
     else if (shortId == "") ""
-    else "CP" + shortId
+    else "Cp" + shortId
   }
 
   /** Find first encoding title in list which matches a given short id.

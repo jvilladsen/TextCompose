@@ -53,6 +53,7 @@ class DocumentFont(
   var license = "" // 13
   var licenseURL = "" // 14
   var sampleText = "" // 18
+  var fullFileName = ""
   var encodings = ""
 
   if (builtIn) {
@@ -105,7 +106,7 @@ class DocumentFont(
   def register(caching: Boolean) {
     def registerFont() {
       try {
-        val fullFileName = FontFileRegister.getLongFontId(shortFontId)
+        fullFileName = FontFileRegister.getLongFontId(shortFontId)
         FontFactory.register(fullFileName)
         baseFont = BaseFont.createFont(fullFileName, encoding, embedded, caching, null, null)
       } catch {
@@ -136,11 +137,31 @@ class DocumentFont(
   def getFontInfo: scala.collection.immutable.List[String] = {
     scala.collection.immutable.List(postscriptName, title, version, copyright,
       familyName, subFamilyName, uniqueId, trademark, manufacturer, designer,
-      description, vendorURL, designerURL, license, licenseURL, sampleText, encodings)
+      description, vendorURL, designerURL, license, licenseURL, sampleText, encodings, fullFileName)
   }
 
   def getListOfCharacters: String = {
-    def existsAndNotControl(c: Char): Boolean = !c.isControl && baseFont.charExists(c.toInt)
-    baseFont.getUnicodeDifferences.toList.filter(existsAndNotControl).sortWith((a, b) => a.toInt < b.toInt).mkString
+    def existsAndNotControl(c: Char): Boolean =
+      !c.isControl && baseFont.charExists(c.toInt)
+    
+    val baseFontUnicodes: String =
+      baseFont.getUnicodeDifferences.
+        toList.
+        filter(existsAndNotControl).
+        sortWith((a, b) => a.toInt < b.toInt).
+        mkString
+    
+    if (baseFontUnicodes == "") {
+      /** This seems to happen when the font is not installed which then also
+        * seems to mean that you have no preview of the font in the combo-box
+        * or the PDF preview. Still it may show up just fine in the PDF document
+        * with the decent PDF viewer.
+        * Examples of fonts where this has happened on OS X: Webdings and
+        * Wingdings, Hoefler Text Ornaments.
+        */
+      (32 to 127).map(_.toChar).mkString + (160 to 255).map(_.toChar).mkString
+    } else {
+      baseFontUnicodes
+    }
   }
 }
