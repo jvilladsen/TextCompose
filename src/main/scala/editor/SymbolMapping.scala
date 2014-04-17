@@ -20,18 +20,14 @@ package writesetter.editor
 
 object SymbolMapping {
 
-  // lazy val standardRange: String = ((32 to 127) ++ (160 to 255)).map(_.toChar).mkString
-  
-  // Zapfdingbats starts with first scissors  i 2701 which is 21 i iText.
-  
   def apply(fontTitle: String, position: Int): Int = {
     fontTitle match {
       case "Zapfdingbats" => position + 9952 - (if (position > 127) 32 else 0)  // 0x26E0
       case "Webdings" => position + 61440  // 0xF000
-      case "Wingdings" => position + 57311  // bad guess
-      case "Wingdings 2" => position + 58207  // bad guess
-      case "Wingdings 3" => position  // bad guess
-      case "Symbol" => position
+      case "Wingdings" => position + 61440
+      case "Wingdings 2" => position + 61440
+      case "Wingdings 3" => position + 61440
+      case "Symbol" => position // no preview :-(
       case _ => position
     }
   }

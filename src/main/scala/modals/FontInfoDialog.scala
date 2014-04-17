@@ -100,9 +100,7 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
     for (f <- storage.FontCharacters.dataSet.filter(r => r(0) == fontFileName)) {
       val enc = f(1)
       val (chars, fontSize) = try {
-        val megaRange = (61472 to 62000).map(_.toChar).mkString
-        (megaRange.mkString(" "), 85)
-        (editor.SymbolMapping(fontTitle, f(2)).mkString(" "), 85) // the real deal
+        (editor.SymbolMapping(fontTitle, f(2)).mkString(" "), 85)
       } catch {
         case e: Exception => ("Could not retrieve the characters of this font. It may be broken.", 14)
       }
