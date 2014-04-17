@@ -119,7 +119,11 @@ class TagPane {
 
   def updateColors() {
     panel.background = Colors.supportPane
-    refreshLayout(dialog.getAsSourceElement, -1)
+    try {
+      refreshLayout(dialog.getAsSourceElement, -1)
+    } catch {
+      case e: Exception => None // we may have no dialog
+    }
   }
 
   /**

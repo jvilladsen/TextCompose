@@ -462,13 +462,13 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
     // Get the image and if it does not fit in the column, go to next column and do it once again.
     var image = try {
-      ic.getProcessedImage()
+      ic.getProcessedImage(false)
     } catch {
       case e: NoSpaceForImageException => {
         openFirstTime()
         currentColumn.newColumn(false)
         try {
-          ic.getProcessedImage()
+          ic.getProcessedImage(true)
         } catch {
           case e: NoSpaceForImageException => throw new TagError("Could not insert the image here (nor in previous column/page) " +
             "since it would go below the lower magin. Consider moving it relative to the text, scaling it " +

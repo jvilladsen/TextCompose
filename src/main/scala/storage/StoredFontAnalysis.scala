@@ -155,7 +155,6 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         fontTitleToShortId(fontTitle) = shortFontId
         val (hasJavaFont, javaFont) = GUIFonts.getFontWithMatchingName(fontName, fontTitle, shortFontId)
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
-        else println("no java font for", fontTitle)
       }
     }
 

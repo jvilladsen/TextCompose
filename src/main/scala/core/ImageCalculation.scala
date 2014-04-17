@@ -169,9 +169,8 @@ class ImageCalculation(
     //debug(xBorderPos, yBorderPos)
   }
 
-  def getProcessedImage(): Image = {
-
-    image = ImageCache.get(fileName, useCache)
+  def getProcessedImage(isRetry: Boolean): Image = {
+    image = ImageCache.get(fileName, useCache, isRetry)
 
     scale()
     image.setRotationDegrees(rotationDeg)

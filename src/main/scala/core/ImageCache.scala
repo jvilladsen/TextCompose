@@ -40,7 +40,7 @@ object ImageCache {
     fullFileNameUncached.clear
   }
 
-  def get(fileName: String, useCache: Boolean): Image = {
+  def get(fileName: String, useCache: Boolean, isRetry: Boolean): Image = {
 
     if (fullFileNameToImage.contains(fileName)) {
       fullFileNameUtilization(fileName) += 1
@@ -51,7 +51,7 @@ object ImageCache {
       fullFileNameToImage(fileName)
     } else {
       if (!fullFileNameUncached.contains(fileName)) fullFileNameUncached(fileName) = 0
-      fullFileNameUncached(fileName) += 1
+      if (!isRetry) fullFileNameUncached(fileName) += 1
       Image.getInstance(fileName)
     }
   }
@@ -77,7 +77,7 @@ object ImageCache {
       if (f._2 > 1) {
         warningMessages.append("Warning: Image used " + f._2.toString +
           " times without use of cache: '" + f._1 + "'. This means that the PDF file is larger than necessary. " +
-          "You can avoid this by using the 'cache' keyword as second parameter for the 'image' tag.")
+          "You can avoid this by using the 'cache' keyword as second parameter for the 'image' tag the first time.")
       }
     }
 
