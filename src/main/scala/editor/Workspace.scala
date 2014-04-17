@@ -48,20 +48,22 @@ class Workspace(fontSize: Int) {
   }
 
   private val metaData = new MetaDataPane
-  private val applicationWindowHeight = writesetter.editor.Application.top.size.height
   private val showMetaData = new PropertyChangeListener() {
     def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
       if (metaData.getNumberOfErrors > 0) {
-        editorWithMetaDataPane.dividerLocation = 500
+        // Show message pane.
+        metaData.wrappedTabsPane.peer.setVisible(true)
+        editorWithMetaDataPane.dividerLocation = 0.7
       } else {
-        editorWithMetaDataPane.dividerLocation = applicationWindowHeight
+        // Effectively hide the message pane - also on resize.
+        metaData.wrappedTabsPane.peer.setVisible(false)
       }
     }
   }
   metaData.metaDataFakeAction.peer.addPropertyChangeListener(showMetaData)
 
   val editorWithMetaDataPane = new SplitPane(Orientation.Horizontal, editorScrollPane, metaData.wrappedTabsPane)
-  editorWithMetaDataPane.dividerLocation = applicationWindowHeight
+  metaData.wrappedTabsPane.peer.setVisible(false)
   editorWithMetaDataPane.border = Swing.EmptyBorder(0, 0, 0, 0) // top, left, bottom, right
   editorWithMetaDataPane.continuousLayout = true
   editorWithMetaDataPane.oneTouchExpandable = false
