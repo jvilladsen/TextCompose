@@ -31,6 +31,8 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
 
   override def getKeyLength(configuration: List[String]) = 2
 
+  lazy val standardRange: String = ((32 to 127) ++ (160 to 255)).map(_.toChar).mkString
+    
   def initialize() {
     if (!initialized) {
       if (fileExists) load()
@@ -38,21 +40,37 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     }
   }
 
-  def addNewFont(fontName: String, encodingTitle: String): Boolean = {
+  def getListOfCharacters(font: core.DocumentFont): String = {
+    
+    val baseFontUnicodes: String = font.getUnicodes
+
+    if (baseFontUnicodes == "") {
+      /** This seems to happen when the font is not installed which then also
+        * seems to mean that you have no preview of the font in the combo-box
+        * or the PDF preview. Still it may show up just fine in the PDF document
+        * with the decent PDF viewer.
+        * Examples of fonts where this has happened on OS X: Webdings and
+        * Wingdings, Hoefler Text Ornaments.
+        */
+      standardRange
+    } else {
+      baseFontUnicodes
+    }
+  }
+  
+  def addNewFont(shortFontId: String, encodingTitle: String): Boolean = {
 
     def getFontCharacters(codePage: String): String = {
-      
-      val font = new core.DocumentFont(fontName, false, false, codePage)
-      
+      val font = new core.DocumentFont(shortFontId, false, false, codePage)
       font.register(false) // without caching
-      font.getListOfCharacters
+      getListOfCharacters(font)
     }
 
     var success = true
-    if (getIndexOf(List(fontName, encodingTitle)) == -1) {
+    if (getIndexOf(List(shortFontId, encodingTitle)) == -1) {
       val codePage = core.FontEncoding.titleToCodePage(encodingTitle)
       try {
-        update(List(fontName, encodingTitle, getFontCharacters(codePage)))
+        update(List(shortFontId, encodingTitle, getFontCharacters(codePage)))
       } catch {
         case e: Exception => success = false
       }
@@ -60,9 +78,8 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     success
   }
   
-  def addBuiltInFont(fontName: String) {
-    val characters = (32 to 127).map(_.toChar).mkString + (160 to 255).map(_.toChar).mkString
-    update(List(fontName, "", characters))
+  def addBuiltInFont(shortFontId: String) {
+    update(List(shortFontId, "", standardRange))
   }
   
   /** Get list of characters available in a given font.

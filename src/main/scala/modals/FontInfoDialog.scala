@@ -62,6 +62,7 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
     panel.emptyRow
     addIfNonempty("", record(19)) // sample text
     panel.setFont(storage.GUIFonts.getStandardFontName, 20)
+    panel.label("Preview in local font: " + javaFontName, "left", width)
   } else {
     panel.setFont(storage.GUIFonts.getStandardFontName, 20)
     panel.label("Cannot display sample. Maybe the font is not installed.", "left", width)

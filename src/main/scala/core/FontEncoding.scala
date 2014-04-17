@@ -20,6 +20,20 @@ package writesetter.core
 
 import com.itextpdf.text.pdf.BaseFont.{ CP1252, MACROMAN, WINANSI }
 
+/** Methods related to encoding for True Type Fonts.
+  * Terminology:
+  *   Encoding title: title of encoding such as "Symbol Character Set",
+  *                   "1250 Latin 2: Eastern Europe", "Macintosh Character Set (US Roman)".
+  *   Short id: short id for "user source code" such as "sym", "1250", "mac".
+  *   Code page: for use by iText. Example: Cp1250, Cp1251, Cp1252.
+  * 
+  * Contains functions that map between these forms.
+  * 
+  * Note that iText uses Cp1252 for Symbol Character Set whereas Java respects Unicodes.
+  * Example: 0x41 is your regular text font is a capital A. In some Symbol character set
+  * such as Webdings, Wingdings,... iText would be fine with 0x41 and produce a symbol.
+  * However, for Java, that symbol is positioned at 0x2241, an offset of 0x2200.
+  */
 object FontEncoding {
 
   val macShortName = "mac"
