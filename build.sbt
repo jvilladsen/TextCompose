@@ -17,9 +17,13 @@ mainClass := Some("writesetter.startup.Launch")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
-fork := true
-
 resourceDirectory in Compile <<= baseDirectory { _ / "src" }
+
+// run
+
+mainClass in (Compile,run) := Some("writesetter.startup.Launch")
+
+fork := true
 
 // appbundle
     
