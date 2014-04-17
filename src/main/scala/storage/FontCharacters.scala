@@ -19,6 +19,7 @@
 package writesetter.storage
 
 import writesetter.core
+import writesetter.editor.SymbolMapping
 import com.itextpdf.text.pdf.BaseFont
 
 object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
@@ -32,6 +33,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
   override def getKeyLength(configuration: List[String]) = 2
 
   lazy val standardRange: String = ((32 to 127) ++ (160 to 255)).map(_.toChar).mkString
+  lazy val webdingsRange: String = ((32 to 255)).map(_.toChar).mkString
     
   def initialize() {
     if (!initialized) {
@@ -40,30 +42,29 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     }
   }
 
-  def getListOfCharacters(font: core.DocumentFont): String = {
-    
-    val baseFontUnicodes: String = font.getUnicodes
-
-    if (baseFontUnicodes == "") {
-      /** This seems to happen when the font is not installed which then also
-        * seems to mean that you have no preview of the font in the combo-box
-        * or the PDF preview. Still it may show up just fine in the PDF document
-        * with the decent PDF viewer.
-        * Examples of fonts where this has happened on OS X: Webdings and
-        * Wingdings, Hoefler Text Ornaments.
-        */
-      standardRange
-    } else {
-      baseFontUnicodes
-    }
-  }
-  
   def addNewFont(shortFontId: String, encodingTitle: String): Boolean = {
 
     def getFontCharacters(codePage: String): String = {
       val font = new core.DocumentFont(shortFontId, false, false, codePage)
       font.register(false) // without caching
-      getListOfCharacters(font)
+      val baseFontUnicodes: String = font.getUnicodes
+	
+      if (baseFontUnicodes == "") {
+        /** This seems to happen when the font is not installed which then also
+          * seems to mean that you have no preview of the font in the combo-box
+          * or the PDF preview. Still it may show up just fine in the PDF document
+          * with the decent PDF viewer.
+          * Examples of fonts where this has happened on OS X: Webdings and
+          * Wingdings, Hoefler Text Ornaments.
+          */
+        if (shortFontId == "Webdings") {
+          webdingsRange  // This is for iText. Java has an offset of 0xF000.
+        } else {
+          standardRange
+        }
+      } else {
+        baseFontUnicodes
+      }
     }
 
     var success = true
@@ -91,6 +92,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     * "<Unicode> <character>" with Unicode in hexadecimal notation. 
     */
   def getCharacters(fontAndEncoding: String): List[String] = {
+    
     val decomposed = fontAndEncoding.split('#')
     val fontTitle = decomposed(0)
     val shortEncodingId = if (decomposed.length == 2) decomposed(1) else ""
@@ -100,9 +102,14 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     val encodingTitles = StoredFontAnalysis.getEncodingTitlesOfFont(fontTitle)
     val encodingTitle = core.FontEncoding.getMatchingEncodingTitle(encodingTitles, shortEncodingId)
     
+    def present(c: Char): String = {
+      val i = c.intValue
+      i.toHexString + " " + SymbolMapping(fontTitle, i).toChar
+    }
+    
     val index = getIndexOf(List(shortFontId, encodingTitle))
     if (index >= 0 && dataSet(index).length > 2) {
-      dataSet(index)(2).map(c => c.intValue.toHexString + " " + c).toList
+      dataSet(index)(2).map(present).toList
     } else {
       List()
     }

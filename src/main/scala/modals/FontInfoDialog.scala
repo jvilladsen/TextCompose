@@ -100,13 +100,19 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
     for (f <- storage.FontCharacters.dataSet.filter(r => r(0) == fontFileName)) {
       val enc = f(1)
       val (chars, fontSize) = try {
-        (f(2).mkString(" "), 85)
+        val megaRange = (61472 to 62000).map(_.toChar).mkString
+        (megaRange.mkString(" "), 85)
+        (editor.SymbolMapping(fontTitle, f(2)).mkString(" "), 85) // the real deal
       } catch {
         case e: Exception => ("Could not retrieve the characters of this font. It may be broken.", 14)
       }
       panel.emptyRow
       panel.setFont(storage.GUIFonts.getStandardFontName, 18)
-      panel.label("<b>Characters in " + enc + "</b>", "left", width)
+      if (enc == "") { 
+        panel.label("<b>Characters</b>", "left", width)
+      } else {
+        panel.label("<b>Characters in " + enc + "</b>", "left", width)
+      }
       panel.setFont(javaFontName, fontSize)
       panel.label(chars, "left", width)
     }

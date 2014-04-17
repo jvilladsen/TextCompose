@@ -44,11 +44,10 @@ object Dependency {
   private val fontEncodingToChars: String => List[String] =
     fontAndEncoding => getCharacters(fontAndEncoding)
 
-  val characterOnFont = new ParameterDependency(fontEncodingToChars, List(0))
+  val characterOnFontAndEncoding = new ParameterDependency(fontEncodingToChars, List(0, 1))
 
   private val fontToChars: String => List[String] =
     font => getCharacters(font + "#")
 
-  val characterOnFontAndEncoding = new ParameterDependency(fontEncodingToChars, List(0, 1))
-
+  val characterOnFont = new ParameterDependency(fontToChars, List(0))
 }
