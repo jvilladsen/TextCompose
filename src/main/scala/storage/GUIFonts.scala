@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
 import java.awt._
 import javax.swing.UIManager

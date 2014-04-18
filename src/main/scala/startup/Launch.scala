@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.startup
+package textcompose.startup
 
 import javax.swing.UIManager
 import java.util.Calendar
@@ -31,11 +31,11 @@ object Launch {
 
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
-    if (writesetter.core.Environment.isMacOSX) {
+    if (textcompose.core.Environment.isMacOSX) {
       SpecialitiesMacOSX.prepare()
     }
 
-    writesetter.editor.CompileOrGUI.switcher(args)
+    textcompose.editor.CompileOrGUI.switcher(args)
   }
 }
 

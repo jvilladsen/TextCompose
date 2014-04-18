@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
-import writesetter.modals
+import textcompose.modals
 
 object FontInformation extends TagAction("Font info") {
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 class ExternalArguments(arguments: Array[String]) {
 
@@ -29,7 +29,7 @@ class ExternalArguments(arguments: Array[String]) {
       if (x == "-v") {
         openPDFViewer = PreviewType.Yes
       } else if (x == "-h") {
-        throw new IllegalArgumentException("Writesetter [OPTIONS] FILENAME\nOptions:\n-v\tOpen PDF viewer")
+        throw new IllegalArgumentException("TextCompose [OPTIONS] FILENAME\nOptions:\n-v\tOpen PDF viewer")
       } else {
         if (providedSourceName ne "") {
           throw new IllegalArgumentException("You can only specify one file or folder")
@@ -58,7 +58,7 @@ class ExternalArguments(arguments: Array[String]) {
       var failed = 0
       for (file <- listOfFiles) {
         val fileName = file.getName
-        if (writesetter.editor.BatchBuilding.validSourceName(fileName)) {
+        if (textcompose.editor.BatchBuilding.validSourceName(fileName)) {
           val fullFileName = file.getAbsolutePath
           var args = new Arguments(
             false, // internal

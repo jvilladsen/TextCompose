@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import org.icepdf.core.exceptions.PDFSecurityException
 import org.icepdf.core.pobjects.{ Document, Page }
@@ -28,7 +28,7 @@ import javax.swing.ImageIcon
 import event._
 import Key._
 import scala.math.{ min, max }
-import writesetter.{ core, editor, modals, storage }
+import textcompose.{ core, editor, modals, storage }
 
 class Preview(filePath: String, fileTitle: String, initialPageNumber: Int) extends Dialog {
 

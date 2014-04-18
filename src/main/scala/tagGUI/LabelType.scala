@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
 import scala.swing._
 import java.awt.{ Font, Component }
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class LabelType(labelText: String, labelType: String) {
 

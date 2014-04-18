@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import com.itextpdf.text._
 import com.itextpdf.text.pdf._
@@ -172,7 +172,7 @@ class State extends Cloneable {
 
   private def updateActualFont() {
     try {
-      val shortFontId = writesetter.storage.StoredFontAnalysis.getShortFontId(fontTitle)
+      val shortFontId = textcompose.storage.StoredFontAnalysis.getShortFontId(fontTitle)
 
       if (FontFileRegister.isBuiltIn(shortFontId)) {
 

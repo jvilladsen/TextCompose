@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
 import scala.collection.mutable.{ Stack, HashMap }
-import writesetter.{ core, editor }
+import textcompose.{ core, editor }
 
 object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
@@ -180,7 +180,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
       load()
       prune
     } else {
-      editor.DialogBox.info("Since it is the first time you run Writesetter on this installation,\n" +
+      editor.DialogBox.info("Since it is the first time you run TextCompose on this installation,\n" +
         "your fonts will be analyzed. This can take a minute.")
     }
     updateStorage(false)
@@ -194,7 +194,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
       case e: Exception => editor.DialogBox.stackTrace("Failed recalculating fonts", e)
     }
     try {
-      writesetter.core.Parsers.updateFont()
+      textcompose.core.Parsers.updateFont()
     } catch {
       case e: Exception => editor.DialogBox.stackTrace("Failed updating parsers", e)
     }

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import scala.collection.mutable.{ ArrayBuffer, HashMap }
 import swing._
@@ -25,7 +25,7 @@ import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
-import writesetter.{ core, modals, storage }
+import textcompose.{ core, modals, storage }
 
 class WorkspaceTabs {
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import com.itextpdf.text._
 import com.itextpdf.text.Image
@@ -25,7 +25,7 @@ import com.itextpdf.text.PageSize
 import com.itextpdf.text.pdf._
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.immutable.List
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class SourceProcessor(
   document: PDFDocument,
@@ -173,7 +173,7 @@ class SourceProcessor(
 
   private def showErrorMessage(message: String, location: String) {
 
-    def messageForWritesetter = {
+    def escapedMessage = {
       message.replace("\\", "\\\\").replace("<", "\\<").replace(">", "\\>")
     }
 
@@ -187,10 +187,10 @@ class SourceProcessor(
       if (storage.Configurations.GetWriteErrorMessagesToDocument) {
         showingErrorMessage = true
         processingUnit.addErrorMessage(message + location)
-        val textForWritesetter = messageForWritesetter + location
+        val displayMessage = escapedMessage + location
         processingUnit.update("<store><reset><new paragraph><font Helvetica>" +
           "<color highlight RGB 245 240 144><highlight 3 3 5 4><highlight><size 11><height 125%>" +
-          "<align text left>" + textForWritesetter + "<new paragraph><restore>")
+          "<align text left>" + displayMessage + "<new paragraph><restore>")
         processSourceLine()
         processingUnit.popElement()
         showingErrorMessage = false

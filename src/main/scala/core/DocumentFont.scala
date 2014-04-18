@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import com.itextpdf.text._
 import com.itextpdf.text.pdf.BaseFont
-import writesetter.storage
+import textcompose.storage
 
 class DocumentFont(
   val shortFontId: String,

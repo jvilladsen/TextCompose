@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import event._
 import Key._
 import java.awt.Component
 import java.io.File
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class ScrollText(
   width: Int,
@@ -72,7 +72,7 @@ class ScrollText(
     case KeyPressed(`editorPane`, Escape, _, _) => { close; dispose }
   }
 
-  title = "Writesetter"
+  title = "TextCompose"
   modal = true
   resizable = false
   preferredSize = new Dimension(width, 700)

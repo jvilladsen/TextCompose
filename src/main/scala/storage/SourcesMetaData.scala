@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
 import scala.collection.mutable.Stack
-import writesetter.editor
+import textcompose.editor
 
 object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 

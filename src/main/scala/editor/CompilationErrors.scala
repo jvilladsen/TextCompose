@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import scala.collection.mutable.ArrayBuffer
-import writesetter.core
+import textcompose.core
 
 class CompilationErrors {
 

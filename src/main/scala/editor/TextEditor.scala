@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import swing._
 import javax.swing.text._
@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import event.Key._
 import event.KeyPressed
-import writesetter.{ modals, storage }
+import textcompose.{ modals, storage }
 
 class TextEditor(fontSize: Int) extends EditorPane {
 

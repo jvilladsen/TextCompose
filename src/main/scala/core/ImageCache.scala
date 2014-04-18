@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
@@ -81,7 +81,7 @@ object ImageCache {
       }
     }
 
-    if (writesetter.editor.CompileOrGUI.canExpectGUI) {
+    if (textcompose.editor.CompileOrGUI.canExpectGUI) {
       for (m <- warningMessages) CompilationMetaData.addError(m, "")
     } else {
       for (m <- warningMessages) println(m)

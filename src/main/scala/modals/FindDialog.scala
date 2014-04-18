@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import scala.swing.GridBagPanel._
@@ -25,7 +25,7 @@ import java.awt.Font
 import Key._
 
 class FindDialog(
-  textEditor: writesetter.editor.TextFileEditor,
+  textEditor: textcompose.editor.TextFileEditor,
   initialFindText: String,
   initialCaseSensitive: Boolean) extends Dialog {
 

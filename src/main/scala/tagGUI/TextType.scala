@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
 import scala.swing._
 import scala.collection.mutable.ArrayBuffer
 import event._
 import Key._
-import writesetter.editor.Colors
+import textcompose.editor.Colors
 
 class TextType(label: String, large: Boolean) extends ParameterType {
 

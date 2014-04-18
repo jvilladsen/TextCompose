@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
+
+import textcompose.editor.DialogBox
 
 object Compiler {
 
@@ -29,7 +31,7 @@ object Compiler {
         val extensions = new Extensions
         val processingUnit = new ProcessingUnit(extensions)
         processingUnit.setCaretPosition(arguments.caretPostionForPreview)
-        val encoding = writesetter.storage.SourcesMetaData.getEncoding(arguments.sourceFullFileName, "")
+        val encoding = textcompose.storage.SourcesMetaData.getEncoding(arguments.sourceFullFileName, "")
         val source = new SourceFile(arguments.sourceFullFileName, encoding, processingUnit, true)
 
         //val wordsVectors = new WordVectors
@@ -55,8 +57,8 @@ object Compiler {
         }
       }
     } catch {
-      case e: java.io.FileNotFoundException => writesetter.editor.DialogBox.error("Could not open file: '" + e.getMessage + "'")
-      case e: Exception                     => writesetter.editor.DialogBox.stackTrace(e.getMessage, e)
+      case e: java.io.FileNotFoundException => DialogBox.error("Could not open file: '" + e.getMessage + "'")
+      case e: Exception                     => DialogBox.stackTrace(e.getMessage, e)
     }
   }
 }

@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import java.awt.FileDialog
-import writesetter.{ core, storage }
+import textcompose.{ core, storage }
 import core.PreviewType
 
 object BatchBuilding {

@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
 import scala.swing._
 import java.awt.Component
 import scala.collection.mutable.ArrayBuffer
-import writesetter.editor.Colors
+import textcompose.editor.Colors
 
 abstract class ParameterType {
 

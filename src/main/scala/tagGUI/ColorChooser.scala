@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
-import writesetter.editor.Colors
-import writesetter.core.ColorFunctions
+import textcompose.editor.Colors
+import textcompose.core.ColorFunctions
 import javax.swing.JColorChooser
 import scala.swing.Color
 

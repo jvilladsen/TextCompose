@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import scala.swing._
 import scala.collection.mutable.ArrayBuffer
@@ -38,7 +38,7 @@ class TagPane {
     border = Swing.EmptyBorder(1, 5, 1, 1)
     minimumSize = new Dimension(170, 200)
   }
-  private var dialog: writesetter.tagGUI.TagDialog = null
+  private var dialog: textcompose.tagGUI.TagDialog = null
 
   val fakeAction = new Action("<signal to update editor>") {
     enabled = false
@@ -56,7 +56,7 @@ class TagPane {
 
   private def addSyntaxSelector(syntaxes: List[String], currentSyntax: Int) {
     val syntaxAlternatives =
-      new writesetter.tagGUI.ComboBoxType("form", syntaxes, true)
+      new textcompose.tagGUI.ComboBoxType("form", syntaxes, true)
 
     syntaxAlternatives.field.peer.setSelectedIndex(currentSyntax)
 
@@ -71,9 +71,9 @@ class TagPane {
     addContent(syntaxAlternatives.panel)
   }
 
-  private def assembleDialog(se: writesetter.core.SourceElement, forcedSyntax: Int) {
+  private def assembleDialog(se: textcompose.core.SourceElement, forcedSyntax: Int) {
 
-    dialog = new writesetter.tagGUI.TagDialog(fileKey, se.TagName)
+    dialog = new textcompose.tagGUI.TagDialog(fileKey, se.TagName)
     val okAction = new Action("OK") {
       enabled = true
       def apply() {
@@ -108,7 +108,7 @@ class TagPane {
     }
   }
 
-  private def refreshLayout(se: writesetter.core.SourceElement, forcedSyntax: Int) {
+  private def refreshLayout(se: textcompose.core.SourceElement, forcedSyntax: Int) {
     clearLayout()
     if (isInsideTag) { assembleDialog(se, forcedSyntax) }
     panel.revalidate()
@@ -137,7 +137,7 @@ class TagPane {
     inside: Boolean,
     start: Int,
     end: Int,
-    se: writesetter.core.SourceElement) {
+    se: textcompose.core.SourceElement) {
 
     fileKey = givenKey
     isInsideTag = inside
@@ -165,7 +165,7 @@ class TagPane {
   def updateWithParserErrorFromEditor(message: String) {
     clearLayout()
 
-    dialog = new writesetter.tagGUI.TagDialog(fileKey, "")
+    dialog = new textcompose.tagGUI.TagDialog(fileKey, "")
     dialog.layoutParserError(message)
     addContent(dialog.panel)
 

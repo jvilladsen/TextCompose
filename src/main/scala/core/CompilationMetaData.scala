@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -59,7 +59,7 @@ object CompilationMetaData {
   def end() {
     complete = true
     if (!isTemporaryLocation) {
-      writesetter.storage.SourcesMetaData.updateCompilationMetaData(
+      textcompose.storage.SourcesMetaData.updateCompilationMetaData(
         latestSourceFullName,
         pageCount,
         errorCount,

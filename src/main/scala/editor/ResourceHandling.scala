@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import java.io._
 import scala.collection.mutable.ArrayBuffer
-import writesetter.{ core, storage }
+import textcompose.{ core, storage }
 
 object ResourceHandling {
 
@@ -173,7 +173,7 @@ object ResourceHandling {
     }
 
     outFile.write("<html><body>\n")
-    add("Writesetter License", "Writesetter.txt", true)
+    add("TextCompose License", "Writesetter.txt", true)
     add("Third Party Software", "Third_part_software.txt", true)
     add("iText License", "iText.txt", false)
     add("Bouncy Castle License", "Bouncy_Castle.txt", false)

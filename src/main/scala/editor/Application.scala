@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import swing._
 import swing.event._
@@ -37,7 +37,7 @@ import java.io.File
 import scala.io.Source
 import scala.language.existentials
 
-import writesetter.{ core, modals, storage }
+import textcompose.{ core, modals, storage }
 
 object Application extends SimpleSwingApplication {
 
@@ -133,7 +133,7 @@ object Application extends SimpleSwingApplication {
 
   override val top = new Frame {
 
-    title = "Writesetter"
+    title = "TextCompose"
 
     var showToolbar = true
     val showHideToolbarAction = new Action("Show/Hide Toolbar") {
@@ -184,7 +184,7 @@ object Application extends SimpleSwingApplication {
     // Quit menu item in either File menu or the Mac application menu.
     if (core.Environment.isMacOSX) {
 
-      writesetter.startup.SpecialitiesMacOSX.prepareQuit(workspaceTabs)
+      textcompose.startup.SpecialitiesMacOSX.prepareQuit(workspaceTabs)
     } else {
 
       def quitAction = new Action("Quit") {

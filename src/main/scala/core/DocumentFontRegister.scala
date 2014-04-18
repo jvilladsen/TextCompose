@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import com.itextpdf.text.pdf.BaseFont
 import scala.collection.mutable.HashMap
-import writesetter.storage
+import textcompose.storage
 
 object DocumentFontRegister {
 
@@ -89,14 +89,14 @@ object DocumentFontRegister {
           }
         } else {
           throw new TagError("Unknown font '" + shortFontId +
-            "'. The font has previously been found by Writesetter, but now the file does" +
-            " not exist, in any of the folders/directories listed in the settings of Writesetter.")
+            "'. The font has previously been found by TextCompose, but now the file does" +
+            " not exist, in any of the folders/directories listed in the settings of TextCompose.")
         }
       }
     } else {
       val message = "Unknown font '" + fontTitle + "'." +
         " This font is either not installed, or the font-file is placed in another folder/directory" +
-        " than the ones listed in the settings of Writesetter. If the font has just be installed," +
+        " than the ones listed in the settings of TextCompose. If the font has just be installed," +
         " try the 'Update' item in the 'Fonts' menu."
       throw new TagError(message)
     }

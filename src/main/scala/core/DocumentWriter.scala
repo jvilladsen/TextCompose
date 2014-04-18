@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import java.io.FileOutputStream
 import com.itextpdf.text._
@@ -94,7 +94,7 @@ class DocumentWriter(iTextDoc: Document, arg: Arguments) {
       writer.setEncryption(userPwByteArray, ownerPwByteArray, allowingInt, PdfWriter.STANDARD_ENCRYPTION_128)
     } catch {
       case e: DocumentException => throw new TagError("The tag 'encrypt' should be placed before all content. " + e.getMessage)
-      case e: Exception         => writesetter.editor.DialogBox.systemError("Failed setting encryption: " + e.getMessage)
+      case e: Exception         => textcompose.editor.DialogBox.systemError("Failed setting encryption: " + e.getMessage)
     }
   }
 }

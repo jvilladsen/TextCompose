@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import javax.swing.{ JEditorPane, JFrame, JPanel, JScrollPane, JSplitPane, UIManager, ImageIcon, JTree, ToolTipManager, BorderFactory }
 import javax.swing.tree.{ DefaultMutableTreeNode, TreeSelectionModel, DefaultTreeCellRenderer, TreePath }
@@ -29,7 +29,7 @@ import scala.collection.mutable.HashMap
 import swing._
 import event.KeyPressed
 import event.Key._
-import writesetter.core
+import textcompose.core
 
 class TagTree {
 

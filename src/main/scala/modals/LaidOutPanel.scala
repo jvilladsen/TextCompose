@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import scala.swing.GridBagPanel._
 import scala.swing.Alignment
 import java.awt.Font
 import event._
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class LaidOutPanel(cols: Int, spaced: Boolean) extends GridBagPanel {
 

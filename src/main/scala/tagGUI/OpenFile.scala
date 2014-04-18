@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class OpenFile(isImage: Boolean) extends TagAction("Open") {
 

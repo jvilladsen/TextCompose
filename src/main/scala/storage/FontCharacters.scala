@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
-import writesetter.core
-import writesetter.editor.SymbolMapping
+import textcompose.core
+import textcompose.editor.SymbolMapping
 import com.itextpdf.text.pdf.BaseFont
 
 object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {

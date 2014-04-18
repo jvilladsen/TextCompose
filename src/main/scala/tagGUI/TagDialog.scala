@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
 import javax.swing.JPanel
 import scala.swing._
@@ -24,7 +24,7 @@ import scala.collection.mutable.ArrayBuffer
 import java.awt.event._
 import event._
 import Key._
-import writesetter.{ core, editor, storage }
+import textcompose.{ core, editor, storage }
 
 class TagDialog(fileKey: String, tagName: String) extends ParameterType {
 
@@ -173,7 +173,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     for (f <- fields) {
       f.AddActionOnEnter(okAction)
       f match {
-        case c: writesetter.tagGUI.ComboBoxType => c.field.peer.addActionListener(actionListener)
+        case c: textcompose.tagGUI.ComboBoxType => c.field.peer.addActionListener(actionListener)
         case _                                  => None
       }
       f.setFields(fields)
@@ -184,13 +184,13 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
   }
 
   def layout(
-    se: writesetter.core.SourceElement,
+    se: textcompose.core.SourceElement,
     okAction: Action,
     actionListener: java.awt.event.ActionListener,
     forcedSyntax: Int) {
 
     knownTag = true
-    val parser = writesetter.core.Parsers.getParser(tagName)
+    val parser = textcompose.core.Parsers.getParser(tagName)
     var tagParserErrorFound = false
     var tagParserErrorMessage = ""
 
@@ -381,8 +381,8 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     removeUnchangedOptional(result) + ">"
   }
 
-  def getAsSourceElement: writesetter.core.SourceElement = {
-    val s = new writesetter.core.SourceElement
+  def getAsSourceElement: textcompose.core.SourceElement = {
+    val s = new textcompose.core.SourceElement
     s.SetTag(tagName)
     for (f <- fields) {
       val text = f.getUnwrapped

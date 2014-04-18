@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
 import scala.swing._
 import scala.collection.mutable.ArrayBuffer
 import event._
 import Key._
-import writesetter.core._
-import writesetter.editor._
+import textcompose.core._
+import textcompose.editor._
 
 /** Numbers (integer or float) with or without decoration.
   * 

@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.io.Source
-import writesetter.{editor, storage}
+import textcompose.{editor, storage}
 
 object FileRegistration {
 

@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.HashMap
 import swing.Component
-import writesetter.{ core, editor }
+import textcompose.{ core, editor }
 
 object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
 

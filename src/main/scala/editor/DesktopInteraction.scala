@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import java.awt.Desktop
 import java.net._
 import java.io._
-import writesetter.{ core, modals }
+import textcompose.{ core, modals }
 
 object DesktopInteraction {
 

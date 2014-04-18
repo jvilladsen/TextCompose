@@ -1,9 +1,9 @@
-package writesetter.startup
+package textcompose.startup
 
 import scala.collection.JavaConverters._
 import javax.swing.SwingUtilities
 import com.apple.eawt.{ AppEvent, OpenFilesHandler, AboutHandler, PreferencesHandler, QuitHandler, QuitResponse }
-import writesetter.{ core, editor, modals, storage }
+import textcompose.{ core, editor, modals, storage }
 
 object SpecialitiesMacOSX {
 
@@ -15,7 +15,7 @@ object SpecialitiesMacOSX {
           val files = e.getFiles().asScala
           for (file <- files) {
             val fullFileName = file.getAbsolutePath();
-            writesetter.editor.CompileOrGUI.handleOpenFile(fullFileName);
+            textcompose.editor.CompileOrGUI.handleOpenFile(fullFileName);
           }
         }
       })
@@ -43,7 +43,7 @@ object SpecialitiesMacOSX {
       })
   }
   
-  def prepareQuit(workspaceTabs: writesetter.editor.WorkspaceTabs) {
+  def prepareQuit(workspaceTabs: textcompose.editor.WorkspaceTabs) {
     
     com.apple.eawt.Application.getApplication.setQuitHandler(
       new QuitHandler {

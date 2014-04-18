@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import scala.collection.mutable.{ ArrayBuffer, HashMap }
 import scala.swing._
@@ -27,7 +27,7 @@ import event._
 import event.Key._
 import java.awt.Graphics
 import java.awt.event.{ MouseEvent, MouseAdapter }
-import writesetter.storage
+import textcompose.storage
 
 class TableContent(
   d: ArrayBuffer[List[String]], // FIXME: should not be parameter?

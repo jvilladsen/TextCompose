@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.{ Stack, HashMap }
 import scala.collection.immutable.List
 import scala.io._
 import scala.util.matching.Regex
 import com.itextpdf.text.pdf.BaseFont
-import writesetter.storage
+import textcompose.storage
 
 object FontFileRegister {
 
@@ -95,7 +95,7 @@ object FontFileRegister {
       }
     }
 
-    if (!directories.contains(directory) && writesetter.storage.FileMethods.IsDirectory(directory)) {
+    if (!directories.contains(directory) && textcompose.storage.FileMethods.IsDirectory(directory)) {
       directories.push(directory)
       traverseDirectory(directory)
     }

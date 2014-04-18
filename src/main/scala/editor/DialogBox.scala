@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import scala.collection.mutable.Stack
 import swing.Dialog._
 import swing.Component
 import java.io.{ StringWriter, PrintWriter }
-import writesetter.{ editor, modals }
+import textcompose.{ editor, modals }
 
 // http://www.scala-lang.org/api/current/scala/swing/Dialog$.html
 
@@ -30,7 +30,7 @@ import writesetter.{ editor, modals }
 
 object DialogBox {
 
-  val appTitle = writesetter.startup.Launch.appTitle
+  val appTitle = textcompose.startup.Launch.appTitle
 
   def stackTrace(message: String, e: Exception) {
     val stringWriter = new StringWriter
@@ -39,7 +39,7 @@ object DialogBox {
     val d = new modals.ScrollText(
       900, // width
       "System Error: " + message,
-      writesetter.core.Environment.operatingSystemName, // sub text
+      textcompose.core.Environment.operatingSystemName, // sub text
       stacktrace,
       "", // html file name
       editor.Images.systemErrorIcon)
@@ -88,11 +88,11 @@ object DialogBox {
   def about {
     val d = new modals.ScrollText(
       700, // width
-      appTitle + " " + writesetter.startup.Launch.appVersion,
+      appTitle + " " + textcompose.startup.Launch.appVersion,
       "Copyright \u00A9 2013 Jesper S. Villadsen",
       "", // plain text
       ResourceHandling.licenseText,
-      editor.Images.writeSetterIcon)
+      editor.Images.textcomposeIcon)
   }
 
   def newFonts(count: Int, fonts: Stack[String], recalculation: Boolean) {
@@ -107,6 +107,6 @@ object DialogBox {
       subText,
       fonts.sorted.mkString("\n"),
       "", // htmlFileName
-      editor.Images.writeSetterIcon)
+      editor.Images.textcomposeIcon)
   }
 }

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
 import scala.collection.mutable.HashMap
 
@@ -42,7 +42,7 @@ object Dictionaries extends StoredArrayOfStringLists("Dictionaries.txt") {
   def initialize() {
     if (!initialized) {
       if (fileExists) load() // could eventually include user-added dictionaries
-      writesetter.editor.ResourceHandling.initialize() // built-in dictionaries
+      textcompose.editor.ResourceHandling.initialize() // built-in dictionaries
       extractFromDataSet()
       initialized = true
     }

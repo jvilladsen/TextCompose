@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import swing._
 import java.beans.{ PropertyChangeEvent, PropertyChangeListener }
 import java.io.File
-import writesetter.{ core, storage }
-import writesetter.core.PreviewType
+import textcompose.{ core, storage }
+import textcompose.core.PreviewType
 
 class TextFileEditor(fontSize: Int) {
 

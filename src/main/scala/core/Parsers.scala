@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.HashMap
-import writesetter.tagGUI._
+import textcompose.tagGUI._
 
 object Parsers {
 
@@ -33,7 +33,7 @@ object Parsers {
   // FIXME: the encoding for font tag should be a kind of level-2-option which takes a map string -> list of options... 
   val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
-    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
     addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
       setOptionMapping(FontEncoding.titleToShortId).
     addFlag("local").addGuiAction(FontInformation, 0)
@@ -44,12 +44,12 @@ object Parsers {
       se => se.NumberOfParameters <= 2 || se.Parameters(2) == "local",
       "Font name, encoding (optional), Unicode (hexadecimal) and 'local' (optional).",
       sp => sp.glyphTag)).
-    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
     addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFont).
       setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0).
     addSyntax("specify encoding", se => true).
-    addOptions(fontName, true, writesetter.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
     addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
       setOptionMapping(FontEncoding.titleToShortId).
     addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFontAndEncoding).
@@ -57,8 +57,8 @@ object Parsers {
     addFlag("local").addGuiAction(FontInformation, 0)
 
   def updateFont() {
-    parser("font").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)
-    parser("glyph").updateOptions("", fontName, writesetter.storage.StoredFontAnalysis.getAllFontTitles)
+    parser("font").updateOptions("", fontName, textcompose.storage.StoredFontAnalysis.getAllFontTitles)
+    parser("glyph").updateOptions("", fontName, textcompose.storage.StoredFontAnalysis.getAllFontTitles)
   }
 
   parser("char") = (new TagParser("char", sp => sp.charTag)).
@@ -398,10 +398,10 @@ object Parsers {
 
   val nameOfExtension = "name of extension"
   parser("include") = (new TagParser("include", sp => sp.includeTag)).
-    addOptions(nameOfExtension, true, writesetter.storage.Configurations.getListOfExtensions).noGuiTitle()
+    addOptions(nameOfExtension, true, textcompose.storage.Configurations.getListOfExtensions).noGuiTitle()
   
   def updateInclude() {
-    parser("include").updateOptions("", nameOfExtension, writesetter.storage.Configurations.getListOfExtensions)
+    parser("include").updateOptions("", nameOfExtension, textcompose.storage.Configurations.getListOfExtensions)
   }
 
   parser("encrypt") = (new TagParser("encrypt", sp => sp.encryptTag)).

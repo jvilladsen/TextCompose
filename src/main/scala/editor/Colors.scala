@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import java.awt.Color
 import java.awt._
 import scala.collection.immutable.List
-import writesetter.storage
+import textcompose.storage
 
 object Colors {
   private var theme = -1

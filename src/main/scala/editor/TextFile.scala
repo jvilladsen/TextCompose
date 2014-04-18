@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import swing._
 import java.awt.Font
 import java.util.Date
 import java.awt.FileDialog
-import writesetter.{ core, storage }
-import writesetter.core.PreviewType
+import textcompose.{ core, storage }
+import textcompose.core.PreviewType
 
 class TextFile {
 

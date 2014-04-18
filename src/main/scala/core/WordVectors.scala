@@ -1,4 +1,4 @@
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.HashMap
 

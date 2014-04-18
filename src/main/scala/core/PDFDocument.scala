@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.{ Stack, ArrayBuffer, HashMap, HashSet }
 import com.itextpdf.text._
@@ -152,7 +152,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       iTextDoc.open
       notYetOpened = false
       try {
-        setCreator("Writesetter")
+        setCreator("TextCompose")
       } catch {
         case e: Exception => throw new TagError(e.getMessage)
       }
@@ -509,7 +509,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
   def closeDocument() {
     CompilationMetaData.stopTimer()
     if (EmptyDocument) {
-      writesetter.editor.DialogBox.info("The source file does not give rise to any document content.")
+      textcompose.editor.DialogBox.info("The source file does not give rise to any document content.")
       varRegister.save(Arg.VariablesFileName)
     } else {
       bookmarks.insertBookmarksInOutline(writer.getDirectContent(false).getRootOutline)

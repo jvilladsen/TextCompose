@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import concurrent.ExecutionContext.Implicits.global
 import concurrent._
 import swing._
-import writesetter.core
+import textcompose.core
 
 object CaretPosition {
 

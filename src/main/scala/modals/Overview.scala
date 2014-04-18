@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import javax.swing.JTable
 import scala.collection.mutable.Set
 import event._
 import event.Key._
-import writesetter.{ editor, storage }
-import writesetter.editor.Colors
+import textcompose.{ editor, storage }
+import textcompose.editor.Colors
 
 class Overview extends Dialog {
 

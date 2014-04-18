@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import java.awt.Font
 import event._
 import Key._
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class TemplateChooser extends Dialog {
 

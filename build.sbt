@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
     "org.bouncycastle" % "bcpkix-jdk15on" % "1.49",
     "net.sf.jazzy" % "jazzy-core" % "0.5.2")
 
-mainClass := Some("writesetter.startup.Launch")
+mainClass := Some("textcompose.startup.Launch")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
@@ -21,7 +21,7 @@ resourceDirectory in Compile <<= baseDirectory { _ / "src" }
 
 // run
 
-mainClass in (Compile,run) := Some("writesetter.startup.Launch")
+mainClass in (Compile,run) := Some("textcompose.startup.Launch")
 
 fork := true
 
@@ -37,7 +37,7 @@ appbundle.javaOptions += "-Xmx1024m"
 
 appbundle.icon := Some(file("src/main/resources/TextCompose.icns"))
 
-appbundle.mainClass := Some("writesetter.startup.Launch")
+appbundle.mainClass := Some("textcompose.startup.Launch")
 
 appbundle.documents := Seq(appbundle.Document(
     "TextCompose source",
@@ -50,4 +50,4 @@ appbundle.documents := Seq(appbundle.Document(
 
 seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
 
-mainClass in oneJar := Some("writesetter.startup.Launch")
+mainClass in oneJar := Some("textcompose.startup.Launch")

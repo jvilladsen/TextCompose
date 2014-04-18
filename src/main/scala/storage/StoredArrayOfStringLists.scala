@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.storage
+package textcompose.storage
 
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import scala.io.Source
 import scala.collection.mutable.ArrayBuffer
-import writesetter.{ core, editor }
+import textcompose.{ core, editor }
 
 abstract class StoredArrayOfStringLists(fileName: String) {
 

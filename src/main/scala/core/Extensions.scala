@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.ArrayBuffer
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class Extensions {
 

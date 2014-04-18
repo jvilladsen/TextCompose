@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import event._
 import Key._
 import java.awt.Component
-import writesetter.core.PreviewType
-import writesetter.{ core, editor, storage }
+import textcompose.core.PreviewType
+import textcompose.{ core, editor, storage }
 
 class Preferences(pretend: Boolean) extends Dialog {
 
@@ -145,7 +145,7 @@ class Preferences(pretend: Boolean) extends Dialog {
     case KeyPressed(`panel`, Escape, _, _) => cancelAction.apply()
   }
 
-  title = "Writesetter Preferences"
+  title = "TextCompose Preferences"
   modal = true
   resizable = false
   preferredSize = new Dimension(550, 400)

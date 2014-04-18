@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import concurrent.ExecutionContext.Implicits.global
 import concurrent._
-import writesetter.{ core, storage }
+import textcompose.{ core, storage }
 
 object CompileOrGUI {
 
@@ -51,7 +51,7 @@ object CompileOrGUI {
       ResourceHandling.copyDocuments()
       future {
         // Pretend to open the window now to make it faster later.
-        new writesetter.modals.Preferences(true)
+        new textcompose.modals.Preferences(true)
       }
       Application.main(arguments)
     }

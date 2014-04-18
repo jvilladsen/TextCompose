@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.ArrayBuffer
-import writesetter.storage.FontCharacters.getCharacters
+import textcompose.storage.FontCharacters.getCharacters
 
 class ParameterDependency(
   options: String => List[String],
@@ -34,7 +34,7 @@ class ParameterDependency(
 object Dependency {
 
   private val fontToEncodings: String => List[String] =
-    font => writesetter.storage.StoredFontAnalysis.getEncodingTitlesOfFont(font)
+    font => textcompose.storage.StoredFontAnalysis.getEncodingTitlesOfFont(font)
 
   val encodingOnFont = new ParameterDependency(fontToEncodings, List(0))
 

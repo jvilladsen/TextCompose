@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.io.Source
 
@@ -41,7 +41,7 @@ class SourceFile(
         lineContent = sourceIterator.next // Since we don't trim here, we must take care of newline char in parser
         processingUnit.update(lineContent)
       } catch {
-        case e: Exception => writesetter.editor.DialogBox.stackTrace(
+        case e: Exception => textcompose.editor.DialogBox.stackTrace(
           "\nError reading line " + lineNumber.toString + " from " + fileName + ". Wrong encoding?", e)
       }
     } else {

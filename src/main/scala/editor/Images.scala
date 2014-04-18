@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import javax.swing.ImageIcon
 import java.net.URL
@@ -53,5 +53,5 @@ object Images {
   val createPdfIcon = getIcon("crystal_32_right2.png")
   val pdfIcon = getIcon("eponasDeeway_32_pdf.png")
 
-  val writeSetterIcon = getIcon("oxygen_writesetter_tiny.png")
+  val textcomposeIcon = getIcon("oxygen_writesetter_tiny.png")
 }

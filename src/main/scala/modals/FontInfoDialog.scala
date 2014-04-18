@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.modals
+package textcompose.modals
 
 import scala.swing._
 import event._
 import Key._
 import java.awt.Component
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 class FontInfoDialog(fontTitle: String) extends Dialog {
 
@@ -131,7 +131,7 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
     case KeyPressed(`pane`, Escape, _, _) => { close; dispose }
   }
 
-  title = "Writesetter, Font info on " + fontTitle
+  title = "TextCompose, Font info on " + fontTitle
   modal = true
   resizable = false
   preferredSize = new Dimension(1050, 700)

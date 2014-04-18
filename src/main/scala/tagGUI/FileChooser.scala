@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.tagGUI
+package textcompose.tagGUI
 
 import java.awt.{ Component, FileDialog, Frame }
-import writesetter.{ editor, storage }
+import textcompose.{ editor, storage }
 
 object FileChooser extends TagAction("Choose file") {
 

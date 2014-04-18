@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import scala.collection.mutable.ArrayBuffer
-import writesetter.tagGUI._
+import textcompose.tagGUI._
 
 class TagParser(
   val tagName: String,

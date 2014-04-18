@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.editor
+package textcompose.editor
 
 import com.swabunga.spell.engine.SpellDictionaryHashMap
 import com.swabunga.spell.engine.GenericSpellDictionary
@@ -30,7 +30,7 @@ object Spelling {
   private var spellChecker: SpellChecker = null
 
   private def getSpellChecker: SpellChecker = {
-    val (dictionaryFullFileName, encoding) = writesetter.storage.Dictionaries.getDict(dictionaryName)
+    val (dictionaryFullFileName, encoding) = textcompose.storage.Dictionaries.getDict(dictionaryName)
     val file = new FileInputStream(dictionaryFullFileName)
     val reader = new InputStreamReader(file, encoding)
     val dictionaryMap = new SpellDictionaryHashMap(reader)

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package writesetter.core
+package textcompose.core
 
 import java.io.File
 
@@ -32,13 +32,13 @@ object Environment {
 
   private val configurationsDirectory =
     if (isWindows) {
-      userHomeDirectory + fileSeparator + "AppData\\Writesetter"
+      userHomeDirectory + fileSeparator + "AppData\\TextCompose"
     } else {
-      userHomeDirectory + fileSeparator + ".Writesetter"
+      userHomeDirectory + fileSeparator + ".TextCompose"
     }
 
   private val documentsDirectory =
-    userHomeDirectory + fileSeparator + "Writesetter"
+    userHomeDirectory + fileSeparator + "TextCompose"
 
   (new File(configurationsDirectory)).mkdir()
   (new File(documentsDirectory)).mkdir()
