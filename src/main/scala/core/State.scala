@@ -76,7 +76,7 @@ class State extends Cloneable {
   var indentationRight = 0f
   var justification = "full"
 
-  var lineHeight = new DecoratedNumber("120%", "line height")
+  var lineHeight = new DecoratedNumber("130%", "line height")
 
   var spaceBeforeParagraph = new DecoratedNumber("100%", "space before paragraph")
   var spaceAfterParagraph = new DecoratedNumber("0", "space after paragraph")
@@ -107,7 +107,7 @@ class State extends Cloneable {
   var cellJustification = "left"
 
   var listIndentation = new DecoratedNumber("0", "list indentation")
-  var listSymbolIndentation = new DecoratedNumber("100%", "list symbol indentation")
+  var listSymbolIndentation = new DecoratedNumber("170%", "list symbol indentation")
   var listFormatting = "^1."
 
   var lineWidth = 1f
