@@ -24,6 +24,7 @@ import com.itextpdf.text.Rectangle
 import com.itextpdf.text.PageSize
 import com.itextpdf.text.pdf._
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable.List
 import writesetter.{ editor, storage }
 
 class SourceProcessor(
@@ -34,6 +35,8 @@ class SourceProcessor(
 
   private var keepWhitespace = false
   private var showingErrorMessage = false
+  private var readingTagDefinition = false
+  private var currentDefinitionName = ""
 
   def whitespaceTag(parser: TagParser, se: SourceElement) {
     parser(se)
@@ -135,8 +138,8 @@ class SourceProcessor(
     extensions.addNewExtension(parser.getNextOption, processingUnit)
     for ((message, unit) <- extensions.errorMessages) { showErrorMessage(message, unit) }
     /* If a 'main' was encountered in the extension, then we should throw it into the stream here.
-		 * Note that there may be more than one, since extension can use the include tag.
-		 */
+     * Note that there may be more than one, since extension can use the include tag.
+     */
     for (mainTagName <- extensions.mainTags) {
       val tagLineNumber = extensions.TagDefinitions(mainTagName).lineNumber
       processingUnit.addMainTag(mainTagName, tagLineNumber)
@@ -437,21 +440,64 @@ class SourceProcessor(
   }
 
   def extensionTag(parser: TagParser, se: SourceElement) {
-    throw new TagError("Building a document from an extension file? The 'extension' tag is used in the top of " +
-      "extension files for specifying a name of the extension.")
+    None
   }
+
+  private def addTagDefinition(se: SourceElement) {
+    val definitionType = se.TagName
+    val isMainTag = definitionType == "main"
+    val td = new TagDefinition(se, "self", 1, isMainTag)
+    currentDefinitionName = td.tagName
+
+    if (extensions.TagDefinitions.contains(currentDefinitionName)) {
+      if (isMainTag) {
+        throw new TagError("A file can contain at most one 'main' declaration.")
+      } else {
+        throw new TagError("The tag '" + currentDefinitionName + "' has already been defined.")
+      }
+    }
+    extensions.TagDefinitions += currentDefinitionName -> td
+    /**
+     * Neither 'sub' nor 'main' definitions should appear in the tag tree.
+     * This is actually the whole point with 'sub'. The point with 'main' definitions
+     * is that they get directly into the stream, just by extension.
+     */
+    if (definitionType == "def") {
+      LatestExtensions.addTag("self", currentDefinitionName, td)
+    }
+    TagRegister.AddNewTag(currentDefinitionName)
+  }
+
   def defTag(parser: TagParser, se: SourceElement) {
-    throw new TagError("The 'def' tag, used for defining new tags, can only be used in extensions. " +
-      "Extensions are separate files with the 'extension' tag in the top. Before you can refer to " +
-      "an extension, with the 'include' tag, you must add it by choosing 'Add' in the 'Extensions' menu.")
+    addTagDefinition(se)
+    readingTagDefinition = true
   }
+
   def subTag(parser: TagParser, se: SourceElement) {
-    throw new TagError("The 'sub' tag, used for defining new tags, can only be used in extensions. The only " +
-      "difference between 'sub' and 'def' is that sub's do not appear in the tag menu.")
+    addTagDefinition(se)
+    readingTagDefinition = true
   }
+
   def mainTag(parser: TagParser, se: SourceElement) {
-    throw new TagError("The 'main' tag, used for specifying stuff that should be inserted along with the " +
-      "extension, can only be used in extensions.")
+    addTagDefinition(se)
+    readingTagDefinition = true
+  }
+
+  def defEndTag(parser: TagParser, se: SourceElement) {
+    None
+  }
+
+  def subEndTag(parser: TagParser, se: SourceElement) {
+    None
+  }
+
+  def mainEndTag(parser: TagParser, se: SourceElement) {
+    val mainTagName = "self#main"
+    val tagLineNumber = extensions.TagDefinitions(mainTagName).lineNumber
+    processingUnit.addMainTag(mainTagName, tagLineNumber)
+    processingUnit.update("<" + mainTagName + ">")
+    processSourceLine()
+    processingUnit.popElement()
   }
 
   def marginsTag(parser: TagParser, se: SourceElement) {
@@ -657,42 +703,22 @@ class SourceProcessor(
       parser.getNextString)
   }
 
-  // FIXME: There must be something we can factor out in the following method:
   private def addListItem() {
     val listItem = document.addPhraseToItem()
     document.storeStateToStack()
-    document.enteringItemFormatting
-
-    var inLineSE = new SourceElement // Used as a way to feed a parameter into ^1
-    inLineSE.SetTag("item format") // In place of "def" as in <def ...
-    inLineSE.SetParameter("item format") // In place of the name of the user-defined tag
-    inLineSE.SetParameter("item counter") // The first parameter of the user-defined tag
+    document.enteringItemFormatting()
 
     val format = document.getListFormat.replace("$1", "^1")
 
-    var inLineTD = new TagDefinition(inLineSE, "item format", 0, false)
-    try {
-      inLineTD.ParseLine(format)
-    } catch {
-      case e: Exception => throw new TagError("Problem parsing the content of the item format: " + e.getMessage + ".")
-    }
-
-    var actualParameters = new SourceElement
-    actualParameters.SetParameter(document.getItemIndex.toString)
-    var defWithValues = inLineTD.GetDefinitionWithValues(actualParameters)
-
-    processingUnit.addInLineTag(inLineSE.TagName)
-    for (line <- defWithValues) { // stack with one element, since this is an in-line tag definition.
-      processingUnit.update(line)
-      document.noPendingPadding
-      processSourceLine()
-    }
-    processingUnit.popElement()
-    // END OF SHAMELES COPY
+    inlineTagHandler(
+      "list format",
+      format,
+      List("list item counter"),
+      List(document.getItemIndex.toString))
 
     document.setListSymbol(listItem)
-    document.leavingItemFormatting
-    document.restoreStateFromStack
+    document.leavingItemFormatting()
+    document.restoreStateFromStack()
     document.addItemToList(listItem)
   }
 
@@ -787,42 +813,38 @@ class SourceProcessor(
     document.injectionRegister.addInjection(beforeOrAfter, oddOrEven, point, number, content, "yet to come", 1)
   }
 
-  // FIXME: There must be something we can factor out here:
-  def loopTag(parser: TagParser, se: SourceElement) {
+  private def inlineTagHandler(
+    description: String,
+    inlineSource: String,
+    parameterName: List[String],
+    parameterValue: List[String]) {
 
-    def inlineTagHandler(
-      inlineSource: String,
-      parameterName: scala.collection.immutable.List[String],
-      parameterValue: scala.collection.immutable.List[String]) {
+    val actualParameters = new SourceElement
+    for (v <- parameterValue) actualParameters.SetParameter(v)
 
-      val actualParameters = new SourceElement
-      for (v <- parameterValue) actualParameters.SetParameter(v)
-
-      val inLineSE = new SourceElement // Used as a way to feed a parameter into ^1
-      inLineSE.SetTag("loop in-line tag") // In place of "def" as in <def ...
-      inLineSE.SetParameter("loop in-line tag") // In place of the name of the user-defined tag
-      for (p <- parameterName) inLineSE.SetParameter(p)
-      val inLineTD = new TagDefinition(inLineSE, "loop in-line tag", 0, false)
-      try {
-        inLineTD.ParseLine(inlineSource)
-      } catch {
-        case e: Exception => throw new TagError("Problem parsing the content of the loop tag (" + inlineSource + "): " + e.getMessage + ".")
-      }
-
-      def processInLineTagWithParameters() {
-        val defWithValues = inLineTD.GetDefinitionWithValues(actualParameters)
-
-        processingUnit.addInLineTag(inLineSE.TagName)
-        for (line <- defWithValues) { // stack with one element, since this is an in-line tag definition.
-          processingUnit.update(line)
-          document.noPendingPadding
-          processSourceLine()
-        }
-        processingUnit.popElement()
-      }
-
-      processInLineTagWithParameters()
+    val inlineSourceElement = new SourceElement
+    inlineSourceElement.SetTag(description)
+    inlineSourceElement.SetParameter(description)
+    for (p <- parameterName) inlineSourceElement.SetParameter(p)
+    val inlineTagDefinition = new TagDefinition(inlineSourceElement, description, 0, false)
+    try {
+      inlineTagDefinition.ParseLine(inlineSource)
+    } catch {
+      case e: Exception => throw new TagError("Error in " + description + " (" + inlineSource + "): " + e.getMessage + ".")
     }
+
+    val defWithValues = inlineTagDefinition.GetDefinitionWithValues(actualParameters)
+
+    processingUnit.addInLineTag(inlineSourceElement.TagName)
+    for (line <- defWithValues) {
+      processingUnit.update(line)
+      document.noPendingPadding
+      processSourceLine()
+    }
+    processingUnit.popElement()
+  }
+
+  def loopTag(parser: TagParser, se: SourceElement) {
 
     parser(se)
     parser.getSyntax match {
@@ -843,9 +865,10 @@ class SourceProcessor(
         for (n <- start to stop by delta) {
 
           inlineTagHandler(
+            "loop body",
             loopBody,
-            scala.collection.immutable.List("counter in loop over range"),
-            scala.collection.immutable.List(n.toString))
+            List("counter in loop over range"),
+            List(n.toString))
         }
       }
       case "map" => {
@@ -859,9 +882,10 @@ class SourceProcessor(
         for (pair <- mapContent) {
 
           inlineTagHandler(
+            "loop body",
             loopBody,
-            scala.collection.immutable.List("key in loop over map", "value in loop over map"),
-            scala.collection.immutable.List(pair._1, pair._2))
+            List("key in loop over map", "value in loop over map"),
+            List(pair._1, pair._2))
         }
       }
     }
@@ -886,14 +910,21 @@ class SourceProcessor(
     }
   }
 
-  def checkNotInListMode {
+  private def checkNotInTagDefMode() {
+    if (readingTagDefinition) {
+      readingTagDefinition = false
+      showErrorMessage("End of file was reached before ending definition of tag '" + currentDefinitionName + "'.")
+    }
+  }
+
+  private def checkNotInListMode() {
     if (document.isInListMode) {
       document.forceExitFromListMode()
       showErrorMessage("End of file was reached before ending a list. Use '/list' tag to end it.")
     }
   }
 
-  def checkNotInTableMode {
+  private def checkNotInTableMode() {
     if (document.isInTableMode) {
       document.forceExitFromTableMode()
       showErrorMessage("End of file was reached before ending a table. Use '/table' tag to end it.")
@@ -901,7 +932,7 @@ class SourceProcessor(
   }
 
   // FIXME: This could be a method on document returning a list of string (error messages).
-  def checksAtClosing {
+  private def checksAtClosing() {
     if (!document.varRegister.isDepthZero) {
       document.varRegister.stopCopying() // Hard exit which ignores what was read for copying to variable.
       val varName = document.varRegister.getCurrentVariable
@@ -934,14 +965,15 @@ class SourceProcessor(
   }
 
   def closeDocument() {
-    checkNotInListMode
-    checkNotInTableMode
+    checkNotInTagDefMode()
+    checkNotInListMode()
+    checkNotInTableMode()
     try {
       document.addParagraph()
     } catch {
       case te: TagError => showErrorMessage(te.errorMessage, "at end of document")
     }
-    checksAtClosing
+    checksAtClosing()
     applyInjections("after", "all", 0)
     try {
       document.closeDocument()
@@ -1094,7 +1126,27 @@ class SourceProcessor(
     }
   }
 
+  private def checkEndOfDefintion(line: String): Boolean = {
+    val trimmedLine = line.trim()
+    trimmedLine == "</def>" || trimmedLine == "</sub>" || trimmedLine == "</main>"
+  }
+
   def processSourceLine() {
+
+    if (readingTagDefinition) {
+      val line = processingUnit.getLine
+      if (checkEndOfDefintion(line)) {
+        readingTagDefinition = false
+      } else {
+        extensions.TagDefinitions(currentDefinitionName).ParseLine(line)
+      }
+    }
+    if (!readingTagDefinition) {
+      processCoreSource()
+    }
+  }
+
+  def processCoreSource() {
 
     if (!keepWhitespace) processingUnit.trim()
 

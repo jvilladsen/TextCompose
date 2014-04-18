@@ -193,20 +193,18 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     val parser = writesetter.core.Parsers.getParser(tagName)
     var tagParserErrorFound = false
     var tagParserErrorMessage = ""
-    try {
-      parser(se)
-    } catch {
-      case e: Exception => {
-        tagParserErrorFound = true
-        tagParserErrorMessage = e.getMessage
-      }
-    }
-    syntaxes = parser.getSyntaxes
-    currentSyntax = parser.getCurrentSyntax
-
-    val parameters = se.Parameters
 
     if (parser.tagName != "empty") {
+      try {
+        parser(se)
+      } catch {
+        case e: Exception => {
+          tagParserErrorFound = true
+          tagParserErrorMessage = e.getMessage
+        }
+      }
+      syntaxes = parser.getSyntaxes
+      currentSyntax = parser.getCurrentSyntax
 
       parser.buildGUI(fields, forcedSyntax)
 
@@ -321,11 +319,12 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
 
     if (knownTag) {
       addFieldsToPanel(okAction, actionListener)
-      /** If errors were found during parse of tag parameters, we show them.
-        * However, when the choice of syntax is forced away from what was
-        * found by the parser, one should expect errors, but they are artificial
-        * in that new context. Maybe a bit flaky, but often useful way to keep values. 
-        */
+      /**
+       * If errors were found during parse of tag parameters, we show them.
+       * However, when the choice of syntax is forced away from what was
+       * found by the parser, one should expect errors, but they are artificial
+       * in that new context. Maybe a bit flaky, but often useful way to keep values.
+       */
       if (tagParserErrorFound && forcedSyntax == -1) {
         val errorMessage = new EditorPane {
           text = tagParserErrorMessage
@@ -372,7 +371,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
   }
 
   def getUnwrapped: String = "NOT USED"
-  
+
   def Get: String = {
     var result = "<" + tagName
     for (f <- fields) {

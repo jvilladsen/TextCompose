@@ -431,17 +431,39 @@ object Parsers {
   parser("extension") = (new TagParser("extension", sp => sp.extensionTag)).
     addString("name", true)
   
-  parser("def") = (new TagParser("def", sp => sp.defTag))
+  parser("def") = (new TagParser("def", sp => sp.defTag)).
+    addString("tag name", true).
+    addString("1. arg. title", false).
+    addString("2. arg. title", false).
+    addString("3. arg. title", false).
+    addString("4. arg. title", false).
+    addString("5. arg. title", false).
+    addString("6. arg. title", false).
+    addString("7. arg. title", false).
+    addString("8. arg. title", false).
+    addString("9. arg. title", false).
+    addString("10. arg. title", false)
   
-  parser("sub") = (new TagParser("sub", sp => sp.subTag))
+  parser("sub") = (new TagParser("sub", sp => sp.subTag)).
+    addString("tag name", true).
+    addString("1. arg. title", false).
+    addString("2. arg. title", false).
+    addString("3. arg. title", false).
+    addString("4. arg. title", false).
+    addString("5. arg. title", false).
+    addString("6. arg. title", false).
+    addString("7. arg. title", false).
+    addString("8. arg. title", false).
+    addString("9. arg. title", false).
+    addString("10. arg. title", false)
   
   parser("main") = (new TagParser("main", sp => sp.mainTag))
  
-  parser("/def") = new TagParser("/def", sp => (p, s) => ())
+  parser("/def") = new TagParser("/def", sp => sp.defEndTag)
   
-  parser("/sub") = new TagParser("/sub", sp => (p, s) => ())
+  parser("/sub") = new TagParser("/sub", sp => sp.subEndTag)
   
-  parser("/main") = new TagParser("/main", sp => (p, s) => ())
+  parser("/main") = new TagParser("/main", sp => sp.mainEndTag)
   
   parser("template") = new TagParser("template", sp => (p, s) => ()).
     addString("name", true)

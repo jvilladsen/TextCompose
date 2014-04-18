@@ -123,11 +123,8 @@ class Extensions {
             } else {
               errorMessages.append(("The 'include' tag should have a parameter.", processingUnit))
             }
-          } else if (tagName != "extension") {
-            errorMessages.append(("Unexpected tag '" + tagName + "' in the extension '" + extensionName +
-              "'. Extensions are meant for specifying new tags using the tag 'def' (or 'sub', 'main'). " +
-              "It is also possible to use the 'include' tag in extensions.", processingUnit))
           }
+          // Note that you are free to write other stuff in the extension to test and document it.
         }
       } // if insideTagDefinition / else
     } // end while

@@ -665,14 +665,14 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
   def getItemIndex: Int = listStack.top.nextIndex
 
-  def enteringItemFormatting {
+  def enteringItemFormatting() {
     inItemFormatting = true
     itemFormatChunk = new Chunk
   }
   def setListSymbol(listItem: ListItem) {
     listItem.setListSymbol(itemFormatChunk)
   }
-  def leavingItemFormatting { inItemFormatting = false }
+  def leavingItemFormatting() { inItemFormatting = false }
 
   def addItemToList(listItem: ListItem) {
     //format

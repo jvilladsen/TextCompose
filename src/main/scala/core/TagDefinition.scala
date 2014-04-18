@@ -20,21 +20,20 @@ package writesetter.core
 
 import scala.collection.mutable.ArrayBuffer
 
-class TagDefinition(definitionTag: SourceElement,
-  extensionNamePar: String,
-  lineNumberPar: Int,
-  isMainTag: Boolean) {
+class TagDefinition(
+    definitionTag: SourceElement,
+    val extensionName: String,
+    val lineNumber: Int,
+    isMainTag: Boolean) {
 
   val tagName = if (isMainTag) {
-    """\s""".r.replaceAllIn(extensionNamePar, "") + "#main"
+    """\s""".r.replaceAllIn(extensionName, "") + "#main"
   } else {
     if (definitionTag.NumberOfParameters == 0) throw new TagError("The tags 'def' and 'sub' for defining new tags takes at least one parameter with the name of the new tag.")
     definitionTag.Parameters(0)
   }
   val parameterDescriptions = definitionTag.Parameters.slice(1, definitionTag.NumberOfParameters)
   val numberOfParameters = if (isMainTag) 0 else definitionTag.NumberOfParameters - 1
-  val extensionName = extensionNamePar
-  val lineNumber = lineNumberPar // the line number where the content of the tag starts
 
   class TagDefElement(p: Boolean, i: Int, s: String, n: Boolean) { // plain record type
     val parameter = p
