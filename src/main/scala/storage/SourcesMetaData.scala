@@ -57,7 +57,7 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
     }
   }
 
-  def GetListOfFileNames: List[List[String]] = {
+  def getListOfFileNames: List[List[String]] = {
     val result = new Stack[List[String]]
     for (configuration <- dataSet) {
       val fullFileName = configuration(0)

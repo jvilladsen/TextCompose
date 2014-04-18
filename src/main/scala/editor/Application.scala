@@ -305,7 +305,7 @@ object Application extends SimpleSwingApplication {
       var counter = 0
       object LimitReached extends Exception {}
       try {
-        for (i <- storage.SourcesMetaData.GetListOfFileNames) {
+        for (i <- storage.SourcesMetaData.getListOfFileNames) {
           if (counter == 30) {
             throw LimitReached
           } else {
