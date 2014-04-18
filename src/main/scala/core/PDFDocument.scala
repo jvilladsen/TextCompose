@@ -302,11 +302,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       gState.setFillOpacity(stateStack.top.strokeOpacity / 100f) //FIXME: Add new field called text opacity?
 
       val contentByte = writer.getDirectContent(under)
-      contentByte.saveState
+      contentByte.saveState()
       contentByte.setGState(gState)
 
       ColumnText.showTextAligned(contentByte, stateStack.top.actualJustification, phrase, x, y, a)
-      contentByte.restoreState
+      contentByte.restoreState()
 
       phrase = new Phrase(stateStack.top.actualLineHeight)
       phraseIsEmpty = true
@@ -492,10 +492,10 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 		*/
 
     val contentByte = writer.getDirectContent(under)
-    contentByte.saveState
+    contentByte.saveState()
     contentByte.setGState(gState)
     contentByte.addImage(image)
-    contentByte.restoreState
+    contentByte.restoreState()
 
     if (stateStack.top.imageBorderUse) ic.drawImageBorder(under, opacity)
     EmptyDocument = false
@@ -513,8 +513,8 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       varRegister.save(Arg.VariablesFileName)
     } else {
       bookmarks.insertBookmarksInOutline(writer.getDirectContent(false).getRootOutline)
-      iTextDoc.newPage // This looks wrong, but seems to work :-|
-      iTextDoc.close
+      iTextDoc.newPage() // This looks wrong, but seems to work :-|
+      iTextDoc.close()
 
       varRegister.save(Arg.VariablesFileName)
       CompilationMetaData.setHasContent(writer.getPageNumber - 1)
@@ -568,19 +568,23 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       case _        => throw new TagError("The line-cap tag takes one of the values 'butt', 'round' and 'square'.")
     }
   }
+
   def setLineDash(pattern: ArrayBuffer[Float], phase: Float) {
     stateStack.top.lineDashPattern = pattern
     stateStack.top.lineDashPhase = phase
   }
+
   def drawingMoveTo(x: DecoratedNumber, y: DecoratedNumber) {
     drawingCommandList += new DrawingCommand(this, "move", x, y)
   }
+
   def drawingLineTo(x: DecoratedNumber, y: DecoratedNumber) {
     if (!hasDrawingCommands) {
       throw new TagError("To draw a line, you must use an initial 'move-to' before using 'line-to'.")
     }
     drawingCommandList += new DrawingCommand(this, "line", x, y)
   }
+
   def drawDrawingCommands(
     commandList: ArrayBuffer[DrawingCommand],
     opacity: Float,
@@ -589,13 +593,14 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     lineCap: Int,
     lineColor: BaseColor,
     useDashing: Boolean) {
+
     openFirstTime()
     val gState = new PdfGState
     gState.setBlendMode(stateStack.top.actualBlendMode)
     gState.setStrokeOpacity(opacity / 100f)
 
     val contentByte = writer.getDirectContent(under)
-    contentByte.saveState
+    contentByte.saveState()
     contentByte.setGState(gState)
 
     contentByte.setLineWidth(lineWidth)
@@ -610,10 +615,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
         case "line" => contentByte.lineTo(d.xCoordinate, d.yCoordinate)
       }
     }
-    contentByte.stroke
-    contentByte.restoreState
+    contentByte.stroke()
+    contentByte.restoreState()
     EmptyDocument = false
   }
+
   def drawingDraw(under: Boolean) {
     drawDrawingCommands(
       drawingCommandList,
@@ -631,11 +637,13 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     stateStack.top.listSymbolIndentation = symbolIndent
     stateStack.top.listFormatting = itemFormat
   }
+
   def getListFormat: String = stateStack.top.listFormatting
 
   def beforeEnteringListMode() {
     if (!inListMode) addPhrase()
   }
+
   def initiateList(continue: Boolean) {
     val firstIndex = if (continue && !priorListIndex.isEmpty) priorListIndex.top else 1
     if (!priorListIndex.isEmpty) priorListIndex.pop()
@@ -654,9 +662,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     listStack.top.list.setSymbolIndent(symbolIndent)
     inListMode = true
   }
+
   def newListItem() {
     listStack.top.newItemAwaitingAdd = true
   }
+
   def addPhraseToItem(): ListItem = {
     val listItem = new ListItem(phrase)
     phrase = new Phrase(stateStack.top.actualLineHeight)
@@ -669,9 +679,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     inItemFormatting = true
     itemFormatChunk = new Chunk
   }
+
   def setListSymbol(listItem: ListItem) {
     listItem.setListSymbol(itemFormatChunk)
   }
+
   def leavingItemFormatting() { inItemFormatting = false }
 
   def addItemToList(listItem: ListItem) {
@@ -680,6 +692,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     listStack.top.nextIndex += 1
     listStack.top.newItemAwaitingAdd = false
   }
+
   def addList() {
     if (listStack.length == 1) {
 
