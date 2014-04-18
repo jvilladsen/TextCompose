@@ -173,7 +173,7 @@ object ResourceHandling {
     }
 
     outFile.write("<html><body>\n")
-    add("TextCompose License", "Writesetter.txt", true)
+    add("TextCompose License", "TextCompose.txt", true)
     add("Third Party Software", "Third_part_software.txt", true)
     add("iText License", "iText.txt", false)
     add("Bouncy Castle License", "Bouncy_Castle.txt", false)

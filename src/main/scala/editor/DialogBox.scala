@@ -89,7 +89,7 @@ object DialogBox {
     val d = new modals.ScrollText(
       700, // width
       appTitle + " " + textcompose.startup.Launch.appVersion,
-      "Copyright \u00A9 2013 Jesper S. Villadsen",
+      "Copyright 2014 Jesper S. Villadsen",
       "", // plain text
       ResourceHandling.licenseText,
       editor.Images.textcomposeIcon)

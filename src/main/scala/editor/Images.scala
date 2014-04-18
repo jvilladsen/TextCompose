@@ -53,5 +53,5 @@ object Images {
   val createPdfIcon = getIcon("crystal_32_right2.png")
   val pdfIcon = getIcon("eponasDeeway_32_pdf.png")
 
-  val textcomposeIcon = getIcon("oxygen_writesetter_tiny.png")
+  val textcomposeIcon = getIcon("oxygen_textcompose_tiny.png")
 }
