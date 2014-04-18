@@ -25,13 +25,13 @@ import writesetter.{ editor, storage }
 
 class Extensions {
 
-  var extensionNames = new HashSet[String] // to ensure that we don't try to include the same twice
+  val extensionNames = new HashSet[String] // to ensure that we don't try to include the same twice
 
-  var TagDefinitions = new HashMap[String, TagDefinition] // tag name -> tag definition
+  val TagDefinitions = new HashMap[String, TagDefinition] // tag name -> tag definition
 
-  var errorMessages = new ArrayBuffer[(String, ProcessingUnit)]
+  val errorMessages = new ArrayBuffer[(String, ProcessingUnit)]
 
-  var mainTags = new ArrayBuffer[String]
+  val mainTags = new ArrayBuffer[String]
 
   TagRegister.addBuiltInTags
 
