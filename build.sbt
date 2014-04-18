@@ -1,8 +1,8 @@
 // Assuming use of sbt version 0.13.1 (or later?)
 
-name := "Writesetter"
+name := "TextCompose"
 
-version := "0.7.1"
+version := "0.7.3"
 
 scalaVersion := "2.10.2"
 
@@ -31,20 +31,20 @@ seq(appbundle.settings: _*)
 
 appbundle.name := name.value
 
-appbundle.version := name.value + " " + version.value + " (c) 2013 J S Villadsen"
+appbundle.version := name.value + " " + version.value + " (c) 2014 J.S.Villadsen"
 
 appbundle.javaOptions += "-Xmx1024m"
 
-appbundle.icon := Some(file("src/main/resources/Writesetter.icns"))
+appbundle.icon := Some(file("src/main/resources/TextCompose.icns"))
 
 appbundle.mainClass := Some("writesetter.startup.Launch")
 
 appbundle.documents := Seq(appbundle.Document(
-    "Writesetter source",
+    "TextCompose source",
     role = appbundle.Document.Editor,
     mimeTypes = Seq("text/plain"),
-    extensions = Seq("wr"),
-    icon = Some(file("src/main/resources/Writesetter_doc.icns"))))
+    extensions = Seq("tc"),
+    icon = Some(file("src/main/resources/TextCompose_doc.icns"))))
 
 // one-jar
 
