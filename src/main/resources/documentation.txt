@@ -15,7 +15,7 @@ document will be shown in exactly the same fonts on any other computer. This
 also means that the document file is larger than it would otherwise have been.
 
 If a font cannot be embedded, e.g. due to license restrictions, you can use the
-keyword 'local' for the 'font' tag. Writesetter will then not attempt to embed
+keyword 'local' for the 'font' tag. TextCompose will then not attempt to embed
 the font, for example<br>
 
 &#160;&#160;&lt;font "A Yummy Apology" local&gt;<br>

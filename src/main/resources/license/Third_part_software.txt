@@ -1,4 +1,4 @@
-Third party software used in Writesetter:
+Third party software used in TextCompose:
 iText, http://itextpdf.com
 Bouncy Castle, http://www.bouncycastle.org
 ICEpdf, http://www.icesoft.org/java/projects/ICEpdf
