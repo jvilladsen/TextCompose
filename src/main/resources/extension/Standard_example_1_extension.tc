@@ -112,7 +112,7 @@ The following tag is used in the References extension:
 </sub>
 
 <def bulletList>
-	<format-list 0 90% "<color text HSL 0 0 60><size 18><rise -3><char 8226>">
+	<format-list 0 90% "<color text HSL 0 0 60><size 18><rise -3><char 2022>">
 	<list>
 </def>
 
@@ -122,7 +122,7 @@ The following tag is used in the References extension:
 </def>
 
 <def checkList>
-	<format-list 0 110% "<color text HSL 150 70 33><font Zapfdingbats><char 51>">
+	<format-list 0 110% "<color text HSL 150 70 33><font Zapfdingbats><char 33>">
 	<list>
 </def>
 

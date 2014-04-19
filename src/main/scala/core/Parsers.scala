@@ -30,17 +30,17 @@ object Parsers {
       "glyph",
       "default encoding",
       se => se.NumberOfParameters <= 2 || se.Parameters(2) == "local",
-      "Font name, encoding (optional), Unicode (hexadecimal) and 'local' (optional).",
+      "Font name, encoding (optional), position (hexadecimal) and 'local' (optional).",
       sp => sp.glyphTag)).
     addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
-    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFont).
+    addOptions("position", true, List()).setDependency(Dependency.characterOnFont).
       setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0).
     addSyntax("specify encoding", se => true).
     addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
     addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
       setOptionMapping(FontEncoding.titleToShortId).
-    addOptions("Unicode", true, List()).setDependency(Dependency.characterOnFontAndEncoding).
+    addOptions("position", true, List()).setDependency(Dependency.characterOnFontAndEncoding).
       setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0)
 
@@ -50,7 +50,7 @@ object Parsers {
   }
 
   parser("char") = (new TagParser("char", sp => sp.charTag)).
-    addString("Unicode", true)  // hexadecimal
+    addString("position", true)  // hexadecimal
 
   parser("size") = (new TagParser("size", sp => sp.sizeTag)).
     addDecNum("font size", true, Sign.asDelta, optionalPercentage).noGuiTitle()

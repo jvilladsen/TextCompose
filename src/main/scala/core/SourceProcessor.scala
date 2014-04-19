@@ -211,23 +211,23 @@ class SourceProcessor(
         case "default encoding" => ""
         case "specify encoding" => parser.getNextOption
       }
-    val hexUnicode = parser.getNextOption
+    val hexPosition = parser.getNextOption
     val codePage = FontEncoding.shortIdToCodePage(shortCodePageId)
     val local = parser.getNextFlag
-    val intUnicode = Integer.valueOf(hexUnicode, 16).intValue
+    val intPosition = Integer.valueOf(hexPosition, 16).intValue
 
     document.storeStateToStack()
     DocumentFontRegister.addFont(fontTitle, codePage, !local)
     document.setFont(fontTitle)
-    document.AddText((intUnicode).toChar.toString)
+    document.AddText((intPosition).toChar.toString)
     document.restoreStateFromStack()
   }
 
   def charTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    val hexUnicode = parser.getNextString
-    val intUnicode = Integer.valueOf(hexUnicode, 16).intValue
-    document.AddText((intUnicode).toChar.toString)
+    val hexPosition = parser.getNextString
+    val intPosition = Integer.valueOf(hexPosition, 16).intValue
+    document.AddText((intPosition).toChar.toString)
   }
 
   def sizeTag(parser: TagParser, se: SourceElement) {
