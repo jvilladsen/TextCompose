@@ -30,6 +30,11 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
    * - ResourcesVersion (internal)
    */
 
+  /** Version number of resources. Increase it by one if there are 
+    * changes to resources that are copied out to the file system.
+    */
+  private val currentResourcesVersion = 2
+  
   private var extensionToFileName = new HashMap[String, String]
   private var templateToFileName = new HashMap[String, String]
   private var latestDirectory = new HashMap[String, String]
@@ -42,7 +47,6 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   private var guiTheme = 0
   private var defaultDictionary = "English UK"
   private var previewZoomPercentage = 170
-  private val currentResourcesVersion = 1 // bump this up if changes to resources that are copied out to file system
   private var storedResourcesVersion = 0
   private var isHigherResourcesVersion = false
 
@@ -138,7 +142,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     update(List("ViewAfterCompile", "2"))
     update(List("CharacterEncoding", "UTF-8"))
     update(List("EditorFontName", GUIFonts.getStandardFontName))
-    update(List("GUITheme", "0"))
+    update(List("GUITheme", "1"))
     update(List("DefaultDictionary", "English UK"))
     update(List("PreviewZoomPercentage", "170"))
     update(List("ResourcesVersion", "0"))

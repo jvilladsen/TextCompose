@@ -18,8 +18,6 @@ object Images {
 
   // http://www.iconarchive.com/show/crystal-clear-icons-by-everaldo.1.html	-- CURRENT
   // http://www.iconarchive.com/show/oxygen-icons-by-oxygen-icons.org.html	-- Typewriter icon page 10
-  // http://www.iconarchive.com/show/danish-royalty-free-icons-by-jonas-rask.2.html
-  // http://www.iconarchive.com/show/nuoveXT-2-icons-by-saki.1.html
   // http://www.iconarchive.com/show/colobrush-icons-by-eponas-deeway/software-acrobat-reader-icon.html (the PDF icon)
   // http://findicons.com/icon/67194/gnome_window_close?id=334143
 

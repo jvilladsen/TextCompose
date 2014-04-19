@@ -170,7 +170,6 @@ object ResourceHandling {
     add("Affero GPL License", "AfferoGPL.txt", true)
     add("Apache License", "Apache_2.0.txt", false)
     add("Lesser GPL", "LesserGPL.txt", true)
-    add("Scala", "Scala.txt", true)
     outFile.write("\n</body></html>\n")
     outFile.close
   }

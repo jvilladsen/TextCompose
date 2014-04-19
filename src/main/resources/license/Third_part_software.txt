@@ -1,21 +1,20 @@
-Third party software used in TextCompose:
 iText, http://itextpdf.com
 Bouncy Castle, http://www.bouncycastle.org
 ICEpdf, http://www.icesoft.org/java/projects/ICEpdf
 Jazzy, http://jazzy.sourceforge.net
-Scala, http://www.scala-lang.org
 
-Icons:
-Everaldo / Yellowicon, http://www.everaldo.com
-Oxygen Icons, http://www.oxygen-icons.org
-Gnome, http://www.gnome.org
+ICONS:
+Crystal Icons, Everaldo Coelho, http://www.everaldo.com
+Gianni Polito, http://pgianni.deviantart.com
+GNOME icon artists, http://www.gnome.org
+Oxygen Icons by Oxygen Team, https://github.com/pasnox/oxygen-icons-png
 
-Dictionaries:
-English (UK) Dictionary, Erik Frambach
-English (US) Dictionary, Erik Frambach
-Danish Dictionary, Erik Frambach
-German Dictionary, GNU General Public License v. 2 or later
-French Dictionary, GNU General Public License v. 2 or later
-Portuguese Dictionary, José João Dias de Almeida ?
-Russian Dictionary, Igor A. Kotelnikov
-Spanish Dictionary, Juan L. Varona
+DICTIONARIES:
+English (UK), Erik Frambach
+English (US), Erik Frambach
+Danish, Erik Frambach
+German, Juergen Vierheilig
+French, Peter Laurence
+Portuguese, Jos&#233; Jo&#227;o Dias de Almeida
+Russian, Igor A. Kotelnikov
+Spanish, Juan L. Varona
