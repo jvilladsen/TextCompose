@@ -8,6 +8,9 @@ package textcompose.startup
 
 import javax.swing.UIManager
 import java.util.Calendar
+import textcompose.{ storage, editor }
+import concurrent.ExecutionContext.Implicits.global
+import concurrent._
 
 object Launch {
 
@@ -15,14 +18,34 @@ object Launch {
   val appTitle = p.getImplementationTitle
   val appVersion = p.getImplementationVersion
 
-  def main(args: Array[String]): Unit = {
+  def initializations() {
+    storage.Configurations.initialize()
+    storage.FontCharacters.initialize()
+    storage.StoredFontAnalysis.initialize()
+    storage.SourcesMetaData.initialize()
+    storage.Dictionaries.initialize()
+  }
 
+  def guiRelatedInitializations() {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
     if (textcompose.core.Environment.isMacOSX) {
       SpecialitiesMacOSX.prepare()
     }
+    editor.ResourceHandling.copyDictionaries()
+    editor.ResourceHandling.copyDocuments()
+    future {
+      // Pretend to open the window now to make it faster later.
+      new textcompose.modals.Preferences(true)
+    }
+  }
 
+  def main(args: Array[String]): Unit = {
+
+    initializations()
+    if (args.length == 0) {
+      guiRelatedInitializations()
+    }
     textcompose.editor.CompileOrGUI.switcher(args)
   }
 }

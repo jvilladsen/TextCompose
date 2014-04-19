@@ -6,9 +6,7 @@
 
 package textcompose.editor
 
-import concurrent.ExecutionContext.Implicits.global
-import concurrent._
-import textcompose.{ core, storage }
+import textcompose.core
 
 object CompileOrGUI {
 
@@ -20,12 +18,6 @@ object CompileOrGUI {
 
   def switcher(arguments: Array[String]) {
 
-    storage.Configurations.initialize()
-    storage.FontCharacters.initialize()
-    storage.StoredFontAnalysis.initialize()
-    storage.SourcesMetaData.initialize()
-    storage.Dictionaries.initialize()
-
     if (arguments.length > 0) {
       try {
         calledWithArguments = true
@@ -35,12 +27,6 @@ object CompileOrGUI {
         case e: Exception => println(e.getMessage)
       }
     } else {
-      ResourceHandling.copyDictionaries()
-      ResourceHandling.copyDocuments()
-      future {
-        // Pretend to open the window now to make it faster later.
-        new textcompose.modals.Preferences(true)
-      }
       Application.main(arguments)
     }
   }
