@@ -29,7 +29,7 @@ class TextFile {
     if (fullFileName != "") {
       fullFileName
     } else {
-      core.Environment.getConfigFilePath("untitled " + untitledIndex.toString + ".wr")
+      core.Environment.getConfigFilePath("untitled " + untitledIndex.toString + ".tc")
     }
   }
 
@@ -105,7 +105,7 @@ class TextFile {
     val localName = fileHandle.getName
     val dotList = localName.split('.')
     val dotLength = dotList.length
-    if (dotLength == 1) fullFileName += ".wr"
+    if (dotLength == 1) fullFileName += ".tc"
   }
 
   def updateFromFullName() {

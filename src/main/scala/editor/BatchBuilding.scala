@@ -12,7 +12,7 @@ import core.PreviewType
 
 object BatchBuilding {
 
-  def validSourceName(n: String) = n.endsWith(".wr") && !n.startsWith(".")
+  def validSourceName(n: String) = n.endsWith(".tc") && !n.startsWith(".")
 
   def buildDirectory {
     val openFileChooser = new java.awt.FileDialog(Application.top.peer, "Build for all .wr files in same folder as selected file", FileDialog.LOAD)

@@ -35,7 +35,7 @@ appbundle.version := name.value + " " + version.value + " (c) 2014 J.S.Villadsen
 
 appbundle.javaOptions += "-Xmx1024m"
 
-appbundle.icon := Some(file("src/main/resources/TextCompose.icns"))
+appbundle.icon := Some(file("src/main/resources/graphics/TextCompose.icns"))
 
 appbundle.mainClass := Some("textcompose.startup.Launch")
 
@@ -44,7 +44,7 @@ appbundle.documents := Seq(appbundle.Document(
     role = appbundle.Document.Editor,
     mimeTypes = Seq("text/plain"),
     extensions = Seq("tc"),
-    icon = Some(file("src/main/resources/TextCompose_doc.icns"))))
+    icon = Some(file("src/main/resources/graphics/TextCompose_doc.icns"))))
 
 // one-jar
 
