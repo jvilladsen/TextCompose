@@ -81,7 +81,6 @@ object Parsers {
     addInt("hue", true).
     addInt("saturation", true).
     addInt("lightness", true).addGuiAction(ColorChooser, 1)
-  // FIXME: add some direction flags for the 'border' as scope - consider extending the parser with notion of function to evaluate if a parameter is included or not.
 
   parser("underline") = (new TagParser(
     "underline",

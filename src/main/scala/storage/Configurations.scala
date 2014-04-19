@@ -182,7 +182,6 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     extensionToFileName += extensionName -> fileName
     update(List("Extension", extensionName, fileName))
     store()
-    // Tag dialog for 'include' has combo box with list of extensions.
     core.Parsers.updateInclude()
   }
 
@@ -204,7 +203,6 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
       remove(List("Extension", i, fileName))
     }
     store()
-    // Tag dialog for 'include' has combo box with list of extensions.
     core.Parsers.updateInclude()
   }
 
@@ -233,8 +231,6 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     }
     store()
   }
-
-  // setters
 
   def updateLatestDirectory(directory: String, context: String) {
     latestDirectory += context -> directory

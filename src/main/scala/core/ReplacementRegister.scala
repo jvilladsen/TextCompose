@@ -49,7 +49,7 @@ class ReplacementRegister {
 
     def apply(s: String): String = {
       try {
-        val findMatcher = findPattern.matcher(s) // create the pattern matcher
+        val findMatcher = findPattern.matcher(s)
         findAndReplaceAllMatches(findMatcher)
       } catch {
         case e: Exception => throw new TagError("Replacement failed: " + e.getMessage + ".")

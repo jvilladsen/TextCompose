@@ -9,7 +9,6 @@ package textcompose.core
 import java.io.File
 
 object Environment {
-  // Get some information about the OS and current user
   val operatingSystemName = System.getProperty("os.name")
   val fileSeparator = System.getProperty("file.separator")
   private val userHomeDirectory = System.getProperty("user.home")
@@ -32,11 +31,10 @@ object Environment {
   (new File(documentsDirectory)).mkdir()
 
   def PathIsAbsolute(path: String): Boolean = {
+    // FIXME: do this right
     if (fileSeparator == "/") {
-      // Linux and OS X - root
       path(0) == '/'
     } else {
-      // Windows - some drive
       path(1) == ':'
     }
   }

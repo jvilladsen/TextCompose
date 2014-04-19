@@ -306,7 +306,7 @@ class WorkspaceTabs {
       saveTab(false, false, "")
       val index = getIndexOfSelectedTab
       textFileEditor(index).registerNewExtension()
-      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of extensions menu (hack)
+      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled
     }
   }
 
@@ -316,7 +316,7 @@ class WorkspaceTabs {
     def apply() {
       val index = getIndexOfSelectedTab
       textFileEditor(index).file.unregisterExtension()
-      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled // toggle to trigger an update of extensions menu (hack)
+      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled
     }
   }
 
@@ -327,7 +327,7 @@ class WorkspaceTabs {
       saveTab(false, false, "")
       val index = getIndexOfSelectedTab
       textFileEditor(index).registerNewTemplate()
-      templatesMenuFakeAction.enabled = !templatesMenuFakeAction.enabled // toggle to trigger an update of templates menu (hack)
+      templatesMenuFakeAction.enabled = !templatesMenuFakeAction.enabled
     }
   }
 
@@ -337,7 +337,7 @@ class WorkspaceTabs {
     def apply() {
       val index = getIndexOfSelectedTab
       textFileEditor(index).file.unRegisterTemplate()
-      templatesMenuFakeAction.enabled = !templatesMenuFakeAction.enabled // toggle to trigger an update of templates menu (hack)
+      templatesMenuFakeAction.enabled = !templatesMenuFakeAction.enabled
     }
   }
 
@@ -384,7 +384,6 @@ class WorkspaceTabs {
   }
 
   private def refreshHistoryMenu() {
-    // Toggle to trigger an update of history menu (hack)
     historyMenuFakeAction.enabled = !historyMenuFakeAction.enabled
   }
 

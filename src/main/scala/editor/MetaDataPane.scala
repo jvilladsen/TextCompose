@@ -25,7 +25,7 @@ class MetaDataPane {
 
   def updateErrors() {
     errors.update()
-    metaDataFakeAction.enabled = !metaDataFakeAction.enabled // toggle to trigger showing meta data (hack)
+    metaDataFakeAction.enabled = !metaDataFakeAction.enabled
   }
 
   def updateColors() {

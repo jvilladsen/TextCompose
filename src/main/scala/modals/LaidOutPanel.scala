@@ -15,7 +15,7 @@ import textcompose.{ editor, storage }
 
 class LaidOutPanel(cols: Int, spaced: Boolean) extends GridBagPanel {
 
-  border = Swing.EmptyBorder(20, 20, 20, 20) // top, left, bottom, right
+  border = Swing.EmptyBorder(20, 20, 20, 20)
   background = editor.Colors.modalWindows
 
   var currentFont = storage.GUIFonts.getStandardFont(14)
@@ -34,7 +34,6 @@ class LaidOutPanel(cols: Int, spaced: Boolean) extends GridBagPanel {
     cm.font = currentFont
     val c = new Constraints
     val span = if (flag == "FULL") columns else 1
-    // http://www.scala-lang.org/api/current/scala/swing/GridBagPanel$Constraints.html
     c.gridx = x
     c.gridy = y
     c.gridwidth = span

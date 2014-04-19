@@ -123,7 +123,6 @@ object ColorFunctions {
     }
   }
   
-  // No exceptions
   def hexToIntTriple(hex: String): (Int, Int, Int) = {
     def tryHexToInt(hex: String, offset: Int): Int = try {
       hexToInt(hex, offset)

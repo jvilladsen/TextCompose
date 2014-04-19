@@ -28,10 +28,9 @@ class TagTree {
   jtree.setFocusable(true)
 
   // The tooltips are made with HTML, so no need for additional border (and it has other color).
-  UIManager.put("ToolTip.border", BorderFactory.createCompoundBorder(UIManager.getBorder("ToolTip.border"), BorderFactory.createEmptyBorder(0, 0, 0, 0))) // (-2, -3, -2, -3)
+  UIManager.put("ToolTip.border", BorderFactory.createCompoundBorder(UIManager.getBorder("ToolTip.border"), BorderFactory.createEmptyBorder(0, 0, 0, 0)))
 
   // Icons and colors for the nodes of the tree
-  // See http://download.oracle.com/javase/1.4.2/docs/api/javax/swing/tree/DefaultTreeCellRenderer.html#setBackgroundNonSelectionColor(java.awt.Color)
   class TippedTreeCellRenderer() extends DefaultTreeCellRenderer() {
     override def getTreeCellRendererComponent(tree: JTree, value: Object, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component = {
       setToolTipText(Documentation.get(value.toString))
@@ -45,9 +44,9 @@ class TagTree {
     if (!core.Environment.isLinux) {
       setBackgroundNonSelectionColor(Colors.supportPane)
       setTextNonSelectionColor(Colors.standard)
-      setBorder(Swing.EmptyBorder(2, 5, 2, 5)) // top, left, bottom, right
+      setBorder(Swing.EmptyBorder(2, 5, 2, 5))
     } else {
-      setBorder(Swing.EmptyBorder(2, 7, 2, 5)) // top, left, bottom, right
+      setBorder(Swing.EmptyBorder(2, 7, 2, 5))
     }
     setBorderSelectionColor(Colors.selectionBorder)
     setBackgroundSelectionColor(Colors.selectionBackground)
@@ -55,12 +54,11 @@ class TagTree {
   }
   jtree.setCellRenderer(renderer)
   ToolTipManager.sharedInstance().registerComponent(jtree)
-  ToolTipManager.sharedInstance().setDismissDelay(100000) // FIXME: setting?
+  ToolTipManager.sharedInstance().setDismissDelay(100000)
 
-  private val tree = Component.wrap(jtree) // wrap in Scala component
+  private val tree = Component.wrap(jtree)
   tree.background = Colors.supportPane
 
-  // Hack to signal Enter key to TagPane
   val fakeAction = new Action("<signal to tag pane>") {
     enabled = false
     def apply() { None }
@@ -72,7 +70,7 @@ class TagTree {
       val selection = jtree.getSelectionPath()
       if (selection.getPathCount == 3) {
         selectedOnEnter = selection.getLastPathComponent.toString
-        fakeAction.enabled = !fakeAction.enabled // toggle to trigger an update
+        fakeAction.enabled = !fakeAction.enabled
       }
     }
   }
@@ -95,11 +93,6 @@ class TagTree {
     jtree.expandRow(0)
     jtree.setRootVisible(false)
     jtree.setShowsRootHandles(true)
-    //var basicTreeUI = new BasicTreeUI()
-    //jtree.setUI(basicTreeUI)
-    //basicTreeUI.setRightChildIndent(10)
-    //basicTreeUI.setCollapsedIcon(null)
-    //basicTreeUI.setExpandedIcon(null)
   }
 
   private def addNode(base: DefaultMutableTreeNode, name: String): DefaultMutableTreeNode = {
@@ -128,18 +121,11 @@ class TagTree {
   var folderNode = new HashMap[String, DefaultMutableTreeNode]
   var availableTagName = new HashMap[String, Boolean]
 
-  // Here we should add the included tags in the same way, with one folder for each extension file.
-  // So we need access to Extensions object - maybe there is a timing issue?
-  // We will certainly have to refresh and redraw the tag tree whenever a file is compiled
-  // if the LatestExtensions object may have changed.
-  // See how we clear the contents in TagPane and do the same for scrollPane below.
-
   def isAvailableTag(name: String): Boolean = availableTagName.contains(name)
 
   var scrollPane = new ScrollPane {
     background = Colors.supportPane
-    //border = Swing.MatteBorder(2, 0, 0, 0, Colors.tabsBar)
-    border = Swing.EmptyBorder(2, 5, 0, 0) // top, left, bottom, right
+    border = Swing.EmptyBorder(2, 5, 0, 0)
 
     preferredSize = new Dimension(220, 470)
     minimumSize = new Dimension(170, 300)
@@ -176,8 +162,6 @@ class TagTree {
       for (extensionName <- extensions) {
         val folderName = extensionName.toUpperCase
         var tags = core.LatestExtensions.getListOfTags(extensionName)
-        // The idea is that we could include a file which has sub's and main's only which 
-        // should not appear in the menu, and there is no reason for showing empty folders.
         if (!tags.isEmpty) {
           folderNode += extensionName -> addNode(root, folderName)
           for (tag <- tags) {

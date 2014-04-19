@@ -25,7 +25,7 @@ class TextEditor(fontSize: Int) extends EditorPane {
 
   text = ""
   font = new Font(storage.Configurations.GetEditorFontName, Font.PLAIN, fontSize)
-  border = Swing.EmptyBorder(3, 5, 3, 3) // top, left, bottom, right
+  border = Swing.EmptyBorder(3, 5, 3, 3)
   peer.setSelectionColor(Colors.editorSelection)
   peer.setCaretColor(Colors.standard)
   background = Colors.editorBackground
@@ -85,7 +85,6 @@ class TextEditor(fontSize: Int) extends EditorPane {
 
   def newText(): Boolean = {
     text = ""
-    // Ask user to select a template
     val dialog = new modals.TemplateChooser
     if (dialog.isTemplate) {
       val templateName = dialog.getTemplate
@@ -135,12 +134,9 @@ class TextEditor(fontSize: Int) extends EditorPane {
   private def SetDirtyFlag(dirty: Boolean) {
     if (dirty != fileIsDirty) {
       fileIsDirty = dirty
-      fakeAction.enabled = !fakeAction.enabled // toggle to trigger listener - hack?
+      fakeAction.enabled = !fakeAction.enabled
     }
   }
-
-  // Undo, Redo functionality was shamelessly stolen from:
-  // http://twiki.csc.depauw.edu/projects/scales/browser/EscalatorMMX/src/main/scala/edu/depauw/escalator/InteractionFrame.scala?rev=575
 
   val undo = new UndoManager()
 
@@ -188,9 +184,9 @@ class TextEditor(fontSize: Int) extends EditorPane {
       }
     })
 
-    // FIXME: First small step towards maintaining a list of "points of interest" in a source file 
     def commonUpdate(e: DocumentEvent) {
-      println(e.getOffset, e.getLength, e.getType.toString)
+   	  // FIXME: First small step towards maintaining a list of "points of interest" in a source file 
+      // println(e.getOffset, e.getLength, e.getType.toString)
     }
     document.addDocumentListener(new DocumentListener {
       def changedUpdate(e: DocumentEvent) { commonUpdate(e) }
@@ -215,10 +211,8 @@ class TextEditor(fontSize: Int) extends EditorPane {
       attempt += 1 // If start becomes negative, we should wrap around
       position = 0 // and search from the start of the file.
     }
-    // if (start < 0) start = text.indexOf(toBeFound)	// wrap around
     if (start >= 0) peer.select(start, start + toBeFound.length)
     grabFocus
-    //locationOnScreen.getY
 
     toBeFound
   }
@@ -249,7 +243,6 @@ class TextEditor(fontSize: Int) extends EditorPane {
     toBeFound
   }
 
-  // Just trying to spell...
   def checkSpelling(dictionary: String) = {
 
     if (dictionary == "") {
@@ -275,9 +268,9 @@ class TextEditor(fontSize: Int) extends EditorPane {
       }
       Math.max(position, 0)
     }
-    /* 1. Run though the text with the parser, to exclude tags.
-		 * 2. Ideally we would like to check the words that end up in the document - that includes some parameters!
-		 */
+    /** 1. Run though the text with the parser, to exclude tags.
+      * 2. Ideally we would like to check the words that end up in the document - that includes some parameters.
+      */
     val length = document.getLength
     val initialPosition = getCursorPosition
     var start = if (initialPosition == length) 0 else getBreakPosition(initialPosition, length, -1)

@@ -117,8 +117,6 @@ object Application extends SimpleSwingApplication {
     }
   }
 
-  // top frame //
-
   override val top = new Frame {
 
     title = "TextCompose"
@@ -148,7 +146,6 @@ object Application extends SimpleSwingApplication {
     val saveWithEncodingMenu = new Menu("Save with Encoding")
     for (a <- workspaceTabs.saveWithEncodingAction) { saveWithEncodingMenu.contents += new MenuItem(a) }
 
-    // File menu
     val fileMenu = new Menu("File")
 
     fileMenu.contents += getMenuItem(newFileAction, KeyEvent.VK_N, false)
@@ -187,7 +184,6 @@ object Application extends SimpleSwingApplication {
       fileMenu.contents += getMenuItem(quitAction, KeyEvent.VK_Q, false)
     }
 
-    // Edit menu
     val editMenu = new Menu("Edit")
     editMenu.contents += getMenuItem(workspaceTabs.undoAction, KeyEvent.VK_Z, false)
     editMenu.contents += getMenuItem(workspaceTabs.redoAction, KeyEvent.VK_Y, false)
@@ -200,7 +196,6 @@ object Application extends SimpleSwingApplication {
     editMenu.contents += getMenuItem(workspaceTabs.findNextAction, KeyEvent.VK_K, false)
     editMenu.contents += getMenuItem(workspaceTabs.findPreviousAction, KeyEvent.VK_K, true)
     editMenu.contents += new Separator
-    // Spelling in Edit menu
     val languageMenu = new Menu("Language") {
       for (d <- storage.Dictionaries.getListOfTitles) {
         contents += new MenuItem(workspaceTabs.languageChoiceAction(d))
@@ -223,7 +218,6 @@ object Application extends SimpleSwingApplication {
       })
     }
 
-    // Fonts menu
     val fontsMenu = new Menu("Fonts")
     fontsMenu.contents += getMenuItem(viewFontsAction, KeyEvent.VK_E, false)
     fontsMenu.contents += getMenuItem(viewFontIssuesAction, KeyEvent.VK_E, true)
@@ -232,7 +226,6 @@ object Application extends SimpleSwingApplication {
       storage.StoredFontAnalysis.recalculate()
     })
 
-    // View menu
     val viewMenu = new Menu("View")
     viewMenu.contents += getMenuItem(showHideToolbarAction, KeyEvent.VK_T, false)
     viewMenu.contents += getMenuItem(showHideSidePaneAction, KeyEvent.VK_T, true)
@@ -247,14 +240,12 @@ object Application extends SimpleSwingApplication {
     }
     viewMenu.contents += colorSchemeMenu
 
-    // Document menu
     val pdfMenu = new Menu("Document")
     pdfMenu.contents += getMenuItem(workspaceTabs.buildPDFAction, KeyEvent.VK_B, false)
     pdfMenu.contents += getMenuItem(workspaceTabs.viewPDFAction, KeyEvent.VK_D, false)
     pdfMenu.contents += new Separator
     pdfMenu.contents += getMenuItem(buildInBatchAction, KeyEvent.VK_B, true)
 
-    // Extensions menu
     val extensionsMenu = new Menu("Extensions")
     updateExtensionsMenu()
 
@@ -268,7 +259,6 @@ object Application extends SimpleSwingApplication {
       }
     }
 
-    // Templates menu
     val templatesMenu = new Menu("Templates")
     updateTemplatesMenu()
 
@@ -282,7 +272,6 @@ object Application extends SimpleSwingApplication {
       }
     }
 
-    // History menu
     val historyMenu = new Menu("History")
     updateHistoryMenu()
 
@@ -314,7 +303,6 @@ object Application extends SimpleSwingApplication {
       })
     }
 
-    // Menu bar
     menuBar = new MenuBar
     menuBar.contents += fileMenu
     menuBar.contents += editMenu
@@ -340,7 +328,6 @@ object Application extends SimpleSwingApplication {
       return button
     }
 
-    // Tool bar
     val newButton = getButton(newFileAction, Images.newIcon)
     val openButton = getButton(openFileAction, Images.openIcon)
     val overviewButton = getButton(overviewAction, Images.overviewIcon)
@@ -390,9 +377,6 @@ object Application extends SimpleSwingApplication {
     }
 
     contents = toolBarAndWorkspace
-
-    // layout managers: FlowLayout, BoxLayout, GridLayout, SpringLayout, BorderLayout....?
-    // http://download.oracle.com/javase/tutorial/uiswing/components/panel.html
 
     // Update the extension menu
     val updateExtMenu = new PropertyChangeListener() {

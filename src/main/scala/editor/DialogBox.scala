@@ -57,8 +57,6 @@ object DialogBox {
     }
   }
 
-  // THE REST only in GUI context
-
   def warning(message: String): Boolean = {
     val confirmation = showConfirmation(null, message, appTitle, Options.OkCancel, Message.Question, Images.warningIcon)
     confirmation == Result.Ok

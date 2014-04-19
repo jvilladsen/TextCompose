@@ -882,15 +882,12 @@ class SourceProcessor(
   def applyInjections(beforeAfterPoint: String, pointObject: String, pointNumber: Int) {
     if (document.OpenOrPreOpen && !showingErrorMessage) {
       var injections = document.injectionRegister.getApplicableInjections(beforeAfterPoint, pointObject, pointNumber)
-      // println(beforeAfterPoint + " " + pointObject + " - " + pointNumber.toString + " - " + injections) // DEBUG
       var injectionList = injections.split(' ')
       for (i <- injectionList) {
         if (i != "") {
-          // println("this is i: '"+i+"'") // DEBUG
-          // println("CONTENT=" + document.injectionRegister.GetContent(i.toInt)) // DEBUG
           processingUnit.addInjection("injection " + beforeAfterPoint + " " + pointObject)
           processingUnit.update(document.injectionRegister.getContent(i.toInt))
-          document.noPendingPadding // Is this risky? It solved a problem with padding on injected stuff.
+          document.noPendingPadding
           processSourceLine()
           processingUnit.popElement()
         }
@@ -1204,9 +1201,7 @@ class SourceProcessor(
     } // if wellFormedLine
 
     if (arguments.previewPageNumber == 0 && processingUnit.isAfterCaretPositionInRoot) {
-      // This is a bit primitive since we only make this comparison for each line
-      // and and not for each character or at least each "word" in the source.
       arguments.previewPageNumber = document.GetPageNumber
     }
-  } // end of processSourceLine()
+  }
 }

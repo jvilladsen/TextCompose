@@ -86,8 +86,7 @@ class Extensions {
             definitionType = tagName
             val isMainTag = tagName == "main"
 
-            var td = new TagDefinition(ses.LineElements(0), extensionName, lineNumber + 1, isMainTag)
-            // FIXME (+1 above) : change this when it becomes possible to define a tag on one single line.
+            var td = new TagDefinition(ses.LineElements(0), extensionName, lineNumber + 1, isMainTag) // FIXME line number
             currentTagName = td.tagName
 
             if (isMainTag) mainTags.append(currentTagName)
@@ -97,9 +96,6 @@ class Extensions {
             }
             TagDefinitions += currentTagName -> td
             if (definitionType == "def") {
-              // Neither 'sub' nor 'main' definitions should appear in the tag tree.
-              // This is actually the whole point with 'sub'. The point with 'main' definitions
-              // is that they get directly into the stream, just by extension.
               LatestExtensions.addTag(extensionName, currentTagName, td)
             }
             TagRegister.AddNewTag(currentTagName)
@@ -112,7 +108,6 @@ class Extensions {
               errorMessages.append(("The 'include' tag should have a parameter.", processingUnit))
             }
           }
-          // Note that you are free to write other stuff in the extension to test and document it.
         }
       } // if insideTagDefinition / else
     } // end while

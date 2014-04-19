@@ -114,12 +114,12 @@ class ImageCalculation(
     commandList += new DrawingCommand(doc, "line", (x).toString, (y + 5).toString)
     doc.drawDrawingCommands(
       commandList,
-      100f, // opacity
-      false, // under
+      100f,
+      false,
       1,
       PdfContentByte.LINE_CAP_PROJECTING_SQUARE,
       new BaseColor(0, 0, 0),
-      false) // useDashing
+      false)
   }
 
   private def calculateBorderRotation() {
@@ -132,29 +132,24 @@ class ImageCalculation(
 		 * but by keeping the image tucked inside the 90-degrees cone at the specified position, the
 		 * cone which is a translation of the first quadrant.
 		 */
-    //debug(xPosition, yPosition)
     val r = degressToRadians(rotationNormalizedDeg)
     val rPlus = degressToRadians(rotationNormalizedDeg + 45)
     val rMinus = degressToRadians(rotationNormalizedDeg - 45)
 
     val hyp = if (((rotationDeg / 90f).toInt & 1) == 0) height else width
 
-    val xContact = (xPosition + hyp * sin(r)).toFloat // (xContact, yPosition) is B
-    val yContact = (yPosition + hyp * cos(r)).toFloat // (xPosition, yContact) is D
-    //debug(xContact, yPosition)
-    //debug(xPosition, yContact)
+    val xContact = (xPosition + hyp * sin(r)).toFloat
+    val yContact = (yPosition + hyp * cos(r)).toFloat
 
     val borderDiagonal = sqrt(2) * borderWidth
     val fromBtoC = ((borderDiagonal * cos(rPlus)).toFloat, (borderDiagonal * sin(rPlus)).toFloat) // C will be the x-contact point of the image excluding border
     val fromDtoE = ((borderDiagonal * cos(rMinus)).toFloat, (borderDiagonal * sin(rMinus)).toFloat) // E will be the y-contact point of the image excluding border
 
-    xImagePosition = xPosition + fromDtoE._1 // x coordinate of E
-    yImagePosition = yPosition + fromBtoC._2 // y coordinate of C
-    //debug(xImagePosition, yImagePosition)
+    xImagePosition = xPosition + fromDtoE._1
+    yImagePosition = yPosition + fromBtoC._2
 
-    xBorderPos = (xContact + fromBtoC._1 / 2f).toFloat // wrong
-    yBorderPos = (yPosition + fromBtoC._2 / 2f).toFloat // seems OK
-    //debug(xBorderPos, yBorderPos)
+    xBorderPos = (xContact + fromBtoC._1 / 2f).toFloat
+    yBorderPos = (yPosition + fromBtoC._2 / 2f).toFloat
   }
 
   def getProcessedImage(isRetry: Boolean): Image = {
@@ -167,7 +162,7 @@ class ImageCalculation(
 
     calculateBorderRotation()
 
-    image.setAbsolutePosition(xImagePosition, yImagePosition) // xPosition + borderWidth, yPosition + borderWidth)
+    image.setAbsolutePosition(xImagePosition, yImagePosition)
     image
   }
 

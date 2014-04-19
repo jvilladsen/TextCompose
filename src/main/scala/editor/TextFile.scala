@@ -17,7 +17,7 @@ class TextFile {
 
   var fileIsReadOnly = false
   var fileLatestTimeStamp = 0L
-  var fileLatestUpdated = "" // fileLatestTimeStamp converted to text
+  var fileLatestUpdated = ""
   var fileName = ""
   var encoding = ""
   var dictionary = ""
@@ -36,22 +36,22 @@ class TextFile {
   private val labelFont = storage.GUIFonts.getStandardFont(14)
   private val fileStatusLabel = new Label {
     foreground = Colors.statusLabel
-    border = Swing.EmptyBorder(0, 0, 1, 20) // top, left, bottom, right
+    border = Swing.EmptyBorder(0, 0, 1, 20)
     font = labelFont
   }
   private val fullFileNameLabel = new Label {
     foreground = Colors.fileInfo
-    border = Swing.EmptyBorder(0, 0, 1, 20) // top, left, bottom, right
+    border = Swing.EmptyBorder(0, 0, 1, 20)
     font = labelFont
   }
   private val fileEncodingLabel = new Label {
     foreground = Colors.fileInfo
-    border = Swing.EmptyBorder(0, 0, 1, 20) // top, left, bottom, right
+    border = Swing.EmptyBorder(0, 0, 1, 20)
     font = labelFont
   }
   private val fileLatestUpdatedLabel = new Label {
     foreground = Colors.fileInfo
-    border = Swing.EmptyBorder(0, 0, 1, 0) // top, left, bottom, right
+    border = Swing.EmptyBorder(0, 0, 1, 0)
     font = labelFont
   }
 
@@ -61,7 +61,7 @@ class TextFile {
     contents += fileEncodingLabel
     contents += fileLatestUpdatedLabel
     background = Colors.editorBackground
-    border = Swing.EmptyBorder(2, 10, 0, 0) // top, left, bottom, right
+    border = Swing.EmptyBorder(2, 10, 0, 0)
     minimumSize = new Dimension(12, 14)
   }
 

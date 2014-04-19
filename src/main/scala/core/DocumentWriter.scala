@@ -40,8 +40,8 @@ class DocumentWriter(iTextDoc: Document, arg: Arguments) {
           case "outline"          => PdfWriter.PageModeUseOutlines
           case "thumbnails"       => PdfWriter.PageModeUseThumbs
           case "full screen"      => PdfWriter.PageModeFullScreen
-          case "optional content" => PdfWriter.PageModeUseOC // FIXME: but hey! that is not supported yet.
-          case "attachments"      => PdfWriter.PageModeUseAttachments // FIXME: what is that?
+          case "optional content" => PdfWriter.PageModeUseOC          // FIXME: no supported here
+          case "attachments"      => PdfWriter.PageModeUseAttachments // FIXME: no supported here
           case _ => throw new TagError(
             "Viewer page mode (2. parameter) must be one of: none, outline, thumbs, full screen, optional content, attachments.")
         })) // Mac OS X PDF viewer ignores this. Use Adobe reader.
@@ -77,8 +77,6 @@ class DocumentWriter(iTextDoc: Document, arg: Arguments) {
     val userPwByteArray = userPW.toList.map { c => c.toByte }.toArray[Byte]
     val ownerPwByteArray = ownerPW.toList.map { c => c.toByte }.toArray[Byte]
     try {
-      // 2013.08.11: Using bcprov-jdk15on-149.jar and bcpkix-jdk15on-149.jar
-      // from http://www.bouncycastle.org/latest_releases.html.
       writer.setEncryption(userPwByteArray, ownerPwByteArray, allowingInt, PdfWriter.STANDARD_ENCRYPTION_128)
     } catch {
       case e: DocumentException => throw new TagError("The tag 'encrypt' should be placed before all content. " + e.getMessage)

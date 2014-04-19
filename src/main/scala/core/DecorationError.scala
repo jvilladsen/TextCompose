@@ -8,7 +8,5 @@ package textcompose.core
 
 class DecorationError(message: String) extends Exception(message) {
 
-  // Exceptions thrown in DecoratedNumber and caught in SourceProcessor
-
   def errorMessage(tagName: String) = "Error in parameter for '" + tagName + "' tag: " + getMessage
 }

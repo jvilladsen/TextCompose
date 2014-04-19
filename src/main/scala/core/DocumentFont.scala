@@ -18,13 +18,11 @@ class DocumentFont(
 
   val encoding = if (enc == "") BaseFont.CP1252 else enc
 
-  // Registration, defaults
   var registered = builtIn
   var valid = true
   var errorMessage = ""
   var baseFont: BaseFont = null
 
-  // Font info
   var postscriptName = "" // 6
   var title = "" // 4
   var copyright = "" // 0

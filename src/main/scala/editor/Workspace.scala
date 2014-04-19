@@ -19,7 +19,7 @@ class Workspace(fontSize: Int) {
   tagTree.updateTreeStructure("")
 
   private var leftHandPane = new SplitPane(Orientation.Horizontal, tagTree.scrollPane, tagPane.panel)
-  leftHandPane.border = Swing.EmptyBorder(0, 0, 0, 0) // top, left, bottom, right
+  leftHandPane.border = Swing.EmptyBorder(0, 0, 0, 0)
   leftHandPane.continuousLayout = true
   leftHandPane.oneTouchExpandable = false
   leftHandPane.dividerSize = 2
@@ -52,7 +52,7 @@ class Workspace(fontSize: Int) {
 
   val editorWithMetaDataPane = new SplitPane(Orientation.Horizontal, editorScrollPane, metaData.wrappedTabsPane)
   metaData.wrappedTabsPane.peer.setVisible(false)
-  editorWithMetaDataPane.border = Swing.EmptyBorder(0, 0, 0, 0) // top, left, bottom, right
+  editorWithMetaDataPane.border = Swing.EmptyBorder(0, 0, 0, 0)
   editorWithMetaDataPane.continuousLayout = true
   editorWithMetaDataPane.oneTouchExpandable = false
   editorWithMetaDataPane.dividerSize = 2
@@ -152,14 +152,16 @@ class Workspace(fontSize: Int) {
   }
   tagPane.fakeAction.peer.addPropertyChangeListener(updateEditorFromTagDialog)
 
-  // Why down here?
   tagTree.initiateLayout
 
   def grabFocus { fileEditor.grabFocus }
 
   def buildPDF() {
     fileEditor.buildPDF()
-    tagTree.updateTreeStructure(fileEditor.file.getFileKey) // FIXME: only update if really necessary !!!
+    
+    // FIXME: Would be better to only update if necessary.
+    tagTree.updateTreeStructure(fileEditor.file.getFileKey)
+    
     metaData.updateErrors()
   }
 }

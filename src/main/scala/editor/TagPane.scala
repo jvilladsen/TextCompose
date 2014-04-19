@@ -34,8 +34,7 @@ class TagPane {
   }
 
   private def signalUpdate() {
-    // Workspace listens to changes in this "fake action".
-    fakeAction.enabled = !fakeAction.enabled // toggle to trigger an update of editor (hack)
+    fakeAction.enabled = !fakeAction.enabled
   }
 
   private def clearLayout() { panel.contents.clear() }

@@ -88,12 +88,12 @@ class ColumnFeed(
 
       val status = go()
 
-      // For tables getLinesWritten is zero (and so is getRowsDrawn !) so hacked using getYLine.
+      // For tables, getLinesWritten is zero (and so is getRowsDrawn !) so solved using getYLine.
       if (getLinesWritten == 0 && getYLine == priorYLine) {
         if (columnIsEmpty) {
           /* To avoid the infinite loop adding one page after the next because the content
-					 * in the buffer is too large to fit on the page - typically an image.
-					 */
+		   * in the buffer is too large to fit on the page - typically an image.
+		   */
           if (emptyRounds > 10) {
             throw new TagError("The page size (excluding margin) it too small for adding content to the document.")
           } else {

@@ -470,15 +470,6 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     gState.setBlendMode(stateStack.top.actualBlendMode)
     gState.setFillOpacity(opacity / 100f)
 
-    /*
-		gState.setTextKnockout(false)
-		gState.setOverPrintStroking(false)
-		gState.setOverPrintNonStroking(false)
-		gState.setOverPrintMode(0) // or 1
-		gState.setStrokeOpacity(100)
-		gState.setAlphaIsShape(true)
-		*/
-
     val contentByte = writer.getDirectContent(under)
     contentByte.saveState()
     contentByte.setGState(gState)
@@ -763,11 +754,11 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     }
     cell.setBackgroundColor(stateStack.top.actualCellBckgColor)
     cell.setHorizontalAlignment(stateStack.top.actualCellJustification)
-    // cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_BASELINE)
-    // FIXME: Integrate this into the language. (part of "align cell" perhaps?)
-    // The above does not work well for tables inside tables. JSV, 2012.12.01: Why not?
+    /** cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_BASELINE)
+      * FIXME: Integrate this into the language. (part of "align cell" perhaps?)
+      *        The above does not work well for tables inside tables.
+      */
     cell.setLeading(stateStack.top.actualLineHeight, 0)
-    // FIXME: Consider using LineHeight value if it is a percentage - but first fix error that clone of State is shallow!
   }
 
   def getNewCellColumnNumber: Int = tableStack.top.newCellColumnNumber
@@ -793,7 +784,6 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     tableStack.top.newCellAwaitingAdd = false
   }
 
-  // When the table is complete and ready for being added
   def addTable() {
     if (tableStack.length == 1) {
 
@@ -806,8 +796,6 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       tableStack.pop()
       inTableMode = false
     } else {
-      // Add the current table (top of stack) to a cell, 
-      // which is then added to the previous table on the stack.
       cell = new PdfPCell(tableStack.top.pdfTable)
       initiateCell()
       cell.setPadding(0)
@@ -892,14 +880,12 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
 
   private def setCreator = iTextDoc.addCreator _
 
-  def storeStateToStack() = stateStack.push(stateStack.top.clone) // FIXME: Is this a deep copy?
+  def storeStateToStack() = stateStack.push(stateStack.top.clone)
 
   def restoreStateFromStack() {
     if (stateStack.length == 1) {
       throw new TagError("Attempt to restore state, which has not been stored on the stack. The state is put on the stack with the tag 'store'.")
     }
-    // FIXME: throw TagError if there is content for paragraph - and we try to change properties such as line height...
-
     stateStack.pop()
     if (!inTableMode && !inListMode) addPhrase()
     iTextDoc.setPageSize(stateStack.top.actualOrientedPageRect)

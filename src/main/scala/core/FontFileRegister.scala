@@ -76,7 +76,7 @@ object FontFileRegister {
 
       for (file <- listOfFiles) {
         if (file.isDirectory()) {
-          traverseDirectory(file.getAbsolutePath) // recursion
+          traverseDirectory(file.getAbsolutePath)
         } else {
           addFile(file)
         }

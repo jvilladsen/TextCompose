@@ -22,7 +22,6 @@ object Compiler {
         val encoding = textcompose.storage.SourcesMetaData.getEncoding(arguments.sourceFullFileName, "")
         val source = new SourceFile(arguments.sourceFullFileName, encoding, processingUnit, true)
 
-        //val wordsVectors = new WordVectors
         val document = new PDFDocument(arguments) //, wordsVectors)
         val processor = new SourceProcessor(document, processingUnit, extensions, arguments)
         val EH = new PDFEventHandler(processor)
@@ -30,7 +29,6 @@ object Compiler {
         ImageCache.clear // If you edit an image and then recompile, get the new image.
         CompilationMetaData.init(arguments)
 
-        // The main loop of the compiler
         while (source.readLine) processor.processSourceLine()
         processor.closeDocument()
         CompilationMetaData.end()
