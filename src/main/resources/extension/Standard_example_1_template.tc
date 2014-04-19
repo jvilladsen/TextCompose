@@ -1,56 +1,11 @@
 <template "Standard - Example 1">
 <include "Standard - Example 1">
-<title "My title here" "My name here" "My subject here" "My first word, Second word">
+<title "title here" "name here" "subject here" "first word, second word,...">
 
-<chapter "Introduction">
-Vivamus auctor sapien <i>elementum orci</i> porta vulputate. Sed dignissim felis a tellus pretium, eget adipiscing neque congue. In laoreet id orci non eleifend. Mauris at metus urna. Nunc porttitor, nunc sit amet placerat vehicula, sapien est mollis ipsum, eu dapibus nisl arcu non libero. Morbi ornare bibendum porttitor. Maecenas dolor sem, tincidunt ac porttitor sed, fringilla et orci. Etiam consectetur eros in congue ornare. Etiam sed euismod risus. Suspendisse euismod quis lectus congue consequat. 
+<chapter "chapter here">
 
-Here is a reference <reference Arit>. See how it gets a link (in PDF viewers) to the bibliography.
+<section "section title here">
 
-<chapter "Lorem Ipsum">
-<section "Pellentesque Habitant">
-Pellentesque habitant morbi <b>tristique</b> senectus et netus et malesuada fames ac turpis egestas. Sed accumsan, nisi in commodo volutpat, mi sapien ornare libero, eget imperdiet quam nibh sit amet mi. Sed blandit libero justo, sit amet dapibus velit lacinia ut.
+<subsection "subsection title here">
 
-<section "Cras Fringilla Lacinia">
-Cras fringilla lacinia diam, vitae tincidunt eros blandit vel. Nam mauris arcu, consectetur eu tincidunt vel, rutrum non neque. Donec ut turpis mattis, ornare purus at, cursus nibh. Integer nec nisi eros. Integer laoreet purus augue, ut egestas tortor consequat ut. 
-
-<subsection "Phasellus">
-Phasellus hendrerit augue volutpat arcu porttitor rhoncus. Donec ut elementum purus. Nam vel mollis turpis, fringilla hendrerit sem. Nunc ultrices velit et metus euismod posuere.
-
-<subsection "Consectetur">
-In consectetur blandit est, sit amet vulputate nulla blandit ut. Donec vestibulum, ipsum ac feugiat condimentum, augue urna ullamcorper augue, ac aliquam tortor mi sit amet lorem.
-
-<subsection "In eget porta dolor">
-In eget porta dolor. Integer hendrerit tellus ipsum, ac malesuada leo auctor sit amet. Ut molestie et magna blandit blandit. Nulla vel sagittis ipsum. Duis ullamcorper, risus nec viverra sodales, dolor arcu pretium risus, vitae elementum eros mi eu risus. Ut ante felis, porttitor nec quam sed, ultrices porta lectus. Vivamus vel dui viverra risus rhoncus tristique. Sed quis posuere tellus, pellentesque congue neque. 
-
-<section "Things to play with">
-<subsection "Numbered lists">
-<numberedList>
-<item>Make some examles with other fonts.
-<item>Make a sample "curriculum vitae".
-<item>Make a sample letter.
-<item>Possibly a page header with document title in one side and chapter title in the other side.
-<item>Check out: http://themes.simplethemes.com/presstige/typography
-<item>Make example where the section headers are not enumerated.
-</list>
-
-<subsection "Bullet lists">
-<bulletList>
-<item>Chapters may come with a page break.
-<item>List of content might just have chapters but not sections and sub-sections.
-<item>Possibly a page header with document title in one side and chapter title in the other side.
-</list>
-
-<subsection "Check-mark lists">
-<checkList>
-<item>Make a standard extension with enumeration of chapters, sections and subsections.
-<item>Make some "style extension" on top of the standard extension – using Helvetica and Times.
-<item>There should be enumerted lists, bullet lists, check-mark lists.
-</list>
-
-<appendix "Appendix A: Glossary">
-Abc
-
-<book "Arit" "Aristotle" "The Art of Rhetoric" "Penguin Classics" "1992">
-
-<bibliography "References" 6>
+<appendix "appendix title here">

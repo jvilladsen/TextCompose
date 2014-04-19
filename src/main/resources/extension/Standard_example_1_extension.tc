@@ -1,8 +1,7 @@
 <extension "Standard - Example 1">
 
-This is a "style" extension for the "Standard" structure extension.
-Note how structure extensions contain tag definitions that refer to
-(contain) tags that are defined in style extensions.
+This is a extension with presentation for the "Standard" structure extension.
+Note how structure extensions contain references to presentation-extensions.
 
 <include "Standard">
 <include "References">

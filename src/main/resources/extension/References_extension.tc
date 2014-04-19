@@ -1,5 +1,6 @@
 <extension "References">
 
+<font Courier><size 11>
 This is a structure extension for adding references (bibliography) to your text.
 
 <def reference "Reference">
@@ -30,13 +31,15 @@ This is a structure extension for adding references (bibliography) to your text.
 	</table>
 </def>
 
-Still need to do several things here:
-1. more types of references than "book" such as journal publications, conference proceedings and what not.
-2. separate style from structure.
-
 <main>
 	<var referenceToContent Str Str>
 	<var referenceToSortValue Str Str>
 	<var referenceNumber Int><set referenceNumber>0</set>
 	<var referenceToNumber Str Int converge>
 </main>
+
+To do:
+<list>
+<item>more types of references than "book".
+<item>separate presentation from structure.
+</list>
