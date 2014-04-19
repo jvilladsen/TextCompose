@@ -18,8 +18,11 @@ object SpecialitiesMacOSX {
     com.apple.eawt.Application.getApplication.setOpenFileHandler(
       new OpenFilesHandler {
         def openFiles(e: AppEvent.OpenFilesEvent) {
-          Launch.initializations()
-          Launch.guiRelatedInitializations()
+          if (Launch.doInitialize) {
+            Launch.initializations()
+            Launch.guiRelatedInitializations()
+            Launch.doneInitializing()
+          }
           val files = e.getFiles().asScala
           for (file <- files) {
             val fullFileName = file.getAbsolutePath();
@@ -50,9 +53,9 @@ object SpecialitiesMacOSX {
         }
       })
   }
-  
+
   def prepareQuit(workspaceTabs: textcompose.editor.WorkspaceTabs) {
-    
+
     com.apple.eawt.Application.getApplication.setQuitHandler(
       new QuitHandler {
         def handleQuitRequestWith(e: AppEvent.QuitEvent, response: QuitResponse) {

@@ -18,6 +18,11 @@ object Launch {
   val appTitle = p.getImplementationTitle
   val appVersion = p.getImplementationVersion
 
+  private var isInitialized = false
+
+  def doInitialize: Boolean = !isInitialized
+  def doneInitializing() { isInitialized = true }
+
   def initializations() {
     storage.Configurations.initialize()
     storage.FontCharacters.initialize()
@@ -35,16 +40,19 @@ object Launch {
     editor.ResourceHandling.copyDictionaries()
     editor.ResourceHandling.copyDocuments()
     future {
-      // Pretend to open the window now to make it faster later.
+      /** Pretend to open the window now to make it faster later. */
       new textcompose.modals.Preferences(true)
     }
   }
 
   def main(args: Array[String]): Unit = {
 
-    initializations()
-    if (args.length == 0) {
-      guiRelatedInitializations()
+    if (doInitialize) {
+      initializations()
+      if (args.length == 0) {
+        guiRelatedInitializations()
+      }
+      doneInitializing()
     }
     textcompose.editor.CompileOrGUI.switcher(args)
   }
