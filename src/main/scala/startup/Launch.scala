@@ -14,8 +14,8 @@ import concurrent._
 
 object Launch {
 
+  val appTitle = "TextCompose"
   val p = getClass.getPackage
-  val appTitle = p.getImplementationTitle
   val appVersion = p.getImplementationVersion
 
   def storageInitializations() {
