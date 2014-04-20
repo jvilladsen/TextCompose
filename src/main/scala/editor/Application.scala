@@ -222,7 +222,7 @@ object Application extends SimpleSwingApplication {
     fontsMenu.contents += getMenuItem(viewFontsAction, KeyEvent.VK_E, false)
     fontsMenu.contents += getMenuItem(viewFontIssuesAction, KeyEvent.VK_E, true)
     fontsMenu.contents += new Separator
-    fontsMenu.contents += new MenuItem(Action("Refresh List of Fonts") {
+    fontsMenu.contents += new MenuItem(Action("Update List of Fonts") {
       storage.StoredFontAnalysis.recalculate()
     })
 

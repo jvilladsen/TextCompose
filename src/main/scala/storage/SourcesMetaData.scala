@@ -95,22 +95,22 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 
   def updateFileData(fullFileName: String, fileName: String, encoding: String, dictionary: String) {
     val time = FileMethods.GetTimeStamp(fullFileName)
-    // FIXME: the first time stamp should be creation time!
+    // FIXME: the first time stamp should be creation time.
     val storedCreationTime = getCreationTime(fullFileName)
     val creationTime = if (storedCreationTime == "") time.toString else storedCreationTime
     // FIXME: check that encoding and dictionary are valid.
     update(List(fullFileName, fileName, creationTime, time.toString, encoding, dictionary))
-    store()
+    saveToFile()
   }
 
   def updateCompilationMetaData(fullFileName: String, pageCount: Int, errorCount: Int, builtTime: Long, builtDuration: Long) {
     updateFrom(List(fullFileName), 6, List(pageCount.toString, errorCount.toString, builtTime.toString, builtDuration.toString))
-    store()
+    saveToFile()
   }
 
   def removeFileData(fullFileName: String) {
     remove(List(fullFileName))
-    store()
+    saveToFile()
   }
 
   def renameFileData(originalFileName: String, newFullFileName: String, newFileName: String) {
@@ -120,6 +120,6 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
     } else {
       dataSet(i) = newFullFileName :: newFileName :: dataSet(i).tail.tail
     }
-    store()
+    saveToFile()
   }
 }

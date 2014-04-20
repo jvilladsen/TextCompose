@@ -18,15 +18,8 @@ object SpecialitiesMacOSX {
     com.apple.eawt.Application.getApplication.setOpenFileHandler(
       new OpenFilesHandler {
         def openFiles(e: AppEvent.OpenFilesEvent) {
-          if (Launch.doInitialize) {
-            Launch.initializations()
-            Launch.guiRelatedInitializations()
-            Launch.doneInitializing()
-          }
-          val files = e.getFiles().asScala
-          for (file <- files) {
-            val fullFileName = file.getAbsolutePath();
-            textcompose.editor.CompileOrGUI.handleOpenFile(fullFileName);
+          for (file <- e.getFiles().asScala) {
+            textcompose.editor.CompileOrGUI.handleOpenFile(file.getAbsolutePath())
           }
         }
       })

@@ -39,7 +39,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
   private val fontTitleToShortId = new HashMap[String, String] // Only for fonts that can be installed.
   private val fontTitleToJavaFont = new HashMap[String, java.awt.Font]
 
-  minimumFieldCount = 21
+  minimumFieldCount = 22
 
   override def getKeyLength(configuration: List[String]) = 1
 
@@ -102,7 +102,6 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
             }
             if (updateRequired) {
               updateFrom(List(shortFontId), 20, List(successFullEncodings))
-              store()
             }
           }
         }
@@ -145,10 +144,10 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
       }
     }
-
+    
     addAllNewFonts(recalculation)
-    store()
-    FontCharacters.store() // Built up in parallel.
+    saveToFile()
+    FontCharacters.saveToFile() // Built up in parallel.
     GUIFonts.calculate()
     updateMapsFromDataSet()
   }

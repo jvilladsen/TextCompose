@@ -191,6 +191,6 @@ object ResourceHandling {
     storage.Dictionaries.update(List("Fran\u00E7ais", getFullName("french.dict"), "utf-16"))
     storage.Dictionaries.update(List("Deutsch", getFullName("german.dict"), "utf-16"))
     storage.Dictionaries.update(List("Dansk", getFullName("danish.dict"), "utf-16"))
-    storage.Dictionaries.store()
+    storage.Dictionaries.saveToFile()
   }
 }

@@ -146,14 +146,14 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     update(List("DefaultDictionary", "English UK"))
     update(List("PreviewZoomPercentage", "170"))
     update(List("ResourcesVersion", "0"))
-    store()
+    saveToFile()
   }
 
   private def compareResourcesVersions() {
     isHigherResourcesVersion = currentResourcesVersion > storedResourcesVersion
     if (isHigherResourcesVersion) {
       update(List("ResourcesVersion", currentResourcesVersion.toString))
-      store()
+      saveToFile()
       storedResourcesVersion = currentResourcesVersion
     }
   }
@@ -166,7 +166,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
       extractFromDataSet()
       initialized = true
       if (!errorsDuringInitialization.isEmpty) {
-        store() // Store if there were any errors.
+        saveToFile()
       }
       compareResourcesVersions()
     }
@@ -181,7 +181,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   def registerNewExtension(extensionName: String, fileName: String) {
     extensionToFileName += extensionName -> fileName
     update(List("Extension", extensionName, fileName))
-    store()
+    saveToFile()
     core.Parsers.updateInclude()
   }
 
@@ -202,14 +202,14 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
       extensionToFileName.remove(i)
       remove(List("Extension", i, fileName))
     }
-    store()
+    saveToFile()
     core.Parsers.updateInclude()
   }
 
   def registerNewTemplate(templateName: String, fileName: String) {
     templateToFileName += templateName -> fileName
     update(List("Template", templateName, fileName))
-    store()
+    saveToFile()
   }
 
   def IsKnownTemplate(fileName: String): Boolean = {
@@ -229,13 +229,13 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
       templateToFileName.remove(i)
       remove(List("Template", i, fileName))
     }
-    store()
+    saveToFile()
   }
 
   def updateLatestDirectory(directory: String, context: String) {
     latestDirectory += context -> directory
     update(List("LatestDirectory", context, directory))
-    store()
+    saveToFile()
   }
 
   def setDefaults(tab: Int, save: Boolean, writeErrors: Boolean, preview: Int, encoding: String, editorFont: String,
@@ -258,14 +258,14 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     update(List("EditorFontName", editorFont))
     update(List("DefaultDictionary", dictionary))
     update(List("PreviewZoomPercentage", previewZoom.toString))
-    store()
+    saveToFile()
     if (doUpdateFont) editor.Application.workspaceTabs.updateFontInEditors
   }
 
   def setTheme(theme: Int) {
     guiTheme = theme
     update(List("GUITheme", theme.toString))
-    store()
+    saveToFile()
   }
 
   def isKnownExtensionName(extension: String): Boolean = extensionToFileName.isDefinedAt(extension)

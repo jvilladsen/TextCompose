@@ -18,11 +18,6 @@ object Launch {
   val appTitle = p.getImplementationTitle
   val appVersion = p.getImplementationVersion
 
-  private var isInitialized = false
-
-  def doInitialize: Boolean = !isInitialized
-  def doneInitializing() { isInitialized = true }
-
   def initializations() {
     storage.Configurations.initialize()
     storage.FontCharacters.initialize()
@@ -32,6 +27,7 @@ object Launch {
   }
 
   def guiRelatedInitializations() {
+
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
     if (textcompose.core.Environment.isMacOSX) {
@@ -47,12 +43,9 @@ object Launch {
 
   def main(args: Array[String]): Unit = {
 
-    if (doInitialize) {
-      initializations()
-      if (args.length == 0) {
-        guiRelatedInitializations()
-      }
-      doneInitializing()
+    initializations()
+    if (args.length == 0) {
+      guiRelatedInitializations()
     }
     textcompose.editor.CompileOrGUI.switcher(args)
   }

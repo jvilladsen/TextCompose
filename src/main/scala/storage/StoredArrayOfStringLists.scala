@@ -15,9 +15,6 @@ import textcompose.{ core, editor }
 
 abstract class StoredArrayOfStringLists(fileName: String) {
 
-  /*
-   * Data set that is kept in sync with the file - with Load and Store methods.
-   */
   val dataSet = new ArrayBuffer[List[String]]
 
   val fullFileName = core.Environment.getConfigFilePath(fileName)
@@ -27,31 +24,24 @@ abstract class StoredArrayOfStringLists(fileName: String) {
   var initialized = false
 
   var minimumFieldCount = 0
-  /* This field (if nonzero) is used for extending lists when reading from file.
-   * Reassign if necessary to ensure lower bound on number of fields.
-   * The reason is that trailing tabs are not stored to the file.
-   * If the data set contains a list with trailing empty string,
-   * then they do not get written to the file.
-   */
+  /** This field (if nonzero) is used for extending lists when reading from file.
+    * Reassign if necessary to ensure lower bound on number of fields.
+    * The reason is that trailing tabs are not stored to the file.
+    */
 
-  /*
-   * Does typically not exist first time, so handle that case before loading.
-   */
   def fileExists: Boolean = FileMethods.IsFile(fullFileName)
 
-  def load() = {
+  def load() {
 
-    def ParseAndAddToMap(line: String) {
-      var x = line.trim.split('\t').toList
-      val length = x.length
-      if (length > 1) dataSet += x.padTo(minimumFieldCount, "")
+    def addLine(line: String) {
+      val r = line.trim.split('\t').toList
+      if (r.length > 1) dataSet += r.padTo(minimumFieldCount, "")
     }
 
-    // Try to open (and read) the mapping file.
     try {
-      var src = Source fromFile (fullFileName, fileEncoding)
-      src.getLines.foreach(line => ParseAndAddToMap(line))
-      true
+      val src = Source fromFile (fullFileName, fileEncoding)
+      src.getLines.foreach(line => addLine(line))
+      src.close()
     } catch {
       case e: Exception => {
         editor.DialogBox.stackTrace("Could not read '" + fileName + "': " + e.getMessage, e)
@@ -62,58 +52,34 @@ abstract class StoredArrayOfStringLists(fileName: String) {
   def getKeyLength(stringList: List[String]): Int
 
   def getIndexOf(stringList: List[String]): Int = {
-
-    def SameKey(c1: List[String], c2: List[String], keyLength: Int): Boolean = {
-      val length1 = c1.length
-      val length2 = c2.length
-      if (length1 < keyLength || length2 < keyLength) { return false }
-
-      var sameValues = true
-      var i = 0
-      while (i < keyLength && sameValues) {
-        sameValues = c1(i) == c2(i)
-        i += 1
-      }
-      return sameValues
-    }
-
     val keyLength = getKeyLength(stringList)
-    var matchingIndex = -1
-    var index = 0
-    for (c <- dataSet) {
-      if (SameKey(c, stringList, keyLength)) { matchingIndex = index }
-      index += 1
-    }
-    return matchingIndex
+    val lookupKey = stringList.slice(0, keyLength)
+    dataSet.indexWhere(_.startsWith(lookupKey))
   }
 
   def update(stringList: List[String]) {
-    // Adds the stringList if it is not found.
-    val matchingIndex = getIndexOf(stringList)
-    if (matchingIndex > -1) {
-      dataSet(matchingIndex) = dataSet(matchingIndex).patch(0, stringList, stringList.length)
-    } else {
+    val index = getIndexOf(stringList)
+    if (index < 0) {
       dataSet += stringList.padTo(minimumFieldCount, "")
+    } else {
+      dataSet(index) = dataSet(index).patch(0, stringList, stringList.length)
     }
   }
 
   def updateFrom(keyList: List[String], offset: Int, stringList: List[String]) {
-    // Patches stringList into data set
-    val matchingIndex = getIndexOf(keyList)
-    if (matchingIndex > -1) {
-      dataSet(matchingIndex) = dataSet(matchingIndex).
+    val index = getIndexOf(keyList)
+    if (index >= 0) {
+      dataSet(index) = dataSet(index).
         patch(offset, stringList, stringList.length)
     }
   }
 
   def remove(key: List[String]) {
-    val matchingIndex = getIndexOf(key)
-    if (matchingIndex > -1) {
-      dataSet.remove(matchingIndex)
-    }
+    val index = getIndexOf(key)
+    if (index >= 0) dataSet.remove(index)
   }
 
-  def store() {
+  def saveToFile() {
 
     def asString(stringList: List[String]): String =
       stringList.mkString("", "\t", "\n")
@@ -122,10 +88,10 @@ abstract class StoredArrayOfStringLists(fileName: String) {
       val outputStream = new FileOutputStream(fullFileName)
       val outFile = new OutputStreamWriter(outputStream, fileEncoding)
       dataSet.foreach(stringList => outFile.write(asString(stringList)))
-      outFile.close
+      outFile.close()
     } catch {
       case e: Exception => editor.DialogBox.stackTrace(
-          "Could not write to \"" + fullFileName + "\": " + e.getMessage, e)
+        "Could not write to \"" + fullFileName + "\": " + e.getMessage, e)
     }
   }
 }
