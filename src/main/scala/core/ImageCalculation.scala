@@ -93,16 +93,16 @@ class ImageCalculation(
         case "center" => (leftIndented + rightIndented - widthRotated) / 2f
         case "right"  => rightIndented - widthRotated
       }
-      val yAdjustment = (state.spaceBeforeParagraph.getValueOrPercentageOfNumber(state.fontSize)
-        + state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)) / 2f
+      val ySpaceBefore = state.spaceBeforeParagraph.getValueOrPercentageOfNumber(state.fontSize)
+      val ySpaceAfter  = state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)
       // FIXME: Should ignore paragraph space above image, if it is the first content to be added to page.
 
-      yPosition = doc.currentColumn.getYLine - heightRotated - yAdjustment // FIXME: Consider explicit adjustment.
+      yPosition = doc.currentColumn.getYLine - heightRotated - ySpaceBefore
       val postYLine = doc.currentColumn.getYLine - heightRotated
       if (postYLine < bottom) {
         throw new NoSpaceForImageException("Image does not fit on page")
       }
-      doc.currentColumn.setYLine(postYLine)
+      doc.currentColumn.setYLine(postYLine - ySpaceAfter)
     }
   }
 

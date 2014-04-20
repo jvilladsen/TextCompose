@@ -370,7 +370,7 @@ class SourceProcessor(
     val under = parser.getNextFlag("under")
     var xPosDN: DecoratedNumber = null
     var yPosDN: DecoratedNumber = null
-    val usePosition = parser.getFormalName == "x-position" // FIXME: this technique is a hack.
+    val usePosition = parser.getFormalName == "x-position"
     if (usePosition) {
       xPosDN = parser.getNextDecNum
       if (parser.getFormalName != "y-position") {
