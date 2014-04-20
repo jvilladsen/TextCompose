@@ -119,7 +119,7 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
     case KeyPressed(`pane`, Escape, _, _) => { close; dispose }
   }
 
-  title = "TextCompose, Font info on " + fontTitle
+  title = textcompose.startup.Launch.appTitle + ", Font info on " + fontTitle
   modal = true
   resizable = false
   preferredSize = new Dimension(1050, 700)

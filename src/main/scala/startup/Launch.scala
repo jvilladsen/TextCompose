@@ -18,7 +18,7 @@ object Launch {
   val appTitle = p.getImplementationTitle
   val appVersion = p.getImplementationVersion
 
-  def initializations() {
+  def storageInitializations() {
     storage.Configurations.initialize()
     storage.FontCharacters.initialize()
     storage.StoredFontAnalysis.initialize()
@@ -43,10 +43,8 @@ object Launch {
 
   def main(args: Array[String]): Unit = {
 
-    initializations()
-    if (args.length == 0) {
-      guiRelatedInitializations()
-    }
+    storageInitializations()
+    if (args.length == 0) guiRelatedInitializations()
     textcompose.editor.CompileOrGUI.switcher(args)
   }
 }

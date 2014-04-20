@@ -17,7 +17,9 @@ class ExternalArguments(arguments: Array[String]) {
       if (x == "-v") {
         openPDFViewer = PreviewType.Yes
       } else if (x == "-h") {
-        throw new IllegalArgumentException("TextCompose [OPTIONS] FILENAME\nOptions:\n-v\tOpen PDF viewer")
+        val appTitle = textcompose.startup.Launch.appTitle
+        throw new IllegalArgumentException(appTitle +
+          " [OPTIONS] FILENAME\nOptions:\n-v\tOpen PDF viewer")
       } else {
         if (providedSourceName ne "") {
           throw new IllegalArgumentException("You can only specify one file or folder")

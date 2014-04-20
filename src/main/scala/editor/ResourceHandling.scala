@@ -87,11 +87,11 @@ object ResourceHandling {
     // Structure extensions
     addExtension("Standard_extension.wr", "Standard")
     addExtension("References_extension.wr", "References")
-    // Style extensions
+    // Presentation extensions
     addExtension("Standard_example_1_extension.wr", "Standard - Example 1")
     addExtension("Standard_example_2_extension.wr", "Standard - Example 2")
     addExtension("Typographical_Replacements_extension.wr", "Typographical Replacements")
-    // Templates (or samples)
+    // Templates
     addTemplate("Standard_example_1_template.wr", "Standard - Example 1")
     addTemplate("Standard_example_2_template.wr", "Standard - Example 2")
   }
@@ -126,9 +126,9 @@ object ResourceHandling {
   }
 
   private def getLicenseText(fileName: String): String = {
-    /* The reason for the low-level implementation below is that
-     * we are reading a "resource" (file inside a jar file).
-	 */
+    /** The reason for the low-level implementation below is that
+      * we are reading a resource from inside a jar file.
+      */
     val streamIn = getResourceStream("license/" + fileName)
     var text = ""
     var b = 0
@@ -178,11 +178,10 @@ object ResourceHandling {
     if (storage.Configurations.doUpdateResourcesNow) {
       updateLicenseInfo()
     }
-    // Dictionaries were found here: http://www.winedt.org/Dict/
-    // "Built-in" dictionaries.
-    
+    /** Dictionaries found here: http://www.winedt.org/Dict/ */
+
     // FIXME: The following should take place in copyDictionaries:
-    
+
     storage.Dictionaries.update(List("English UK", getFullName("english_uk.dict"), "utf-8")) // default default
     storage.Dictionaries.update(List("English US", getFullName("english_us.dict"), "utf-8"))
     storage.Dictionaries.update(List("Espa\u00F1ol", getFullName("spanish.dict"), "utf-16"))

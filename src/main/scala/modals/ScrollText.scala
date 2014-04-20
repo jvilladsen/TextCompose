@@ -60,7 +60,7 @@ class ScrollText(
     case KeyPressed(`editorPane`, Escape, _, _) => { close; dispose }
   }
 
-  title = "TextCompose"
+  title = textcompose.startup.Launch.appTitle
   modal = true
   resizable = false
   preferredSize = new Dimension(width, 700)

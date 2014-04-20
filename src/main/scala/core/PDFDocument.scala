@@ -140,7 +140,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       iTextDoc.open
       notYetOpened = false
       try {
-        setCreator("TextCompose")
+        setCreator(textcompose.startup.Launch.appTitle)
       } catch {
         case e: Exception => throw new TagError(e.getMessage)
       }

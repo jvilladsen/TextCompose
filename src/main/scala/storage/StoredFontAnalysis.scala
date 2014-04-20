@@ -56,9 +56,9 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     def getFontProperties(shortFontId: String) = {
 
       def registerFont(embed: Boolean) = {
-        
+
         val font = new core.DocumentFont(shortFontId, false, embed, "")
-        
+
         font.register(false) // without caching
         font.updateAttributes()
         (font.valid, font.errorMessage, font.getFontInfo)
@@ -144,7 +144,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         if (hasJavaFont) fontTitleToJavaFont(fontTitle) = javaFont
       }
     }
-    
+
     addAllNewFonts(recalculation)
     saveToFile()
     FontCharacters.saveToFile() // Built up in parallel.
@@ -167,8 +167,9 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
       load()
       prune()
     } else {
-      editor.DialogBox.info("Since it is the first time you run TextCompose here,\n" +
-        "your fonts will be analyzed. This can take a minute.")
+      val appTitle = textcompose.startup.Launch.appTitle
+      editor.DialogBox.info("Since it is the first time you run " + appTitle +
+        " here,\nyour fonts will be analyzed. This can take a minute.")
     }
     updateStorage(false)
   }

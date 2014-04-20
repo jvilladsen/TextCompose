@@ -12,20 +12,23 @@ object Environment {
   val operatingSystemName = System.getProperty("os.name")
   val fileSeparator = System.getProperty("file.separator")
   private val userHomeDirectory = System.getProperty("user.home")
+  private val osName = operatingSystemName.toUpperCase()
 
-  val isMacOSX = operatingSystemName.toUpperCase() == "MAC OS X"
-  val isLinux = operatingSystemName.toUpperCase() == "LINUX"
-  val isWindows = operatingSystemName.toUpperCase().startsWith("WINDOWS")
+  val isMacOSX = osName == "MAC OS X"
+  val isLinux = osName == "LINUX"
+  val isWindows = osName.startsWith("WINDOWS")
 
+  val appTitle = textcompose.startup.Launch.appTitle
+  
   private val configurationsDirectory =
     if (isWindows) {
-      userHomeDirectory + fileSeparator + "AppData\\TextCompose"
+      userHomeDirectory + fileSeparator + "AppData\\" + appTitle
     } else {
-      userHomeDirectory + fileSeparator + ".TextCompose"
+      userHomeDirectory + fileSeparator + "." + appTitle
     }
 
   private val documentsDirectory =
-    userHomeDirectory + fileSeparator + "TextCompose"
+    userHomeDirectory + fileSeparator + appTitle
 
   (new File(configurationsDirectory)).mkdir()
   (new File(documentsDirectory)).mkdir()

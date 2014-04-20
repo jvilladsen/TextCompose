@@ -133,7 +133,7 @@ class Preferences(pretend: Boolean) extends Dialog {
     case KeyPressed(`panel`, Escape, _, _) => cancelAction.apply()
   }
 
-  title = "TextCompose Preferences"
+  title = textcompose.startup.Launch.appTitle + " Preferences"
   modal = true
   resizable = false
   preferredSize = new Dimension(550, 400)

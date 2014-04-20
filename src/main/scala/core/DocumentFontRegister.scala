@@ -51,6 +51,8 @@ object DocumentFontRegister {
       font
     }
 
+    val appTitle = textcompose.startup.Launch.appTitle
+    
     if (storage.StoredFontAnalysis.hadFontTitle(fontTitle)) {
       val shortFontId = storage.StoredFontAnalysis.getShortFontId(fontTitle)
       val key = getKey(shortFontId, encoding)
@@ -77,14 +79,13 @@ object DocumentFontRegister {
           }
         } else {
           throw new TagError("Unknown font '" + shortFontId +
-            "'. The font has previously been found by TextCompose, but now the file does" +
-            " not exist, in any of the folders/directories listed in the settings of TextCompose.")
+            "'. The font has previously been found by " + appTitle + " but can no longer be found.")
         }
       }
     } else {
       val message = "Unknown font '" + fontTitle + "'." +
         " This font is either not installed, or the font-file is placed in another folder/directory" +
-        " than the ones listed in the settings of TextCompose. If the font has just be installed," +
+        " than the ones listed in the settings of " + appTitle + ". If the font has just be installed," +
         " try the 'Update' item in the 'Fonts' menu."
       throw new TagError(message)
     }

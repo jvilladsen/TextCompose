@@ -12,10 +12,6 @@ import swing.Component
 import java.io.{ StringWriter, PrintWriter }
 import textcompose.{ editor, modals }
 
-// http://www.scala-lang.org/api/current/scala/swing/Dialog$.html
-
-// http://msdn.microsoft.com/en-us/library/aa511277.aspx
-
 object DialogBox {
 
   val appTitle = textcompose.startup.Launch.appTitle

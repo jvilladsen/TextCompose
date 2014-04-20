@@ -119,7 +119,7 @@ object Application extends SimpleSwingApplication {
 
   override val top = new Frame {
 
-    title = "TextCompose"
+    title = textcompose.startup.Launch.appTitle
 
     var showToolbar = true
     val showHideToolbarAction = new Action("Show/Hide Toolbar") {
