@@ -42,7 +42,7 @@ case class FormalString(
   var default = ""
 
   override def toString = wrap(name + ": string")
-  override def setDefaultValue(d: String) { default = d }
+  def setDefaultValue(d: String) { default = d }
 }
 
 case class FormalInt(
@@ -51,7 +51,7 @@ case class FormalInt(
   var default = 0
 
   override def toString = wrap(name + ": int")
-  override def setDefaultValue(d: String) { default = d.toInt }
+  def setDefaultValue(d: String) { default = d.toInt }
 }
 
 case class FormalFloat(
@@ -60,14 +60,16 @@ case class FormalFloat(
   var default = 0f
   
   override def toString = wrap(name + ": float")
-  override def setDefaultValue(d: String) { default = d.toFloat }
+  def setDefaultValue(d: String) { default = d.toFloat }
 }
 
 case class FormalDecNum(
   val name: String,
   val mandatory: Boolean,
   val sign: Sign.Value,
+  val integer: Boolean,
   val decor: List[String]) extends FormalParameter(name, mandatory) {
+  
   var default = new DecoratedNumber(name)
 
   def decoration = format(decor)
@@ -92,7 +94,7 @@ case class FormalDecNum(
     if (decor.size == 1) wrap(name + ": float decorated with " + decoration)
     else wrap(name + ": float decorated with one of " + decoration)
   
-  override def setDefaultValue(d: String) { default.parse(d) }
+  def setDefaultValue(d: String) { default.parse(d) }
 }
 
 case class FormalOptions(
@@ -113,14 +115,14 @@ case class FormalOptions(
   override def toString =
     if (hasDependency) wrap(name + ": <depends on other parameters>") 
     else wrap(name + ": one of: " + formattedOptions(options)) 
-  override def setDefaultValue(d: String) { default = d }
+  def setDefaultValue(d: String) { default = d }
 }
 
 case class FormalFlag(
   val name: String) extends FormalParameter(name, false) {
 
   override def toString = "[keyword '" + name + "']"
-  override def setDefaultValue(d: String) { throw new Exception("No default for flag type") }
+  def setDefaultValue(d: String) { throw new Exception("No default for flag type") }
 }
 
 case class FormalFlags(
@@ -144,5 +146,5 @@ case class FormalFlags(
   } else {
     "[" + name + ": zero, one, or more of: " + formattedFlags + ", without space inbetween]"
   }
-  override def setDefaultValue(d: String) { throw new Exception("No default for flags type") }
+  def setDefaultValue(d: String) { throw new Exception("No default for flags type") }
 }

@@ -101,22 +101,22 @@ abstract class StoredArrayOfStringLists(fileName: String) {
     // Patches stringList into data set
     val matchingIndex = getIndexOf(keyList)
     if (matchingIndex > -1) {
-      dataSet(matchingIndex) = dataSet(matchingIndex).patch(offset, stringList, stringList.length)
+      dataSet(matchingIndex) = dataSet(matchingIndex).
+        patch(offset, stringList, stringList.length)
     }
   }
 
-  def remove(stringList: List[String]) {
-    val matchingIndex = getIndexOf(stringList)
+  def remove(key: List[String]) {
+    val matchingIndex = getIndexOf(key)
     if (matchingIndex > -1) {
       dataSet.remove(matchingIndex)
     }
   }
 
-  def clear() { dataSet.clear() }
-
   def store() {
 
-    def asString(stringList: List[String]): String = stringList.mkString("", "\t", "\n")
+    def asString(stringList: List[String]): String =
+      stringList.mkString("", "\t", "\n")
 
     try {
       val outputStream = new FileOutputStream(fullFileName)
@@ -124,7 +124,8 @@ abstract class StoredArrayOfStringLists(fileName: String) {
       dataSet.foreach(stringList => outFile.write(asString(stringList)))
       outFile.close
     } catch {
-      case e: Exception => editor.DialogBox.stackTrace("Could not write to \"" + fullFileName + "\": " + e.getMessage, e)
+      case e: Exception => editor.DialogBox.stackTrace(
+          "Could not write to \"" + fullFileName + "\": " + e.getMessage, e)
     }
   }
 }

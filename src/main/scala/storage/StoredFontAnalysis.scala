@@ -155,7 +155,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
   def initialize() {
 
-    def prune {
+    def prune() {
       for (configuration <- dataSet) {
         val shortFontId = configuration(0)
         if (!core.FontFileRegister.exists(shortFontId)) {
@@ -166,9 +166,9 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
     if (fileExists) {
       load()
-      prune
+      prune()
     } else {
-      editor.DialogBox.info("Since it is the first time you run TextCompose on this installation,\n" +
+      editor.DialogBox.info("Since it is the first time you run TextCompose here,\n" +
         "your fonts will be analyzed. This can take a minute.")
     }
     updateStorage(false)

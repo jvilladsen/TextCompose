@@ -97,7 +97,16 @@ class TagParser(
     mandatory: Boolean,
     sign: Sign.Value,
     decor: List[String]) = {
-    formalParameters += FormalDecNum(name, mandatory, sign, decor)
+    formalParameters += FormalDecNum(name, mandatory, sign, false, decor)
+    this
+  }
+
+  def addDecInt(
+    name: String,
+    mandatory: Boolean,
+    sign: Sign.Value,
+    decor: List[String]) = {
+    formalParameters += FormalDecNum(name, mandatory, sign, true, decor)
     this
   }
 
@@ -260,7 +269,7 @@ class TagParser(
               }
             }
           }
-          case p: FormalDecNum => { // FIXME: maybe this block should be a method on FormalDecNum???
+          case p: FormalDecNum => {
             try {
               val d = new DecoratedNumber(p.name)
               if (p.sign == Sign.asDelta) d.doInterpretSignAsDelta()
@@ -270,12 +279,9 @@ class TagParser(
               }
               if (!p.decor.contains(d.decoration)) {
                 if (p.mandatory) {
-                  // So if we have found a decorated number, but the decoration is not as expected
-                  // then we go to the next element in the syntax if the element is not mandatory.
                   throw new TagError("The mandatory parameter '" + p.name +
                     "' for the '" + tagName + "' " + p.requiredDecoration + ".")
                 }
-                // Nice: if the decor does not match and its not mandatory we just leap over it.
               } else {
                 actualParameters += ActualDecNum(formalName, d); index += 1
               }
@@ -474,7 +480,6 @@ class TagParser(
   def buildGUI(fields: ArrayBuffer[ParameterType], forcedSyntax: Int) {
 
     def isOptionalPercentage(op: List[String]) = op.length == 2 && op(0) == "" && op(1) == "%"
-    def isForcedPercentage(op: List[String]) = op.length == 1 && op(0) == "%"
 
     var actualParIndex = 0
     val syntax = if (forcedSyntax == -1) {
@@ -522,24 +527,30 @@ class TagParser(
         case p: FormalFloat => {
           val ft = new NumberType(tagName, title)
           actualPar match {
-            case a: ActualFloat =>
-              ft.set(a.f); actualParIndex += 1
+            case a: ActualFloat => ft.set(a.f); actualParIndex += 1
             case _              => ft.set(p.default)
           }
-          ft.setDefaultValue(p.default) //FIXME: extend setting default value to other types as necessary
-          if (!p.isMandatory) ft.setNotMandatory() //FIXME: extend setting not mandatory to other types as necessary
+          ft.setDefaultValue(p.default)
+          if (!p.isMandatory) ft.setNotMandatory()
           fields.append(ft)
         }
         case p: FormalDecNum => {
           val allowDelta = p.sign == Sign.asDelta
-          val percentageOption = isOptionalPercentage(p.decor)
-          val forcedPercentage = isForcedPercentage(p.decor)
-          val dnt = new NumberType(tagName, title, allowDelta, false, p.decor, percentageOption, forcedPercentage)
+          val dnt = new NumberType(tagName, title, allowDelta, p.integer, p.decor)
           actualPar match {
-            case p: ActualDecNum =>
-              dnt.set(p.dn); actualParIndex += 1
+            case act: ActualDecNum => {
+              /** To handle cell tag, but could make sense more generally */
+              if (p.mandatory || p.decor.contains(act.dn.decoration)) {
+                dnt.set(act.dn)
+                actualParIndex += 1
+              } else {
+                dnt.set(p.default)
+              }
+            }
             case _               => dnt.set(p.default)
           }
+          dnt.setDefaultValue(p.default)
+          if (!p.isMandatory) dnt.setNotMandatory()
           fields.append(dnt)
         }
         case p: FormalOptions => {

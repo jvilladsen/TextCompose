@@ -312,8 +312,8 @@ object Parsers {
     addString("relative column widths", true)
 
   parser("cell") = (new TagParser("cell", sp => sp.cellTag)).
-    addDecNum("column span", false, Sign.disallow, List("C")).
-    addDecNum("row span", false, Sign.disallow, List("R"))
+    addDecInt("column span", false, Sign.disallow, List("C")).setDefaultValue("1").
+    addDecInt("row span", false, Sign.disallow, List("R")).setDefaultValue("1")
 
   parser("/table") = (new TagParser("/table", sp => sp.tableEndTag))
   

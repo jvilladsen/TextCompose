@@ -27,24 +27,19 @@ class NumberType(
   label: String,
   allowDelta: Boolean, // Only for the size tag! +5% != 5% (one adds 5% to font size, the other sets it to 5% of the current font size)
   integer: Boolean,
-  decor: List[String],
-  percentageOption: Boolean,
-  forcedPercentage: Boolean) extends ParameterType {
+  decor: List[String]) extends ParameterType {
 
-  /*
-   * forcedPercentage : use this for numbers that are always a percentage (so not an option in the dialog)
-   * 					  and decorated with a percentage sign in the source code.
-   * 					  Example: opacity in image tag. 
-   */
+  val percentageOption = decor.length == 2 && decor(0) == "" && decor(1) == "%"
+  val hasFixedDecoration = decor.length == 1
 
   def this(tagName: String, label: String) = {
-    this(tagName, label, false, false, List(), false, false)
+    this(tagName, label, false, false, List())
   }
   def this(tagName: String, label: String, integer: Boolean) = {
-    this(tagName, label, false, integer, List(), false, false)
+    this(tagName, label, false, integer, List())
   }
   def this(tagName: String, label: String, decor: List[String]) = {
-    this(tagName, label, false, false, decor, false, false)
+    this(tagName, label, false, false, decor)
   }
 
   private val labelLabel = new Label {
@@ -68,7 +63,7 @@ class NumberType(
 
   private var defaultValue = 0f
 
-  val useDecor = !decor.isEmpty && !percentageOption && !forcedPercentage
+  val useDecor = !decor.isEmpty && !percentageOption && !hasFixedDecoration
   var columns = 1
   if (label != "") { columns += 1 }
   if (allowDelta) { columns += 1 }
@@ -147,14 +142,7 @@ class NumberType(
 
   def getUnwrapped: String = {
     
-    def valueMadeEasy = {
-      /*
-       * If the type is "integer" this is the value before the decimal point.
-       * Float's tend to get shown with a ".0" at the end. This is fine, since
-       * you get information about the possibility to enter a decimal number.
-       * However, in case you enter no decimals, it is most convenient to remove
-       * the trailing ".0".
-       */
+    def getValue = {
       if (integer) {
         val point = valueField.text.indexOf('.')
         if (point < 0) {
@@ -170,12 +158,11 @@ class NumberType(
     }
 
     if (mandatory || !isEmptyOrDefault(valueField.text)) {
-      val percentageSign = if (forcedPercentage || (percentageOption && percentageField.selected)) "%" else ""
+      val fixedDecoration = if (hasFixedDecoration || (percentageOption && percentageField.selected)) decor.last else ""
       if (allowDelta) {
-        print(deltaField.Get, valueMadeEasy, decoration.Get, percentageSign, postFix)
-        deltaField.Get + valueMadeEasy + decoration.Get + percentageSign + postFix
+        deltaField.Get + getValue + decoration.Get + fixedDecoration + postFix
       } else {
-        valueMadeEasy + decoration.Get + percentageSign + postFix
+        getValue + decoration.Get + fixedDecoration + postFix
       }
     } else {
       ""
@@ -184,6 +171,7 @@ class NumberType(
 
   def Get: String = getUnwrapped
 
-
   def setDefaultValue(v: Float) { defaultValue = v }
+  
+  def setDefaultValue(dn: DecoratedNumber) { defaultValue = dn.value }
 }
