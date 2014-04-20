@@ -8,30 +8,30 @@ package textcompose.core
 
 object DirectionFunctions {
 
-  var Left = true
-  var Right = true
-  var Top = true
-  var Bottom = true
+  var left = true
+  var right = true
+  var top = true
+  var bottom = true
 
-  def Initialize {
-    Left = true
-    Right = true
-    Top = true
-    Bottom = true
+  def initialize() {
+    left = true
+    right = true
+    top = true
+    bottom = true
   }
 
-  def Parse(s: String) {
-    Left = false
-    Right = false
-    Top = false
-    Bottom = false
+  def apply(s: String) {
+    left = false
+    right = false
+    top = false
+    bottom = false
 
     for (C <- s) {
       C match {
-        case 'L' => Left = true
-        case 'R' => Right = true
-        case 'T' => Top = true
-        case 'B' => Bottom = true
+        case 'L' => left = true
+        case 'R' => right = true
+        case 'T' => top = true
+        case 'B' => bottom = true
         case _   => throw new TagError("The specification of direction(s) must consist of only 'L', 'R', 'T', 'B' for left, right, top, bottom.")
       }
     }

@@ -8,7 +8,11 @@ package textcompose.tagGUI
 
 import scala.collection.mutable.ArrayBuffer
 
-class BooleanGroupType(representations: List[String], labels: List[String], groupLabel: String) extends ParameterType {
+class BooleanGroupType(
+    representations: List[String],
+    labels: List[String],
+    groupLabel: String,
+    spaced: Boolean) extends ParameterType {
 
   AddToPanel(new LabelType(groupLabel, "Tiny").label, true)
 
@@ -22,11 +26,8 @@ class BooleanGroupType(representations: List[String], labels: List[String], grou
     AddToPanel(f.panel, true)
   }
 
-  var usePadding = true
-  def SetNoPadding { usePadding = false }
-
   def set(flags: String) {
-    val splitter = if (usePadding) { " " } else { "" }
+    val splitter = if (spaced) { " " } else { "" }
     val repList = flags.split(splitter)
     for (f <- fields) {
       f.SetDirectly(repList.contains(f.GetRepresentation))
@@ -41,7 +42,7 @@ class BooleanGroupType(representations: List[String], labels: List[String], grou
     var result = ""
     for (f <- fields) {
       val r = f.Get
-      if (usePadding && result != "" && r != "") { result += " " }
+      if (spaced && result != "" && r != "") { result += " " }
       result += r
     }
     result

@@ -12,16 +12,17 @@ import textcompose.tagGUI._
 object Parsers {
 
   private val parser = new HashMap[String, TagParser]
+  
   private val optionalPercentage = scala.collection.immutable.List("", "%")
 
-  private val empty = new TagParser("empty", sp => (p, s) => ())
+  private val empty = new TagParser("", sp => (p, s) => ())
 
   def getParser(tagName: String) = if (parser.isDefinedAt(tagName)) parser(tagName) else empty
 
-  // FIXME: the encoding for font tag should be a kind of level-2-option which takes a map string -> list of options... 
   val fontName = "font name"
   parser("font") = (new TagParser("font", sp => sp.fontTag)).
-    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).
+      setIsFontName().
     addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
       setOptionMapping(FontEncoding.titleToShortId).
     addFlag("local").addGuiAction(FontInformation, 0)
@@ -32,12 +33,14 @@ object Parsers {
       se => se.NumberOfParameters <= 2 || se.Parameters(2) == "local",
       "Font name, encoding (optional), position (hexadecimal) and 'local' (optional).",
       sp => sp.glyphTag)).
-    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).
+      setIsFontName().
     addOptions("position", true, List()).setDependency(Dependency.characterOnFont).
       setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0).
     addSyntax("specify encoding", se => true).
-    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).setIsFontName().
+    addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).
+      setIsFontName().
     addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
       setOptionMapping(FontEncoding.titleToShortId).
     addOptions("position", true, List()).setDependency(Dependency.characterOnFontAndEncoding).
@@ -71,7 +74,7 @@ object Parsers {
     addString("hexadecimal", true).addGuiAction(ColorChooser, 1).
     addSyntax("RGB", se => se.NumberOfParameters > 1 && se.Parameters(1) == "RGB").
     addOptions("scope", true, colorScopes).
-    addOptions("color system", true, List("RGB", "HSL")). // Looks clunky in this context, but gives simple model.
+    addOptions("color system", true, List("RGB", "HSL")).
     addInt("red", true).
     addInt("green", true).
     addInt("blue", true).addGuiAction(ColorChooser, 1).
@@ -292,9 +295,9 @@ object Parsers {
     addFloat("width", true)
 
   parser("format-list") = (new TagParser("format-list", sp => sp.formatListTag)).
-    addDecNum("list indentation", true, Sign.allow, optionalPercentage).
-    addDecNum("list symbol indentation", true, Sign.allow, optionalPercentage).
-    addString("format", true)
+    addDecNum("list indent", true, Sign.allow, optionalPercentage).
+    addDecNum("symbol indent", true, Sign.allow, optionalPercentage).
+    addString("format ($1 for number)", true)
 
   parser("list") = (new TagParser("list", sp => sp.listTag)).
     addFlag("continue")
@@ -313,6 +316,17 @@ object Parsers {
     addDecNum("row span", false, Sign.disallow, List("R"))
 
   parser("/table") = (new TagParser("/table", sp => sp.tableEndTag))
+  
+  val directionNames = List("L", "R", "T", "B")
+  val directionLabels = List("Left", "Right", "Top", "Bottom")
+  
+  parser("cell-padding") = (new TagParser("cell-padding", sp => sp.cellPaddingTag)).
+    addFloat("padding", true).
+    addFlags("direction", false, directionNames, directionLabels)
+  
+  parser("border-width") = (new TagParser("border-width", sp => sp.borderWidthTag)).
+    addFloat("width", true).
+    addFlags("direction", false, directionNames, directionLabels)
   
   parser("draw") = (new TagParser("draw", sp => sp.drawTag)).
     addFlag("under")
@@ -391,11 +405,12 @@ object Parsers {
     parser("include").updateOptions("", nameOfExtension, textcompose.storage.Configurations.getListOfExtensions)
   }
 
+  val userPermissions = List("print", "degPrint", "modify", "assembly", "copy", "accessibility", "annotate", "fill")
+  
   parser("encrypt") = (new TagParser("encrypt", sp => sp.encryptTag)).
     addString("user password", true).
     addString("owner password", true).
-    addFlags("permissions", true, List("print", "degPrint", "modify",
-      "assembly", "copy", "accessibility", "annotate", "fill"))
+    addFlags("permissions", true, userPermissions, userPermissions)
 
   parser("line-width") = (new TagParser("line-width", sp => sp.lineWidthTag)).
     addFloat("width", true).setDefaultValue("1")

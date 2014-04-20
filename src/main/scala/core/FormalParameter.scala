@@ -126,22 +126,23 @@ case class FormalFlag(
 case class FormalFlags(
   val name: String,
   val spaced: Boolean,
-  val flags: List[String]) extends FormalParameter(name, false) {
+  val flags: List[String],
+  val labels: List[String]) extends FormalParameter(name, false) {
 
   def split(s: String): List[String] = {
     if (spaced) {
       s.split(' ').toList
     } else {
-      s.toList.map(c => s.toString)
+      s.toList.map(c => c.toString)
     }
   }
 
   def formattedFlags = format(flags)
 
   override def toString = if (spaced) {
-    "[" + name + ": zero, one or more of: " + formattedFlags + ", with space inbetween]"
+    "[" + name + ": zero, one, or more of: " + formattedFlags + ", with space inbetween]"
   } else {
-    "[" + name + ": zero, one or more of: " + formattedFlags + ", without space inbetween]"
+    "[" + name + ": zero, one, or more of: " + formattedFlags + ", without space inbetween]"
   }
   override def setDefaultValue(d: String) { throw new Exception("No default for flags type") }
 }

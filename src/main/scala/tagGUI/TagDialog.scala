@@ -69,14 +69,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     fields.append(new NumberType(tagName, "Y", List("T", "TM", "C", "CM", "B", "BM")))
   }
 
-  private def listTag() {
-    fields.append(new BooleanType("continue", "continue"))
-  }
-
-  private def drawTag() {
-    fields.append(new BooleanType("under", "under"))
-  }
-
   private def positionWithAngleTag() {
     fields.append(new NumberType(tagName, "X", List("L", "C", "R")))
     fields.append(new NumberType(tagName, "Y", List("T", "C", "B")))
@@ -86,18 +78,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     fields.append(new BooleanType("under", "under"))
   }
 
-  private def listFormatTag() {
-    fields.append(new NumberType(tagName, "Outer indent", false, false, List(), true, false))
-    fields.append(new NumberType(tagName, "Inner indent", false, false, List(), true, false))
-    fields.append(new TextType("Format (use $1 for number)", true))
-  }
-
-  private def tableTag() {
-    fields.append(new NumberType(tagName, "Columns", true))
-    fields.append(new NumberType(tagName, "Width", false, false, List(), true, false))
-    fields.append(new TextType("Column widths", true))
-  }
-
   private def cellTag() {
     fields.append(new NumberType(tagName, "Row span", true))
     fields.append(new NumberType(tagName, "Column span", true))
@@ -105,16 +85,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     fields(0).SetPostFix("R")
     fields(1).setNotMandatory()
     fields(1).SetPostFix("C")
-  }
-
-  private def tagWithNumberAndDirections(label: String) {
-    fields.append(new NumberType(tagName, label))
-    val directionsRepresentation = List("L", "R", "T", "B")
-    val directionsLabel = List("Left", "Right", "Top", "Bottom")
-    val directionsGroup = new BooleanGroupType(directionsRepresentation, directionsLabel, "Directions")
-    directionsGroup.setNotMandatory()
-    directionsGroup.SetNoPadding
-    fields.append(directionsGroup)
   }
 
   private def labelTag() {
@@ -182,7 +152,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     var tagParserErrorFound = false
     var tagParserErrorMessage = ""
 
-    if (parser.tagName != "empty") {
+    if (parser.tagName != "") {
       try {
         parser(se)
       } catch {

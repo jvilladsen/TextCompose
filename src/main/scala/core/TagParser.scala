@@ -134,8 +134,8 @@ class TagParser(
     this
   }
 
-  def addFlags(name: String, spaced: Boolean, flags: List[String]) = {
-    formalParameters += FormalFlags(name, spaced, flags)
+  def addFlags(name: String, spaced: Boolean, flags: List[String], labels: List[String]) = {
+    formalParameters += FormalFlags(name, spaced, flags, labels)
     this
   }
 
@@ -347,10 +347,10 @@ class TagParser(
     } else {
       false
     }
+  
   def getNextString: String =
     actualParameters(indexActual) match {
-      case p: ActualString =>
-        indexActual += 1; p.s
+      case p: ActualString => indexActual += 1; p.s
       case _ => throw new Exception("Asking parser for string from " + tagName + " but fails.")
     }
 
@@ -363,6 +363,7 @@ class TagParser(
     } else {
       false
     }
+  
   def getNextInt: Int =
     actualParameters(indexActual) match {
       case p: ActualInteger =>
@@ -411,6 +412,7 @@ class TagParser(
     } else {
       false
     }
+  
   def getNextOption: String =
     actualParameters(indexActual) match {
       case p: ActualOption => indexActual += 1; p.option
@@ -426,6 +428,7 @@ class TagParser(
     } else {
       false
     }
+  
   def getNextFlag: Boolean =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
@@ -435,6 +438,17 @@ class TagParser(
     } else {
       false
     }
+  
+  def isNextFlags: Boolean =
+    if (indexActual < numberOfActualParameters) {
+      actualParameters(indexActual) match {
+        case p: ActualFlags => true
+        case _              => false
+      }
+    } else {
+      false
+    }
+  
   def getNextFlags: String =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
@@ -560,10 +574,10 @@ class TagParser(
           fields.append(bt)
         }
         case p: FormalFlags => {
-          val bgt = new BooleanGroupType(p.flags, p.flags, title)
+          val bgt = new BooleanGroupType(p.flags, p.labels, title, p.spaced)
           actualPar match {
-            case p: ActualFlags =>
-              bgt.set(p.flags); actualParIndex += 1
+            case act: ActualFlags =>
+              bgt.set(act.flags); actualParIndex += 1
             case _ => None
           }
           bgt.setNotMandatory()

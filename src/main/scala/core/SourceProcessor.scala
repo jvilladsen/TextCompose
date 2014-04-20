@@ -445,11 +445,10 @@ class SourceProcessor(
       }
     }
     extensions.TagDefinitions += currentDefinitionName -> td
-    /**
-     * Neither 'sub' nor 'main' definitions should appear in the tag tree.
-     * This is actually the whole point with 'sub'. The point with 'main' definitions
-     * is that they get directly into the stream, just by extension.
-     */
+    /** Neither 'sub' nor 'main' definitions should appear in the tag tree.
+      * This is actually the whole point with 'sub'. The point with 'main' definitions
+      * is that they get directly into the stream, just by extension.
+      */
     if (definitionType == "def") {
       LatestExtensions.addTag("self", currentDefinitionName, td)
     }
@@ -542,29 +541,18 @@ class SourceProcessor(
     document.directlyAddPhrase(x, y, angle, under)
   }
 
-  def borderWidthTag(se: SourceElement) {
-    // Border-width (0=no border)
-    se.hasNumberOfParameters(1, 2, "The 'border-width' tag takes 1 or 2 parameters, namely the width of the border of " +
-      "cells in tables. The second parameter is optional. It should be made up of any of the characters L R T B " +
-      "(left, right top, bottom), e.g. 'LT' means apply the width to the left and top borders.")
-    val width = NumberFunctions.getFloat(se.Parameters(0), "The first parameter for the tag 'border-width'")
-    DirectionFunctions.Initialize
-    if (se.NumberOfParameters == 2) {
-      DirectionFunctions.Parse(se.Parameters(1))
-    }
-    document.setCellBorderWidth(width)
+  def cellPaddingTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val padding = parser.getNextFloat
+    if (parser.isNextFlags) DirectionFunctions(parser.getNextFlags) else DirectionFunctions.initialize()
+    document.setCellPadding(padding)
   }
 
-  def cellPaddingTag(se: SourceElement) {
-    se.hasNumberOfParameters(1, 2, "The 'cell-padding' tag takes 1 or 2 parameters, namely the padding of cells in " +
-      "tables. The second parameter is optional. It should be made up of any of the characters L R T B (left, " +
-      "right top, bottom), e.g. 'LT' means apply the width to the left and top borders.")
-    val padding = NumberFunctions.getFloat(se.Parameters(0), "The first parameter for the tag 'cell-padding'")
-    DirectionFunctions.Initialize
-    if (se.NumberOfParameters == 2) {
-      DirectionFunctions.Parse(se.Parameters(1))
-    }
-    document.setCellPadding(padding)
+  def borderWidthTag(parser: TagParser, se: SourceElement) {
+    parser(se)
+    val width = parser.getNextFloat
+    if (parser.isNextFlags) DirectionFunctions(parser.getNextFlags) else DirectionFunctions.initialize()
+    document.setCellBorderWidth(width)
   }
 
   def lineWidthTag(parser: TagParser, se: SourceElement) {
@@ -1008,106 +996,16 @@ class SourceProcessor(
 
     val parser = Parsers.getParser(element.TagName)
 
-    element.TagName match {
-      // FONT
-      case "font"             => parser.evaluate(element, this) //FIXME: eventually do "parser(se)" right after getting parser, and then no need for sending element to evaluate method.
-      case "size"             => parser.evaluate(element, this)
-      case "face"             => parser.evaluate(element, this)
-      case "color"            => parser.evaluate(element, this)
-      case "underline"        => parser.evaluate(element, this)
-      case "/underline"       => parser.evaluate(element, this)
-      case "highlight"        => parser.evaluate(element, this)
-      case "/highlight"       => parser.evaluate(element, this)
-      case "letter-spacing"   => parser.evaluate(element, this)
-      case "scale-letter"     => parser.evaluate(element, this)
-      // SPACE
-      case "height"           => parser.evaluate(element, this)
-      case "paragraph-space"  => parser.evaluate(element, this)
-      case "paragraph-indent" => parser.evaluate(element, this)
-      case "new"              => parser.evaluate(element, this)
-      // POSITION
-      case "align"            => parser.evaluate(element, this)
-      case "indent"           => parser.evaluate(element, this)
-      case "rise"             => parser.evaluate(element, this)
-      case "position"         => parser.evaluate(element, this)
-      // DOCUMENT
-      case "document"         => parser.evaluate(element, this)
-      case "page-size"        => parser.evaluate(element, this)
-      case "margins"          => parser.evaluate(element, this)
-      case "orientation"      => parser.evaluate(element, this)
-      case "columns"          => parser.evaluate(element, this)
-      case "view"             => parser.evaluate(element, this)
-      case "encrypt"          => parser.evaluate(element, this)
-      // IMAGE
-      case "image"            => parser.evaluate(element, this)
-      case "scale-image"      => parser.evaluate(element, this)
-      case "fit-image"        => parser.evaluate(element, this)
-      case "rotate-image"     => parser.evaluate(element, this)
-      case "frame"            => parser.evaluate(element, this)
-      // LIST
-      case "format-list"      => parser.evaluate(element, this)
-      case "list"             => parser.evaluate(element, this)
-      case "item"             => parser.evaluate(element, this)
-      case "/list"            => parser.evaluate(element, this)
-      // TABLE
-      case "table"            => parser.evaluate(element, this)
-      case "cell"             => parser.evaluate(element, this)
-      case "/table"           => parser.evaluate(element, this)
-      case "cell-padding"     => cellPaddingTag(element)
-      case "border-width"     => borderWidthTag(element)
-      // DRAW
-      case "line-width"       => parser.evaluate(element, this)
-      case "line-cap"         => parser.evaluate(element, this)
-      case "line-dash"        => parser.evaluate(element, this)
-      case "move-to"          => parser.evaluate(element, this)
-      case "line-to"          => parser.evaluate(element, this)
-      case "draw"             => parser.evaluate(element, this)
-      // GRAPHICS MODE
-      case "blend"            => parser.evaluate(element, this)
-      case "opacity"          => parser.evaluate(element, this)
-      // INSERT
-      case "insert"           => parser.evaluate(element, this)
-      case "char"             => parser.evaluate(element, this)
-      case "glyph"            => parser.evaluate(element, this)
-      case "Roman"            => parser.evaluate(element, this)
-      case "bookmark"         => parser.evaluate(element, this)
-      case "label"            => parser.evaluate(element, this)
-      case "ref"              => parser.evaluate(element, this)
-      case "/ref"             => parser.evaluate(element, this)
-      // STATE
-      case "store"            => parser.evaluate(element, this)
-      case "restore"          => parser.evaluate(element, this)
-      case "reset"            => parser.evaluate(element, this)
-      // VARIABLE
-      case "var"              => parser.evaluate(element, this)
-      case "set"              => parser.evaluate(element, this)
-      case "/set"             => parser.evaluate(element, this)
-      case "add"              => parser.evaluate(element, this)
-      case "/add"             => parser.evaluate(element, this)
-      case "show"             => parser.evaluate(element, this)
-      // EXTENSION
-      case "include"          => parser.evaluate(element, this)
-      case "extension"        => parser.evaluate(element, this)
-      case "def"              => parser.evaluate(element, this)
-      case "sub"              => parser.evaluate(element, this)
-      case "main"             => parser.evaluate(element, this)
-      case "/def"             => parser.evaluate(element, this)
-      case "/sub"             => parser.evaluate(element, this)
-      case "/main"            => parser.evaluate(element, this)
-      case "template"         => parser.evaluate(element, this)
-      // ADVANCED
-      case "inject"           => parser.evaluate(element, this)
-      case "replace"          => parser.evaluate(element, this)
-      case "loop"             => parser.evaluate(element, this)
-      case "whitespace"       => parser.evaluate(element, this)
-      case _ => {
-        if (extensions.UserDefinedTag(element.TagName)) {
-          handleUserTag(element)
-        } else {
-          val suggestion = NameSuggestion.getSuggestions(element.TagName, TagRegister.getNames)
-          throw new TagError("Unknown tag '" + element.TagName + "'." + suggestion)
-        }
+    if (parser.tagName == "") {
+      if (extensions.UserDefinedTag(element.TagName)) {
+        handleUserTag(element)
+      } else {
+        val suggestion = NameSuggestion.getSuggestions(element.TagName, TagRegister.getNames)
+        throw new TagError("Unknown tag '" + element.TagName + "'." + suggestion)
       }
+    } else {
+      // FIXME: Eventually move parse(element) out here and drop element as parameter.
+      parser.evaluate(element, this)
     }
   }
 

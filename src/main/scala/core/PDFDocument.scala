@@ -844,27 +844,27 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
   def setCellBackgroundColor = stateStack.top.setActualCellBckgColor
 
   def setCellBorderColor {
-    if (DirectionFunctions.Left) stateStack.top.setActualCellColorLeft()
-    if (DirectionFunctions.Right) stateStack.top.setActualCellColorRight()
-    if (DirectionFunctions.Top) stateStack.top.setActualCellColorTop()
-    if (DirectionFunctions.Bottom) stateStack.top.setActualCellColorBottom()
+    if (DirectionFunctions.left) stateStack.top.setActualCellColorLeft()
+    if (DirectionFunctions.right) stateStack.top.setActualCellColorRight()
+    if (DirectionFunctions.top) stateStack.top.setActualCellColorTop()
+    if (DirectionFunctions.bottom) stateStack.top.setActualCellColorBottom()
     stateStack.top.updateCellBorderUniqueColor()
   }
 
   def setCellBorderWidth(w: Float) {
-    if (DirectionFunctions.Left) stateStack.top.cellBorderWidthLeft = w
-    if (DirectionFunctions.Right) stateStack.top.cellBorderWidthRight = w
-    if (DirectionFunctions.Top) stateStack.top.cellBorderWidthTop = w
-    if (DirectionFunctions.Bottom) stateStack.top.cellBorderWidthBottom = w
+    if (DirectionFunctions.left) stateStack.top.cellBorderWidthLeft = w
+    if (DirectionFunctions.right) stateStack.top.cellBorderWidthRight = w
+    if (DirectionFunctions.top) stateStack.top.cellBorderWidthTop = w
+    if (DirectionFunctions.bottom) stateStack.top.cellBorderWidthBottom = w
     stateStack.top.updateCellBorderWidth()
     stateStack.top.updateCellBorderUniqueColor()
   }
 
   def setCellPadding(p: Float) {
-    if (DirectionFunctions.Left) stateStack.top.cellPaddingLeft = p
-    if (DirectionFunctions.Right) stateStack.top.cellPaddingRight = p
-    if (DirectionFunctions.Top) stateStack.top.cellPaddingTop = p
-    if (DirectionFunctions.Bottom) stateStack.top.cellPaddingBottom = p
+    if (DirectionFunctions.left) stateStack.top.cellPaddingLeft = p
+    if (DirectionFunctions.right) stateStack.top.cellPaddingRight = p
+    if (DirectionFunctions.top) stateStack.top.cellPaddingTop = p
+    if (DirectionFunctions.bottom) stateStack.top.cellPaddingBottom = p
   }
 
   def noPendingPadding { PendingPadding = false }
