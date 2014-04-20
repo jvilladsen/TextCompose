@@ -115,8 +115,7 @@ class TagParser(
     this
   }
 
-  /**
-    * Some tags have options that may change, e.g. the font tag and the include tag.
+  /** Some tags have options that may change, e.g. the font tag and the include tag.
     * Most of the work involved in the update is to navigate through the structure
     * to find the option parameter.
     */
@@ -155,10 +154,10 @@ class TagParser(
   }
 
   /** Add an action such as opening font information window or file chooser.
-    * 
+    *
     * @action is the action invoked by the button added to the tag dialog.
     * @offset is used for specifying an offset in the list of fields for actions that
-    *         read from the fields in the dialog.  
+    *       read from the fields in the dialog.
     */
   def addGuiAction(action: TagAction, offset: Int) = {
     formalParameters.last.addGuiAction(action, offset)
@@ -174,7 +173,7 @@ class TagParser(
   /** Modify the parameter just added, to set the flag that it is a font name.
     *
     * This has the effect that the values in the combo-box are rendered in the
-    * font with that name, e.g. "Georgia" is rendered in the font Georgia.  
+    * font with that name, e.g. "Georgia" is rendered in the font Georgia.
     */
   def setIsFontName() = {
     formalParameters.last.setIsFontName()
@@ -182,8 +181,8 @@ class TagParser(
   }
 
   /** Modify the parameter just added, to force font on GUI widget
-    * 
-    * Used for setting font name for use in combo-box with glyphs.  
+    *
+    * Used for setting font name for use in combo-box with glyphs.
     */
   def setUseFontOffset(offset: Int) = {
     formalParameters.last.setUseFontOffset(offset)
@@ -191,8 +190,8 @@ class TagParser(
   }
 
   /** Modify the parameter just added, to set a dependency.
-    * 
-    * The dependency is expressed as getting list of values depending 
+    *
+    * The dependency is expressed as getting list of values depending
     * on current values in other fields. Example: the list of available
     * font encodings depends on the chosen font. Other example is the
     * 'glyph' tag where the available characters depend on the chosen
@@ -204,9 +203,9 @@ class TagParser(
   }
 
   /** Modify the parameter just added, to set option mapping.
-    * 
+    *
     * The mapping is used for converting values shown in combo-box to the
-    * values expected by the parser, e.g. encoding "1252 Latin 1" -> "1252". 
+    * values expected by the parser, e.g. encoding "1252 Latin 1" -> "1252".
     */
   def setOptionMapping(m: String => String) = {
     formalParameters.last.setOptionMapping(m)
@@ -306,7 +305,7 @@ class TagParser(
             } else if (p.mandatory) {
               val suggestion = NameSuggestion.getSuggestions(parameter, currentOptions)
               throw new TagError("'" + parameter + "' is not an option for '" + p.name +
-                  "'. " + suggestion + " Must be one of " + p.formattedOptions(currentOptions))
+                "'. " + suggestion + " Must be one of " + p.formattedOptions(currentOptions))
             }
           }
           case p: FormalFlag => {
@@ -353,10 +352,11 @@ class TagParser(
     } else {
       false
     }
-  
+
   def getNextString: String =
     actualParameters(indexActual) match {
-      case p: ActualString => indexActual += 1; p.s
+      case p: ActualString =>
+        indexActual += 1; p.s
       case _ => throw new Exception("Asking parser for string from " + tagName + " but fails.")
     }
 
@@ -369,7 +369,7 @@ class TagParser(
     } else {
       false
     }
-  
+
   def getNextInt: Int =
     actualParameters(indexActual) match {
       case p: ActualInteger =>
@@ -418,10 +418,11 @@ class TagParser(
     } else {
       false
     }
-  
+
   def getNextOption: String =
     actualParameters(indexActual) match {
-      case p: ActualOption => indexActual += 1; p.option
+      case p: ActualOption =>
+        indexActual += 1; p.option
       case _ => throw new Exception("Asking parser for option from " + tagName + " but fails.")
     }
 
@@ -434,17 +435,18 @@ class TagParser(
     } else {
       false
     }
-  
+
   def getNextFlag: Boolean =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
-        case f: ActualFlag => indexActual += 1; true
-        case _             => false
+        case f: ActualFlag =>
+          indexActual += 1; true
+        case _ => false
       }
     } else {
       false
     }
-  
+
   def isNextFlags: Boolean =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
@@ -454,19 +456,19 @@ class TagParser(
     } else {
       false
     }
-  
+
   def getNextFlags: String =
     if (indexActual < numberOfActualParameters) {
       actualParameters(indexActual) match {
-        case p: ActualFlags => indexActual += 1; p.flags
+        case p: ActualFlags =>
+          indexActual += 1; p.flags
         case _ => ""
       }
     } else {
       ""
     }
 
-  /**
-    * Build the GUI for the "tag dialog" shown in the "tag pane".
+  /** Build the GUI for the "tag dialog" shown in the "tag pane".
     *
     * When we get here, we have already parsed the tag so that we
     * have both formal and actual parameters.
@@ -518,7 +520,7 @@ class TagParser(
           actualPar match {
             case a: ActualInteger =>
               it.set(a.i); actualParIndex += 1
-            case _                => it.set(p.default)
+            case _ => it.set(p.default)
           }
           it.setDefaultValue(p.default)
           if (!p.isMandatory) it.setNotMandatory()
@@ -527,8 +529,9 @@ class TagParser(
         case p: FormalFloat => {
           val ft = new NumberType(tagName, title)
           actualPar match {
-            case a: ActualFloat => ft.set(a.f); actualParIndex += 1
-            case _              => ft.set(p.default)
+            case a: ActualFloat =>
+              ft.set(a.f); actualParIndex += 1
+            case _ => ft.set(p.default)
           }
           ft.setDefaultValue(p.default)
           if (!p.isMandatory) ft.setNotMandatory()
@@ -547,7 +550,7 @@ class TagParser(
                 dnt.set(p.default)
               }
             }
-            case _               => dnt.set(p.default)
+            case _ => dnt.set(p.default)
           }
           dnt.setDefaultValue(p.default)
           if (!p.isMandatory) dnt.setNotMandatory()

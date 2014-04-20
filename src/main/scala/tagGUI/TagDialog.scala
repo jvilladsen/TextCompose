@@ -57,36 +57,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     }
   }
 
-  // --------------------------------------- //
-
-  private def decoratedSize(decor: List[String]) {
-    fields.append(new NumberType(tagName, "X", decor))
-    fields.append(new NumberType(tagName, "Y", decor))
-  }
-
-  private def positionTag() {
-    fields.append(new NumberType(tagName, "X", List("L", "LM", "C", "CM", "R", "RM")))
-    fields.append(new NumberType(tagName, "Y", List("T", "TM", "C", "CM", "B", "BM")))
-  }
-
-  private def positionWithAngleTag() {
-    fields.append(new NumberType(tagName, "X", List("L", "C", "R")))
-    fields.append(new NumberType(tagName, "Y", List("T", "C", "B")))
-    val angle = new NumberType(tagName, "Angle")
-    angle.setNotMandatory()
-    fields.append(angle)
-    fields.append(new BooleanType("under", "under"))
-  }
-
-  private def cellTag() {
-    fields.append(new NumberType(tagName, "Row span", true))
-    fields.append(new NumberType(tagName, "Column span", true))
-    fields(0).setNotMandatory()
-    fields(0).SetPostFix("R")
-    fields(1).setNotMandatory()
-    fields(1).SetPostFix("C")
-  }
-
   private def labelTag() {
     fields.append(new TextType("Name", false))
   }
@@ -176,23 +146,7 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
     }
     /*
     tagName match {
-      // FONT
-      case "font"             => parser.buildGUI(fields)
-      case "size"             => parser.buildGUI(fields)
-      case "face"             => parser.buildGUI(fields)
-      case "color"            => parser.buildGUI(fields)
-      case "underline"        => parser.buildGUI(fields)
-      case "highlight"        => parser.buildGUI(fields)
-      case "/highlight"       => parser.buildGUI(fields)
-      case "letter-spacing"   => parser.buildGUI(fields)
-      case "scale-letter"     => parser.buildGUI(fields)
-      // SPACE
-      case "height"           => parser.buildGUI(fields)
-      case "paragraph-space"  => parser.buildGUI(fields)
-      case "paragraph-indent" => parser.buildGUI(fields)
-      case "new"              => parser.buildGUI(fields)
       // POSITION
-      case "align"            => parser.buildGUI(fields)
       case "indent"           => parser.buildGUI(fields)
       case "rise"             => parser.buildGUI(fields)
       case "position"         => positionWithAngleTag()
@@ -210,11 +164,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
       case "fit-image"        => decoratedSize(List("%P", "%M", "%C"))
       case "rotate-image"     => parser.buildGUI(fields)
       case "frame"            => parser.buildGUI(fields)
-      // LIST
-      case "format-list"      => listFormatTag()
-      case "list"             => listTag()
-      case "item"             => parser.buildGUI(fields)
-      case "/list"            => parser.buildGUI(fields)
       // TABLE
       case "table"            => tableTag()
       case "cell"             => cellTag()
@@ -238,17 +187,6 @@ class TagDialog(fileKey: String, tagName: String) extends ParameterType {
       case "label"            => labelTag()
       case "ref"              => refTag()
       case "/ref"             => parser.buildGUI(fields)
-      // STATE
-      case "store"            => parser.buildGUI(fields)
-      case "restore"          => parser.buildGUI(fields)
-      case "reset"            => parser.buildGUI(fields)
-      // VARIABLE
-      case "var"              => parser.buildGUI(fields)
-      case "set"              => parser.buildGUI(fields)
-      case "/set"             => parser.buildGUI(fields)
-      case "add"              => parser.buildGUI(fields)
-      case "/add"             => parser.buildGUI(fields)
-      case "show"             => parser.buildGUI(fields)
       // EXTENSION
       case "include"          => parser.buildGUI(fields)
       case "extension"        => parser.buildGUI(fields)

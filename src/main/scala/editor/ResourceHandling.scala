@@ -180,6 +180,9 @@ object ResourceHandling {
     }
     // Dictionaries were found here: http://www.winedt.org/Dict/
     // "Built-in" dictionaries.
+    
+    // FIXME: The following should take place in copyDictionaries:
+    
     storage.Dictionaries.update(List("English UK", getFullName("english_uk.dict"), "utf-8")) // default default
     storage.Dictionaries.update(List("English US", getFullName("english_us.dict"), "utf-8"))
     storage.Dictionaries.update(List("Espa\u00F1ol", getFullName("spanish.dict"), "utf-16"))
