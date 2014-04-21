@@ -40,7 +40,7 @@ object SourcesMetaData extends StoredArrayOfStringLists("SourcesMetaData.txt") {
 
   def initialize() {
     if (!initialized) {
-      if (fileExists) load()
+      if (fileExists) loadFromFile()
       initialized = true
     }
   }

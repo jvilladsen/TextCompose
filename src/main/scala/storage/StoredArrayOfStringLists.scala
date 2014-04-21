@@ -31,7 +31,7 @@ abstract class StoredArrayOfStringLists(fileName: String) {
 
   def fileExists: Boolean = FileMethods.IsFile(fullFileName)
 
-  def load() {
+  def loadFromFile() {
 
     def addLine(line: String) {
       val r = line.trim.split('\t').toList

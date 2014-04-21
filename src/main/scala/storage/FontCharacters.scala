@@ -25,7 +25,7 @@ object FontCharacters extends StoredArrayOfStringLists("FontCharacters.txt") {
     
   def initialize() {
     if (!initialized) {
-      if (fileExists) load()
+      if (fileExists) loadFromFile()
       initialized = true
     }
   }

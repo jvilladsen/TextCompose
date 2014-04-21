@@ -162,7 +162,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     if (!initialized) {
       core.FontFileRegister.addBuildInFonts()
       if (!fileExists) { storeDefaults() }
-      load()
+      loadFromFile()
       extractFromDataSet()
       initialized = true
       if (!errorsDuringInitialization.isEmpty) {

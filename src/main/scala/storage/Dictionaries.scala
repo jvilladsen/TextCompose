@@ -29,7 +29,7 @@ object Dictionaries extends StoredArrayOfStringLists("Dictionaries.txt") {
 
   def initialize() {
     if (!initialized) {
-      if (fileExists) load() // could eventually include user-added dictionaries
+      if (fileExists) loadFromFile() // could eventually include user-added dictionaries
       textcompose.editor.ResourceHandling.initialize() // built-in dictionaries
       extractFromDataSet()
       initialized = true

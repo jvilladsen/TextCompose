@@ -164,7 +164,7 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     }
 
     if (fileExists) {
-      load()
+      loadFromFile()
       prune()
     } else {
       val appTitle = textcompose.startup.Launch.appTitle
