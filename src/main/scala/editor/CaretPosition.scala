@@ -16,7 +16,6 @@ object CaretPosition {
   var currentEditor: TextFileEditor = null
   var currentPosition = 0
   var currentLength = 0
-  var updateTimestamp = 0L
   val millisecondsToWait = 600
 
   var currentLine = ""
@@ -30,45 +29,39 @@ object CaretPosition {
   var foundTagStartingAt = 0
   var foundTagEndingAt = 0
 
-  var delayIsSpawned = false
+  var delayedHandlerSpawned = false // Should be out here!
 
   def handleUpdate(fileEditor: TextFileEditor, tagPane: TagPane) {
     currentEditor = fileEditor
     currentPosition = fileEditor.editor.getCursorPosition
     currentLength = fileEditor.editor.document.getLength
 
-    updateTimestamp = java.util.Calendar.getInstance().getTimeInMillis
+    val updateTimestamp = java.util.Calendar.getInstance().getTimeInMillis
+    def waitingTime = java.util.Calendar.getInstance().getTimeInMillis - updateTimestamp
 
-    if (!delayIsSpawned) {
-      delayIsSpawned = true
+    if (!delayedHandlerSpawned) {
+      delayedHandlerSpawned = true
 
       future {
-        // Wait for the user to take a break in the typing.
-        var keepWaiting = true
-        while (keepWaiting) {
-          Thread.sleep(200)
-          val timeSinceLastUpdate = java.util.Calendar.getInstance().getTimeInMillis - updateTimestamp
-          if (timeSinceLastUpdate > millisecondsToWait) {
-            keepWaiting = false
-          }
-        }
+        while (waitingTime <= millisecondsToWait) Thread.sleep(200)
 
         try {
-	        determineCurrentLine()
-	        parseCurrentLine()
-	        if (wellFormedLine) {
-	          tagPane.updateFromEditor(fileEditor.file.getFileKey,
-	            isInsideTag,
-	            foundTagStartingAt,
-	            foundTagEndingAt,
-	            ElmStack.TagAtPosition)
-	        } else {
-	          tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
-	        }
+          determineCurrentLine()
+          parseCurrentLine()
+          if (wellFormedLine) {
+            tagPane.updateFromEditor(
+              fileEditor.file.getFileKey,
+              isInsideTag,
+              foundTagStartingAt,
+              foundTagEndingAt,
+              ElmStack.TagAtPosition)
+          } else {
+            tagPane.updateWithParserErrorFromEditor(parseErrorMessage)
+          }
         } catch {
           case e: Exception => DialogBox.stackTrace("Failed in future to maintain tag dialog", e)
         }
-        delayIsSpawned = false
+        delayedHandlerSpawned = false
       }
     }
   }
