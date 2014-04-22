@@ -19,7 +19,7 @@ import event.KeyPressed
 import event.Key._
 import textcompose.core
 
-class TagTree {
+class TagTree(eventualInsertTagFromTreeMenuInEditor: EventualHandler) {
 
   private var root = new DefaultMutableTreeNode("Available tags");
 
@@ -59,10 +59,6 @@ class TagTree {
   private val tree = Component.wrap(jtree)
   tree.background = Colors.supportPane
 
-  val fakeAction = new Action("<signal to tag pane>") {
-    enabled = false
-    def apply() { None }
-  }
   var selectedOnEnter = ""
   tree.listenTo(tree.keys)
   tree.reactions += {
@@ -70,7 +66,7 @@ class TagTree {
       val selection = jtree.getSelectionPath()
       if (selection.getPathCount == 3) {
         selectedOnEnter = selection.getLastPathComponent.toString
-        fakeAction.enabled = !fakeAction.enabled
+        eventualInsertTagFromTreeMenuInEditor()
       }
     }
   }

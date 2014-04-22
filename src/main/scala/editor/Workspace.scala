@@ -14,7 +14,7 @@ import java.beans.{ PropertyChangeEvent, PropertyChangeListener }
 class Workspace(fontSize: Int) {
 
   val fileEditor = new TextFileEditor(fontSize)
-  val tagTree = new TagTree
+  val tagTree = new TagTree(new EventualHandler(insertTagFromTreeMenuInEditor))
   val tagPane = new TagPane
   tagTree.updateTreeStructure("")
 
@@ -35,20 +35,15 @@ class Workspace(fontSize: Int) {
     verticalScrollBarPolicy = scala.swing.ScrollPane.BarPolicy.Always
   }
 
-  private val metaData = new MetaDataPane
-  private val showMetaData = new PropertyChangeListener() {
-    def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-      if (metaData.getNumberOfErrors > 0) {
-        // Show message pane.
-        metaData.wrappedTabsPane.peer.setVisible(true)
-        editorWithMetaDataPane.dividerLocation = 0.7
-      } else {
-        // Effectively hide the message pane - also on resize.
-        metaData.wrappedTabsPane.peer.setVisible(false)
-      }
+  private val metaData = new MetaDataPane(new EventualHandler(showHideMetaData))
+  def showHideMetaData() {
+    if (metaData.getNumberOfErrors > 0) {
+      metaData.wrappedTabsPane.peer.setVisible(true)
+      editorWithMetaDataPane.dividerLocation = 0.7
+    } else {
+      metaData.wrappedTabsPane.peer.setVisible(false)
     }
   }
-  metaData.metaDataFakeAction.peer.addPropertyChangeListener(showMetaData)
 
   val editorWithMetaDataPane = new SplitPane(Orientation.Horizontal, editorScrollPane, metaData.wrappedTabsPane)
   metaData.wrappedTabsPane.peer.setVisible(false)
@@ -131,18 +126,14 @@ class Workspace(fontSize: Int) {
   }
   tagTree.jtree.addMouseListener(mouseTreeListener)
 
-  // Handle Enter key on the tag tree
-  var handleEnterOnTagTree = new PropertyChangeListener() {
-    def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-      val tagName = tagTree.selectedOnEnter
-      val tag = "<" + tagName + ">"
-      if (tagTree.isAvailableTag(tagName)) {
-        tagPane.setGrabFocus()
-        fileEditor.insertAtCurrentPosition(tag)
-      }
+  def insertTagFromTreeMenuInEditor() {
+    val tagName = tagTree.selectedOnEnter
+    val tag = "<" + tagName + ">"
+    if (tagTree.isAvailableTag(tagName)) {
+      tagPane.setGrabFocus()
+      fileEditor.insertAtCurrentPosition(tag)
     }
   }
-  tagTree.fakeAction.peer.addPropertyChangeListener(handleEnterOnTagTree)
 
   // Pressing OK in tag dialog updates the tag content in the editor.
   var updateEditorFromTagDialog = new PropertyChangeListener() {
@@ -158,10 +149,10 @@ class Workspace(fontSize: Int) {
 
   def buildPDF() {
     fileEditor.buildPDF()
-    
+
     // FIXME: Would be better to only update if necessary.
     tagTree.updateTreeStructure(fileEditor.file.getFileKey)
-    
+
     metaData.updateErrors()
   }
 }

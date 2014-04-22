@@ -15,7 +15,8 @@ import textcompose.core.PreviewType
 class TextFileEditor(fontSize: Int) {
 
   val file = new TextFile
-  val editor = new TextEditor(fontSize: Int)
+
+  val editor = new TextEditor(fontSize, new EventualHandler(updateSaveActionEnabled))
 
   def newText(number: Int): Boolean = {
     file.newText(number)
@@ -189,10 +190,8 @@ class TextFileEditor(fontSize: Int) {
       saveOrSaveAs("")
     }
   }
-  def updateEnabledness = new PropertyChangeListener() {
-    def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-      saveAction.enabled = editor.fileIsDirty
-    }
+
+  def updateSaveActionEnabled() {
+    saveAction.enabled = editor.fileIsDirty
   }
-  editor.fakeAction.peer.addPropertyChangeListener(updateEnabledness)
 }

@@ -8,7 +8,7 @@ package textcompose.editor
 
 import swing._
 
-class MetaDataPane {
+class MetaDataPane(eventualShowHideMetaData: EventualHandler) {
 
   private val errors = new CompilationErrors
 
@@ -25,7 +25,7 @@ class MetaDataPane {
 
   def updateErrors() {
     errors.update()
-    metaDataFakeAction.enabled = !metaDataFakeAction.enabled
+    eventualShowHideMetaData()
   }
 
   def updateColors() {
@@ -35,8 +35,4 @@ class MetaDataPane {
   }
 
   def getNumberOfErrors = errors.getNumberOfErrors
-  val metaDataFakeAction = new Action("<signal to show meta data>") {
-    enabled = false
-    def apply() { None }
-  }
 }

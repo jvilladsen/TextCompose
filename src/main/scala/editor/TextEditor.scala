@@ -19,7 +19,9 @@ import event.Key._
 import event.KeyPressed
 import textcompose.{ modals, storage }
 
-class TextEditor(fontSize: Int) extends EditorPane {
+class TextEditor(
+  fontSize: Int,
+  eventualUpdateSaveActionEnabled: EventualHandler) extends EditorPane {
 
   //The peer of EditorPane (the underlying Swing peer) is JEditorPane.
 
@@ -126,15 +128,10 @@ class TextEditor(fontSize: Int) extends EditorPane {
     grabFocus
   }
 
-  val fakeAction = new Action("<signal to update editor>") {
-    enabled = false
-    def apply() { None }
-  }
-
   private def SetDirtyFlag(dirty: Boolean) {
     if (dirty != fileIsDirty) {
       fileIsDirty = dirty
-      fakeAction.enabled = !fakeAction.enabled
+      eventualUpdateSaveActionEnabled()
     }
   }
 

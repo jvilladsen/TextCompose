@@ -64,6 +64,18 @@ class WorkspaceTabs {
   }
   tabsPane.peer.addChangeListener(tabChangeListener)
 
+  private var eventualUpdateExtensionsMenu: EventualHandler = null
+  private var eventualUpdateTemplatesMenu: EventualHandler = null
+  private var eventualUpdateHistoryMenu: EventualHandler = null
+  def setEventualHandlers(
+    updateExtensionsMenu: () => Unit,
+    updateTemplatesMenu: () => Unit,
+    updateHistoryMenu: () => Unit) {
+    eventualUpdateExtensionsMenu = new EventualHandler(updateExtensionsMenu)
+    eventualUpdateTemplatesMenu = new EventualHandler(updateTemplatesMenu)
+    eventualUpdateHistoryMenu = new EventualHandler(updateHistoryMenu)
+  }
+
   def updateColors() {
     for (w <- workspaces) w.updateColors()
   }
@@ -306,7 +318,7 @@ class WorkspaceTabs {
       saveTab(false, false, "")
       val index = getIndexOfSelectedTab
       textFileEditor(index).registerNewExtension()
-      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled
+      eventualUpdateExtensionsMenu()
     }
   }
 
@@ -316,7 +328,7 @@ class WorkspaceTabs {
     def apply() {
       val index = getIndexOfSelectedTab
       textFileEditor(index).file.unregisterExtension()
-      extensionsMenuFakeAction.enabled = !extensionsMenuFakeAction.enabled
+      eventualUpdateExtensionsMenu()
     }
   }
 
@@ -327,7 +339,7 @@ class WorkspaceTabs {
       saveTab(false, false, "")
       val index = getIndexOfSelectedTab
       textFileEditor(index).registerNewTemplate()
-      templatesMenuFakeAction.enabled = !templatesMenuFakeAction.enabled
+      eventualUpdateTemplatesMenu()
     }
   }
 
@@ -337,7 +349,7 @@ class WorkspaceTabs {
     def apply() {
       val index = getIndexOfSelectedTab
       textFileEditor(index).file.unRegisterTemplate()
-      templatesMenuFakeAction.enabled = !templatesMenuFakeAction.enabled
+      eventualUpdateTemplatesMenu()
     }
   }
 
@@ -383,10 +395,6 @@ class WorkspaceTabs {
     tabsPane.peer.setTitleAt(index, title)
   }
 
-  private def refreshHistoryMenu() {
-    historyMenuFakeAction.enabled = !historyMenuFakeAction.enabled
-  }
-
   private def saveTab(saveAs: Boolean, moveOrRename: Boolean, forcedEncoding: String) {
     var completed = false
     val index = getIndexOfSelectedTab
@@ -398,7 +406,7 @@ class WorkspaceTabs {
     }
     if (completed) {
       UpdateTabTitle(index, editor.file.fileName)
-      refreshHistoryMenu()
+      eventualUpdateHistoryMenu()
     }
     updateActionFlags
   }
@@ -410,7 +418,7 @@ class WorkspaceTabs {
       val editor = textFileEditor(index)
       editor.saveOrSaveAs("")
       UpdateTabTitle(index, editor.file.fileName)
-      refreshHistoryMenu()
+      eventualUpdateHistoryMenu()
     }
     updateActionFlags
   }
@@ -555,21 +563,6 @@ class WorkspaceTabs {
         }
       }
     }
-  }
-
-  val extensionsMenuFakeAction = new Action("<signal to extensions menu>") {
-    enabled = false
-    def apply() { None }
-  }
-
-  val templatesMenuFakeAction = new Action("<signal to templates menu>") {
-    enabled = false
-    def apply() { None }
-  }
-
-  val historyMenuFakeAction = new Action("<signal to history menu>") {
-    enabled = false
-    def apply() { None }
   }
 
   def insertAtCurrentPosition(stringToInsert: String) {

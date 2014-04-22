@@ -206,11 +206,9 @@ object Application extends SimpleSwingApplication {
     editMenu.contents += getMenuItem(workspaceTabs.checkSpellingAction, KeyEvent.VK_L, false)
     editMenu.contents += getMenuItem(workspaceTabs.spellingDialogAction, KeyEvent.VK_M, false)
 
-    /* 
-     * On OS X the settings menu is part of the application menu item.
-     * On Gnome, KDE, Windows it's under Help.
-     */
-
+    /** On OS X the settings menu is part of the application menu item.
+      * On Gnome, KDE, Windows it's under Help.
+      */
     if (!core.Environment.isMacOSX) {
       editMenu.contents += new Separator
       editMenu.contents += new MenuItem(new Action("Preferences") {
@@ -295,6 +293,11 @@ object Application extends SimpleSwingApplication {
       }
     }
 
+    workspaceTabs.setEventualHandlers(
+      updateExtensionsMenu,
+      updateTemplatesMenu,
+      updateHistoryMenu)
+
     val helpMenu = new Menu("Help")
     // On OS X the about menu is part of the app menu item. On Gnome, KDE, Windows it's under Help.
     if (!core.Environment.isMacOSX) {
@@ -378,30 +381,6 @@ object Application extends SimpleSwingApplication {
 
     contents = toolBarAndWorkspace
 
-    // Update the extension menu
-    val updateExtMenu = new PropertyChangeListener() {
-      def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-        updateExtensionsMenu()
-      }
-    }
-    workspaceTabs.extensionsMenuFakeAction.peer.addPropertyChangeListener(updateExtMenu)
-
-    // Update the template menu
-    val updateTemplateMenu = new PropertyChangeListener() {
-      def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-        updateTemplatesMenu()
-      }
-    }
-    workspaceTabs.templatesMenuFakeAction.peer.addPropertyChangeListener(updateTemplateMenu)
-
-    // Update the history menu
-    val updateHistMenu = new PropertyChangeListener() {
-      def propertyChange(propertyChangeEvent: PropertyChangeEvent) {
-        updateHistoryMenu()
-      }
-    }
-    workspaceTabs.historyMenuFakeAction.peer.addPropertyChangeListener(updateHistMenu)
-
     // Listen to window closing
     peer.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE)
     val mainFrame = this
@@ -414,12 +393,12 @@ object Application extends SimpleSwingApplication {
 
     minimumSize = new Dimension(900, 700)
     /* FIXME: This minimum size is too large, but:
-		 * If the minimum height is lower than around 400, there is a problem when you make the window
-		 * smaller than that: the scroll-bar and the narrow pane with file information are left out
-		 * of view because the text editor pane does not scrink below a certain size, but I have not
-		 * been able to find the place to correct this. Maybe related to some kind of view related to
-		 * the the scroll pane on the editor. Anyway, it would be good to get line wrapping as an option!
-		 */
+	 * If the minimum height is lower than around 400, there is a problem when you make the window
+	 * smaller than that: the scroll-bar and the narrow pane with file information are left out
+	 * of view because the text editor pane does not shrink below a certain size, but I have not
+	 * been able to find the place to correct this. Maybe related to some kind of view related to
+	 * the the scroll pane on the editor. Anyway, it would be good to get line wrapping as an option!
+	 */
     maximize
 
     storage.Configurations.showErrorsDuringInitialization()
