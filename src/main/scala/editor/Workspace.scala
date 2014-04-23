@@ -90,13 +90,13 @@ class Workspace(fontSize: Int) {
 
   fileEditor.editor.peer.addCaretListener(new CaretListener {
     def caretUpdate(e: CaretEvent) {
-      /* 1. Scan back and forth from current position looking for line break to get the current line.
-			 * 2. Send the line to the parser.
-			 *    The result of the parser gives us the tag name and all the parameters.
-			 * 3. Find out exactly where to modify the text upon changes in the tab pane.
-			 * 4. Introduce a thread for periodically picking up changes in the editor at the caret. 
-			 * 5. Display the tag name and all the parameters in a new "Tag Pane".
-			 */
+      /** 1. Scan back and forth from current position looking for line break to get the current line.
+        * 2. Send the line to the parser.
+        *   The result of the parser gives us the tag name and all the parameters.
+        * 3. Find out exactly where to modify the text upon changes in the tab pane.
+        * 4. Introduce a thread for periodically picking up changes in the editor at the caret.
+        * 5. Display the tag name and all the parameters in a new "Tag Pane".
+        */
       CaretPosition.handleUpdate(fileEditor, tagPane)
     }
   })
@@ -150,7 +150,7 @@ class Workspace(fontSize: Int) {
   def buildPDF() {
     fileEditor.buildPDF()
 
-    // FIXME: Would be better to only update if necessary.
+    // FIXME: Only update if there are changes.
     tagTree.updateTreeStructure(fileEditor.file.getFileKey)
 
     metaData.updateErrors()

@@ -578,11 +578,11 @@ class SourceProcessor(
   }
   def moveToTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    document.drawingMoveTo(parser.getNextDecNum, parser.getNextDecNum)
+    document.drawingSequence.drawingMoveTo(parser.getNextDecNum, parser.getNextDecNum)
   }
   def lineToTag(parser: TagParser, se: SourceElement) {
     parser(se)
-    document.drawingLineTo(parser.getNextDecNum, parser.getNextDecNum)
+    document.drawingSequence.drawingLineTo(parser.getNextDecNum, parser.getNextDecNum)
   }
   def drawTag(parser: TagParser, se: SourceElement) {
     parser(se)
@@ -932,7 +932,7 @@ class SourceProcessor(
     if (!invalidRefs.isEmpty) {
       showErrorMessage("Reference ('ref' tag) to non-existing label/bookmark: " + invalidRefs)
     }
-    if (document.hasDrawingCommands) {
+    if (!document.drawingSequence.isEmpty) {
       showErrorMessage("Some drawing commands (move-to, line-to) were finally not drawn. Use 'draw' tag to draw them.")
     }
   }

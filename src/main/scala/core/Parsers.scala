@@ -278,8 +278,8 @@ object Parsers {
     addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
 
   parser("fit-image") = (new TagParser("fit-image", sp => sp.fitImageTag)).
-    addDecNum("width", true, Sign.allow, List("", "%", "%P", "%M", "%C")).
-    addDecNum("height", true, Sign.allow, List("", "%", "%P", "%M", "%C"))
+    addDecNum("width", true, Sign.allow, List("", "%P", "%M", "%C")).
+    addDecNum("height", true, Sign.allow, List("", "%P", "%M", "%C"))
 
   parser("rotate-image") = (new TagParser("rotate-image", sp => sp.rotateImageTag)).
     addFloat("degrees", true).setDefaultValue("0")

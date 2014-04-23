@@ -94,16 +94,12 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
       iTextDoc.getPageSize.getHeight - extend - DN.value.toFloat -
         (if (MarginY) iTextDoc.topMargin else 0)
     } else if (AlignY == 'C') {
-      (iTextDoc.getPageSize.getHeight - extend) / 2 - DN.value.toFloat +
+      (iTextDoc.getPageSize.getHeight - extend) / 2 + DN.value.toFloat +
         (if (MarginY) (iTextDoc.bottomMargin - iTextDoc.topMargin) / 2 else 0)
     } else {
       DN.value + (if (MarginY) iTextDoc.bottomMargin else 0)
     }
   }
-
-  private var drawingCommandList = new ArrayBuffer[DrawingCommand]
-
-  def hasDrawingCommands = !drawingCommandList.isEmpty
 
   class ItemList(newList: List, firstIndex: Int) {
     var list = newList
@@ -476,7 +472,9 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     contentByte.addImage(image)
     contentByte.restoreState()
 
-    if (stateStack.top.imageBorderUse) ic.drawImageBorder(under, opacity)
+    if (stateStack.top.imageBorderUse) {
+      ic.drawImageBorder(writer.getDirectContent(under), opacity)
+    }
     EmptyDocument = false
   }
 
@@ -553,62 +551,12 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     stateStack.top.lineDashPhase = phase
   }
 
-  def drawingMoveTo(x: DecoratedNumber, y: DecoratedNumber) {
-    drawingCommandList += new DrawingCommand(this, "move", x, y)
-  }
-
-  def drawingLineTo(x: DecoratedNumber, y: DecoratedNumber) {
-    if (!hasDrawingCommands) {
-      throw new TagError("To draw a line, you must use an initial 'move-to' before using 'line-to'.")
-    }
-    drawingCommandList += new DrawingCommand(this, "line", x, y)
-  }
-
-  def drawDrawingCommands(
-    commandList: ArrayBuffer[DrawingCommand],
-    opacity: Float,
-    under: Boolean,
-    lineWidth: Float,
-    lineCap: Int,
-    lineColor: BaseColor,
-    useDashing: Boolean) {
-
-    openFirstTime()
-    val gState = new PdfGState
-    gState.setBlendMode(stateStack.top.actualBlendMode)
-    gState.setStrokeOpacity(opacity / 100f)
-
-    val contentByte = writer.getDirectContent(under)
-    contentByte.saveState()
-    contentByte.setGState(gState)
-
-    contentByte.setLineWidth(lineWidth)
-    contentByte.setLineCap(lineCap)
-    contentByte.setColorStroke(lineColor)
-    if (useDashing && !stateStack.top.lineDashPattern.isEmpty) {
-      contentByte.setLineDash(stateStack.top.lineDashPattern.toArray, stateStack.top.lineDashPhase)
-    }
-    for (d <- commandList) {
-      d.command match {
-        case "move" => contentByte.moveTo(d.xCoordinate, d.yCoordinate)
-        case "line" => contentByte.lineTo(d.xCoordinate, d.yCoordinate)
-      }
-    }
-    contentByte.stroke()
-    contentByte.restoreState()
-    EmptyDocument = false
-  }
-
+  val drawingSequence = new DrawingSequence(this)
+  
   def drawingDraw(under: Boolean) {
-    drawDrawingCommands(
-      drawingCommandList,
-      stateStack.top.strokeOpacity,
-      under,
-      stateStack.top.lineWidth,
-      stateStack.top.lineCap,
-      stateStack.top.actualLineColor,
-      true)
-    drawingCommandList.clear
+    openFirstTime()
+    drawingSequence.draw(writer.getDirectContent(under), stateStack.top)
+    EmptyDocument = false
   }
 
   def setListFormat(listIndent: DecoratedNumber, symbolIndent: DecoratedNumber, itemFormat: String) {

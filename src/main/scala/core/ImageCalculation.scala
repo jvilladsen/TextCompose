@@ -94,7 +94,7 @@ class ImageCalculation(
         case "right"  => rightIndented - widthRotated
       }
       val ySpaceBefore = state.spaceBeforeParagraph.getValueOrPercentageOfNumber(state.fontSize)
-      val ySpaceAfter  = state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)
+      val ySpaceAfter = state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)
       // FIXME: Should ignore paragraph space above image, if it is the first content to be added to page.
 
       yPosition = doc.currentColumn.getYLine - heightRotated - ySpaceBefore
@@ -106,32 +106,16 @@ class ImageCalculation(
     }
   }
 
-  private def debug(x: Float, y: Float) {
-    val commandList = new ArrayBuffer[DrawingCommand]
-    commandList += new DrawingCommand(doc, "move", (x - 5).toString, (y).toString)
-    commandList += new DrawingCommand(doc, "line", (x + 5).toString, (y).toString)
-    commandList += new DrawingCommand(doc, "move", (x).toString, (y - 5).toString)
-    commandList += new DrawingCommand(doc, "line", (x).toString, (y + 5).toString)
-    doc.drawDrawingCommands(
-      commandList,
-      100f,
-      false,
-      1,
-      PdfContentByte.LINE_CAP_PROJECTING_SQUARE,
-      new BaseColor(0, 0, 0),
-      false)
-  }
-
   private def calculateBorderRotation() {
-    /* The fact that we draw the image border here (drawImageBorder) instead of using iText
-		 * image border feature, also means that:
-		 * (1) the position of the image must be calculated to accommodate the border.
-		 * (2) the combination of border and rotation affects both this positioning
-		 * 		and the position of the border.
-		 * To understand this, note that iText rotates the image, not around the specified position,
-		 * but by keeping the image tucked inside the 90-degrees cone at the specified position, the
-		 * cone which is a translation of the first quadrant.
-		 */
+    /** The fact that we draw the image border here (drawImageBorder) instead of using iText
+      * image border feature, also means that:
+      * (1) the position of the image must be calculated to accommodate the border.
+      * (2) the combination of border and rotation affects both this positioning
+      * 		and the position of the border.
+      * To understand this, note that iText rotates the image, not around the specified position,
+      * but by keeping the image tucked inside the 90-degrees cone at the specified position, the
+      * cone which is a translation of the first quadrant.
+      */
     val r = degressToRadians(rotationNormalizedDeg)
     val rPlus = degressToRadians(rotationNormalizedDeg + 45)
     val rMinus = degressToRadians(rotationNormalizedDeg - 45)
@@ -166,20 +150,23 @@ class ImageCalculation(
     image
   }
 
-  def drawImageBorder(under: Boolean, opacity: Float) {
+  def drawImageBorder(contentByte: PdfContentByte, opacity: Float) {
 
-    // Cannot use iText image border functionality since the border is also scaled if
-    // you scale the image, and because the border is drawn half-way over the image.
+    /** iText image border functionality not used because the border is scaled
+      * with the image, and the image border is drawn half-way over the image.
+      */
 
-    val commandList = new ArrayBuffer[DrawingCommand]
+    val drawingSequence = new DrawingSequence(doc)
+
     var (x, y, a) = (xBorderPos, yBorderPos, rotationNormalizedDeg)
+
     def draw(dist: Float) {
       val r = degressToRadians(a)
       x += (dist * cos(r)).toFloat
       y += (dist * sin(r)).toFloat
-      commandList += new DrawingCommand(doc, "line", x.toString, y.toString)
+      drawingSequence.drawingLineTo(x, y)
     }
-    commandList += new DrawingCommand(doc, "move", x.toString, y.toString)
+    drawingSequence.drawingMoveTo(x, y)
     val (w, h) = (if (((rotationDeg / 90f).toInt & 1) == 0) (width, height) else (height, width))
     draw(w - borderWidth)
     a += 90f
@@ -189,14 +176,7 @@ class ImageCalculation(
     a += 90f
     draw(h - borderWidth)
 
-    doc.drawDrawingCommands(
-      commandList,
-      opacity, // FIXME: Should this be controllable from tag?,
-      under,
-      borderWidth,
-      PdfContentByte.LINE_CAP_PROJECTING_SQUARE,
-      state.actualImgBdrColor,
-      false) // useDashing
+    drawingSequence.draw(contentByte, state, opacity, borderWidth)
   }
 }
 

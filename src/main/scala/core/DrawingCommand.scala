@@ -9,32 +9,22 @@ package textcompose.core
 class DrawingCommand(
   doc: PDFDocument,
   val command: String,
-  xDN: DecoratedNumber,
-  yDN: DecoratedNumber) {
-
-  def this(doc: PDFDocument, command: String, x: String, y: String) = {
-    this(doc,
-      command,
-      new DecoratedNumber(command + " to x position"),
-      new DecoratedNumber(command + " to y position"))
-    parse(x, y)
-  }
+  val arguments: List[(Float, Float)]) {
 
   if (command != "move" && command != "line")
     throw new Exception("Illegal drawing command '" + command + "'.")
+}
 
-  var xCoordinate: Float = 0
-  var yCoordinate: Float = 0
-  updateCoordinates
-
-  def updateCoordinates() {
-    xCoordinate = doc.getAbsoluteX(xDN, 0f)
-    yCoordinate = doc.getAbsoluteY(yDN, 0f)
-  }
-
-  def parse(x: String, y: String) {
-    xDN.parse(x)
-    yDN.parse(y)
-    updateCoordinates()
+object DrawingCommand {
+  
+  def fromDecNums(
+    doc: PDFDocument,
+    command: String,
+    arguments: List[(DecoratedNumber, DecoratedNumber)]) = {
+    
+	def getCoordinates(xDN: DecoratedNumber, yDN: DecoratedNumber): (Float, Float) =
+      (doc.getAbsoluteX(xDN, 0f), doc.getAbsoluteY(yDN, 0f))
+    
+	new DrawingCommand(doc, command, arguments.map(c => getCoordinates(c._1, c._2)))
   }
 }
