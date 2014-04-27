@@ -62,6 +62,7 @@ class NumberType(
   }
 
   private var defaultValue = 0f
+  private var defaultDecor = ""
 
   val useDecor = !decor.isEmpty && !percentageOption && !hasFixedDecoration
   var columns = 1
@@ -127,13 +128,13 @@ class NumberType(
     return result
   }
 
-  private def isEmptyOrDefault(text: String): Boolean = {
-    if (text == "") {
+  private def isEmptyOrDefault: Boolean = {
+    if (valueField.text == "") {
       true
     } else {
       try {
-        val x = text.toFloat - defaultValue
-        return x.abs < 0.0000001f
+        val x = valueField.text.toFloat - defaultValue
+        return x.abs < 0.0000001f && decoration.Get == defaultDecor
       } catch {
         case e: Exception => return true
       }
@@ -157,7 +158,7 @@ class NumberType(
       }
     }
 
-    if (mandatory || !isEmptyOrDefault(valueField.text)) {
+    if (mandatory || !isEmptyOrDefault) {
       val fixedDecoration = if (hasFixedDecoration || (percentageOption && percentageField.selected)) decor.last else ""
       if (allowDelta) {
         deltaField.Get + getValue + decoration.Get + fixedDecoration + postFix
@@ -171,7 +172,13 @@ class NumberType(
 
   def Get: String = getUnwrapped
 
-  def setDefaultValue(v: Float) { defaultValue = v }
+  def setDefaultValue(v: Float) {
+    defaultValue = v
+    defaultDecor = ""
+  }
   
-  def setDefaultValue(dn: DecoratedNumber) { defaultValue = dn.value }
+  def setDefaultValue(dn: DecoratedNumber) {
+    defaultValue = dn.value
+    defaultDecor = dn.decoration
+  }
 }

@@ -269,8 +269,8 @@ object Parsers {
     addString("file name", true).addGuiAction(FileChooser, 0).addGuiAction(OpenImageFile, 0).
     addFlag("cache").
     addFlag("under").
-    addDecNum("x-position", false, Sign.allow, List("", "L", "C", "R", "LM", "CM", "RM")).setDefaultValue("0.0").
-    addDecNum("y-position", false, Sign.allow, List("", "T", "C", "B", "TM", "CM", "BM")).setDefaultValue("0.0").
+    addDecNum("x-position", false, Sign.allow, List("L", "C", "R", "LM", "CM", "RM")).setDefaultValue("0.0").
+    addDecNum("y-position", false, Sign.allow, List("T", "C", "B", "TM", "CM", "BM")).setDefaultValue("0.0").
     addDecNum("opacity %", false, Sign.disallow, List("%")).setDefaultValue("100.0")
 
   parser("scale-image") = (new TagParser("scale-image", sp => sp.scaleImageTag)).
