@@ -21,26 +21,27 @@ class ImageCalculation(
   isRetry: Boolean) {
 
   case class Point(val x: Double, val y: Double) {
-    
-    def + (that: Point) = Point(x + that.x, y + that.y)
-    
-    def - (that: Point) = Point(x - that.x, y - that.y)
-    
+
+    def +(that: Point) = Point(x + that.x, y + that.y)
+
+    def -(that: Point) = Point(x - that.x, y - that.y)
+
     def rotate(rad: Double): Point = {
       val v = cos(rad)
       val w = sin(rad)
       Point(x * v - y * w, x * w + y * v)
     }
-    
+
     override def toString = "(" + x.toString + ", " + y.toString + ")"
   }
-  
+
   private val state = doc.getCurrentState
   private val (left, bottom, right, top) = doc.getCoordinates
   private val borderWidth = if (state.imageBorderUse) state.imageBorderWidth else 0f
   private val ySpaceBefore = state.spaceBeforeParagraph.getValueOrPercentageOfNumber(state.fontSize)
   private val ySpaceAfter = state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)
   // FIXME: Should ignore paragraph space above image, if it is the first content to be added to page.
+  
   private val image = ImageCache.get(fileName, useCache, isRetry)
 
   private def boundingBoxOfFramedImage(w: Double, h: Double): Point =
@@ -59,22 +60,28 @@ class ImageCalculation(
     val index = (degrees / 360d).toInt - (if (degrees < 0) 1 else 0)
     (degrees - index * 360f)
   }
-  
+
   private def boundingBoxOfRotatedImage(p: Point, angle: Double): Point =
     Point(p.x * cos(angle).abs + p.y * cos(Pi / 2d - angle).abs, p.x * sin(angle).abs + p.y * sin(Pi / 2d - angle).abs)
 
-  private def boundingBoxPosition(p: Point): Point = {
+  private def updateDocumentY(y: Float) {
+    if (y < bottom) throw new NoSpaceForImageException("Image does not fit on page.")
+    doc.currentColumn.setYLine(y - ySpaceAfter)
+  }
+  
+  private def boundingBoxPosition(size: Point): Point = {
     if (usePosition) {
-      Point(doc.getAbsoluteX(xPosDN, p.x), doc.getAbsoluteY(yPosDN, p.y))
+      Point(doc.getAbsoluteX(xPosDN, size.x), doc.getAbsoluteY(yPosDN, size.y))
     } else {
       val leftIndented = left + state.indentationLeft
       val rightIndented = right - state.indentationRight
       val x = state.imgAlignment match {
         case "left"   => leftIndented
-        case "center" => (leftIndented + rightIndented - p.x) / 2f
-        case "right"  => rightIndented - p.x
+        case "center" => (leftIndented + rightIndented - size.x) / 2f
+        case "right"  => rightIndented - size.x
       }
-      val y = doc.currentColumn.getYLine - p.y - ySpaceBefore
+      val y = doc.currentColumn.getYLine - size.y - ySpaceBefore
+      updateDocumentY(y.toFloat)
       Point(x, y)
     }
   }
@@ -83,7 +90,7 @@ class ImageCalculation(
     val cat = if (evenQuadrant) p.y else p.x
     Point(sin(normalizedAngle) * cat, cos(normalizedAngle) * cat)
   }
-  
+
   private def getFrameVector(normalizedAngle: Double): Point = {
     val cat = borderWidth / sqrt(2d)
     Point(cos(normalizedAngle + Pi / 4d) * cat, sin(normalizedAngle + Pi / 4d) * cat)
@@ -122,14 +129,18 @@ class ImageCalculation(
 
   val angleDegrees = degreesNormalized(state.imgRotate)
   image.setRotationDegrees(angleDegrees)
-  
+
   private val angle = angleDegrees.toRadians
-  
+
   private val boxRotatedImage: Point =
     boundingBoxOfRotatedImage(boxScaledOrFittedImage, angle)
 
   private val boxPosition: Point = boundingBoxPosition(boxRotatedImage)
 
+  /** iText rotates image not around its center but tucked inside first quadrant (in the usual sense).
+    * In particular the angle between the x-axis and the lower border of the image is discontinuous
+    * as a function of the angle of rotation.
+    */
   private val quadrant = (angle * 2d / Pi).toInt // well, something like that: 0 for angle in [0 - pi/2[ etc.
   private val evenQuadrant: Boolean = quadrant % 2 == 0
   private val normalizedAngle = angle - quadrant * Pi / 2d
@@ -140,14 +151,16 @@ class ImageCalculation(
   def getImage: Image = image
 
   def drawFrame(contentByte: PdfContentByte, opacity: Float) {
-    
+
     val contactPoints = getContactPoints(boxScaledOrFittedImage, normalizedAngle, evenQuadrant)
     val frameVector = getFrameVector(normalizedAngle)
-    
-    val a = boxPosition + Point(contactPoints.x, 0) + frameVector
-    val b = boxPosition + Point(0, contactPoints.y) + frameVector.rotate(-Pi / 2d)
-    val c = boxPosition + boxRotatedImage - Point(contactPoints.x, 0) - frameVector
-    val d = boxPosition + boxRotatedImage - Point(0, contactPoints.y) - frameVector.rotate(-Pi / 2d)
+    val xFrame = Point(contactPoints.x, 0) + frameVector
+    val yFrame = Point(0, contactPoints.y) + frameVector.rotate(-Pi / 2d)
+
+    val a = boxPosition + xFrame
+    val b = boxPosition + yFrame
+    val c = boxPosition + boxRotatedImage - xFrame
+    val d = boxPosition + boxRotatedImage - yFrame
 
     val drawingSequence = new DrawingSequence(doc)
     drawingSequence.drawingMoveTo(a.x, a.y)
