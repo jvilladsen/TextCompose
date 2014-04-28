@@ -65,7 +65,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     if (toMargin) pageHeight - (iTextDoc.topMargin + iTextDoc.bottomMargin) else pageHeight
   }
 
-  def getAbsoluteX(DN: DecoratedNumber, extend: Float): Float = {
+  def getAbsoluteX(DN: DecoratedNumber, extend: Double): Double = {
     var AlignX = ' '
     if (DN.decoration.length > 0) AlignX = DN.decoration(0)
     var MarginX = DN.decoration.length > 1
@@ -83,7 +83,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     }
   }
 
-  def getAbsoluteY(DN: DecoratedNumber, extend: Float): Float = {
+  def getAbsoluteY(DN: DecoratedNumber, extend: Double): Double = {
     var AlignY = ' '
     if (DN.decoration.length > 0) AlignY = DN.decoration(0)
     var MarginY = DN.decoration.length > 1
@@ -436,31 +436,25 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     addParagraph()
     openFirstTime()
 
-    val ic = new ImageCalculation(
-      this,
-      fileName,
-      useCache,
-      usePosition,
-      xPosDN,
-      yPosDN)
-
     // Get the image and if it does not fit in the column, go to next column and do it once again.
-    var image = try {
-      ic.getProcessedImage(false)
-    } catch {
-      case e: NoSpaceForImageException => {
-        openFirstTime()
-        currentColumn.newColumn(false)
-        try {
-          ic.getProcessedImage(true)
-        } catch {
-          case e: NoSpaceForImageException => throw new TagError("Could not insert the image here (nor in previous column/page) " +
-            "since it would go below the lower magin. Consider moving it relative to the text, scaling it " +
-            "down with the tag 'fit', or controlling the position with the optional parameters for the " +
-            "'image' tag. (image: " + fileName + ").")
+    val imageCalculation =
+      try {
+        new ImageCalculation(this, fileName, useCache, usePosition, xPosDN, yPosDN, false)
+      } catch {
+        case e: NoSpaceForImageException => {
+          openFirstTime()
+          currentColumn.newColumn(false)
+          try {
+            new ImageCalculation(this, fileName, useCache, usePosition, xPosDN, yPosDN, true)
+          } catch {
+            case e: NoSpaceForImageException => throw new TagError("Could not insert the image here (nor in previous column/page) " +
+              "since it would go below the lower magin. Consider moving it relative to the text, scaling it " +
+              "down with the tag 'fit', or controlling the position with the optional parameters for the " +
+              "'image' tag. (image: " + fileName + ").")
+          }
         }
       }
-    }
+    val image = imageCalculation.getImage
 
     val gState = new PdfGState
     gState.setBlendMode(stateStack.top.actualBlendMode)
@@ -473,7 +467,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     contentByte.restoreState()
 
     if (stateStack.top.imageBorderUse) {
-      ic.drawImageBorder(writer.getDirectContent(under), opacity)
+      imageCalculation.drawFrame(writer.getDirectContent(under), opacity)
     }
     EmptyDocument = false
   }
@@ -552,7 +546,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
   }
 
   val drawingSequence = new DrawingSequence(this)
-  
+
   def drawingDraw(under: Boolean) {
     openFirstTime()
     drawingSequence.draw(writer.getDirectContent(under), stateStack.top)
@@ -704,7 +698,7 @@ class PDFDocument(Arg: Arguments) { // , wordsVectors: WordVectors
     cell.setHorizontalAlignment(stateStack.top.actualCellJustification)
     /** cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_BASELINE)
       * FIXME: Integrate this into the language. (part of "align cell" perhaps?)
-      *        The above does not work well for tables inside tables.
+      *      The above does not work well for tables inside tables.
       */
     cell.setLeading(stateStack.top.actualLineHeight, 0)
   }

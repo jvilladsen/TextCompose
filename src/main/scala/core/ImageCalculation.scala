@@ -17,165 +17,144 @@ class ImageCalculation(
   useCache: Boolean,
   usePosition: Boolean,
   xPosDN: DecoratedNumber,
-  yPosDN: DecoratedNumber) {
+  yPosDN: DecoratedNumber,
+  isRetry: Boolean) {
 
-  val state = doc.getCurrentState
-  val (left, bottom, right, top) = doc.getCoordinates
-  var image: Image = null
-  var width = 0f
-  var height = 0f
-  var xPosition = 0f // (x, y) of lower left hand corner of the box containing the scaled, rotated, bordered image.
-  var yPosition = 0f
-  val borderWidth = if (state.imageBorderUse) state.imageBorderWidth else 0f
-  val borderSize = borderWidth * 2f
-  def translateToPositive(x: Float) = if (x >= 0) x else x + 360f * (1 - (x / 360f).toInt)
-  val rotationDeg = translateToPositive(state.imgRotate)
-  val rotationNormalizedDeg = rotationDeg - 90f * (rotationDeg / 90f).toInt
-  var xImagePosition = 0f // (x, y) of lower left hand corner of the box containing the scaled, rotated image.
-  var yImagePosition = 0f
-  var xBorderPos = 0f
-  var yBorderPos = 0f
+  case class Point(val x: Double, val y: Double) {
+    
+    def + (that: Point) = Point(x + that.x, y + that.y)
+    
+    def - (that: Point) = Point(x - that.x, y - that.y)
+    
+    def rotate(rad: Double): Point = {
+      val v = cos(rad)
+      val w = sin(rad)
+      Point(x * v - y * w, x * w + y * v)
+    }
+    
+    override def toString = "(" + x.toString + ", " + y.toString + ")"
+  }
+  
+  private val state = doc.getCurrentState
+  private val (left, bottom, right, top) = doc.getCoordinates
+  private val borderWidth = if (state.imageBorderUse) state.imageBorderWidth else 0f
+  private val ySpaceBefore = state.spaceBeforeParagraph.getValueOrPercentageOfNumber(state.fontSize)
+  private val ySpaceAfter = state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)
+  // FIXME: Should ignore paragraph space above image, if it is the first content to be added to page.
+  private val image = ImageCache.get(fileName, useCache, isRetry)
 
-  private def degressToRadians(deg: Float) = (deg / 180f) * Pi
+  private def boundingBoxOfFramedImage(w: Double, h: Double): Point =
+    Point(w + borderWidth * 2d, h + borderWidth * 2d)
 
-  private def scale() {
-    width = image.getWidth + borderSize
-    height = image.getHeight + borderSize
-
-    if (state.imgFitUse) {
-      // Fit to absolute size or % of page size or to-margin size.
-      val decor = scala.List("%P", "%M", "%C")
-      val pageWidth = scala.List(doc.getPageWidth(false), doc.getPageWidth(true), right - left)
-      val fitX = state.imgFitWidth.getValueOfPercentagMulti(decor, pageWidth)
-      val pageHeight = scala.List(doc.getPageHeight(false), doc.getPageHeight(true), top - bottom)
-      val fitY = state.imgFitHeight.getValueOfPercentagMulti(decor, pageHeight)
-
-      image.scaleToFit(fitX - borderSize, fitY - borderSize)
-      if (width * fitY <= height * fitX) {
-        width = width * fitY / height
-        height = fitY
-      } else {
-        height = height * fitX / width
-        width = fitX
-      }
+  private def boundingBoxOfFittedImage(p: Point, fitWidth: Float, fitHeight: Float): Point = {
+    val borderSize = borderWidth * 2f
+    if (p.x * fitHeight <= p.y * fitWidth) {
+      Point((p.x - borderSize) * (fitHeight - borderSize) / (p.y - borderSize) + borderSize, fitHeight)
     } else {
-      // Scale to absolute size or % of image size, page size, to-margin size
-      val decor = scala.List("%", "%P", "%M", "%C")
-      val widths = scala.List(width, doc.getPageWidth(false), doc.getPageWidth(true), right - left)
-      width = state.imgScaleWidth.getValueOfPercentagMulti(decor, widths)
-      val heights = scala.List(height, doc.getPageHeight(false), doc.getPageHeight(true), top - bottom)
-      height = state.imgScaleHeight.getValueOfPercentagMulti(decor, heights)
-      image.scaleAbsolute(width - borderSize, height - borderSize)
+      Point(fitWidth, (p.y - borderSize) * (fitWidth - borderSize) / (p.x - borderSize) + borderSize)
     }
   }
 
-  private def handlePositioning() {
-    // Calculate width and height of rotated image relative to un-rotated coordinates
-    val (widthRotated, heightRotated) =
-      if (rotationDeg == 0f) {
-        (width, height)
-      } else {
-        val r = degressToRadians(rotationDeg)
-        val piHalf = 0.5f * Pi
-        (((cos(r) * width).abs + (cos(r + piHalf) * height).abs).toFloat,
-          ((sin(r) * width).abs + (sin(r + piHalf) * height).abs).toFloat)
-      }
+  private def degreesNormalized(degrees: Float): Float = {
+    val index = (degrees / 360d).toInt - (if (degrees < 0) 1 else 0)
+    (degrees - index * 360f)
+  }
+  
+  private def boundingBoxOfRotatedImage(p: Point, angle: Double): Point =
+    Point(p.x * cos(angle).abs + p.y * cos(Pi / 2d - angle).abs, p.x * sin(angle).abs + p.y * sin(Pi / 2d - angle).abs)
 
+  private def boundingBoxPosition(p: Point): Point = {
     if (usePosition) {
-      xPosition = doc.getAbsoluteX(xPosDN, widthRotated)
-      yPosition = doc.getAbsoluteY(yPosDN, heightRotated)
+      Point(doc.getAbsoluteX(xPosDN, p.x), doc.getAbsoluteY(yPosDN, p.y))
     } else {
       val leftIndented = left + state.indentationLeft
       val rightIndented = right - state.indentationRight
-
-      xPosition = state.imgAlignment match {
+      val x = state.imgAlignment match {
         case "left"   => leftIndented
-        case "center" => (leftIndented + rightIndented - widthRotated) / 2f
-        case "right"  => rightIndented - widthRotated
+        case "center" => (leftIndented + rightIndented - p.x) / 2f
+        case "right"  => rightIndented - p.x
       }
-      val ySpaceBefore = state.spaceBeforeParagraph.getValueOrPercentageOfNumber(state.fontSize)
-      val ySpaceAfter = state.spaceAfterParagraph.getValueOrPercentageOfNumber(state.fontSize)
-      // FIXME: Should ignore paragraph space above image, if it is the first content to be added to page.
-
-      yPosition = doc.currentColumn.getYLine - heightRotated - ySpaceBefore
-      val postYLine = doc.currentColumn.getYLine - heightRotated
-      if (postYLine < bottom) {
-        throw new NoSpaceForImageException("Image does not fit on page")
-      }
-      doc.currentColumn.setYLine(postYLine - ySpaceAfter)
+      val y = doc.currentColumn.getYLine - p.y - ySpaceBefore
+      Point(x, y)
     }
   }
 
-  private def calculateBorderRotation() {
-    /** The fact that we draw the image border here (drawImageBorder) instead of using iText
-      * image border feature, also means that:
-      * (1) the position of the image must be calculated to accommodate the border.
-      * (2) the combination of border and rotation affects both this positioning
-      * 		and the position of the border.
-      * To understand this, note that iText rotates the image, not around the specified position,
-      * but by keeping the image tucked inside the 90-degrees cone at the specified position, the
-      * cone which is a translation of the first quadrant.
-      */
-    val r = degressToRadians(rotationNormalizedDeg)
-    val rPlus = degressToRadians(rotationNormalizedDeg + 45)
-    val rMinus = degressToRadians(rotationNormalizedDeg - 45)
-
-    val hyp = if (((rotationDeg / 90f).toInt & 1) == 0) height else width
-
-    val xContact = (xPosition + hyp * sin(r)).toFloat
-    val yContact = (yPosition + hyp * cos(r)).toFloat
-
-    val borderDiagonal = sqrt(2) * borderWidth
-    val fromBtoC = ((borderDiagonal * cos(rPlus)).toFloat, (borderDiagonal * sin(rPlus)).toFloat) // C will be the x-contact point of the image excluding border
-    val fromDtoE = ((borderDiagonal * cos(rMinus)).toFloat, (borderDiagonal * sin(rMinus)).toFloat) // E will be the y-contact point of the image excluding border
-
-    xImagePosition = xPosition + fromDtoE._1
-    yImagePosition = yPosition + fromBtoC._2
-
-    xBorderPos = (xContact + fromBtoC._1 / 2f).toFloat
-    yBorderPos = (yPosition + fromBtoC._2 / 2f).toFloat
+  private def getContactPoints(p: Point, normalizedAngle: Double, evenQuadrant: Boolean): Point = {
+    val cat = if (evenQuadrant) p.y else p.x
+    Point(sin(normalizedAngle) * cat, cos(normalizedAngle) * cat)
+  }
+  
+  private def getFrameVector(normalizedAngle: Double): Point = {
+    val cat = borderWidth / sqrt(2d)
+    Point(cos(normalizedAngle + Pi / 4d) * cat, sin(normalizedAngle + Pi / 4d) * cat)
   }
 
-  def getProcessedImage(isRetry: Boolean): Image = {
-    image = ImageCache.get(fileName, useCache, isRetry)
+  private val boxFramedImage = boundingBoxOfFramedImage(image.getWidth, image.getHeight)
 
-    scale()
-    image.setRotationDegrees(rotationDeg)
-
-    handlePositioning()
-
-    calculateBorderRotation()
-
-    image.setAbsolutePosition(xImagePosition, yImagePosition)
-    image
+  private lazy val imageFitBox: (Float, Float) = {
+    val decor = scala.List("%P", "%M", "%C")
+    val pageWidth = scala.List(doc.getPageWidth(false), doc.getPageWidth(true), right - left)
+    val fitX = state.imgFitWidth.getValueOfPercentagMulti(decor, pageWidth)
+    val pageHeight = scala.List(doc.getPageHeight(false), doc.getPageHeight(true), top - bottom)
+    val fitY = state.imgFitHeight.getValueOfPercentagMulti(decor, pageHeight)
+    (fitX, fitY)
   }
 
-  def drawImageBorder(contentByte: PdfContentByte, opacity: Float) {
+  private lazy val imageScaleBox: (Float, Float) = {
+    val decor = scala.List("%", "%P", "%M", "%C")
+    val widths = scala.List(boxFramedImage.x, doc.getPageWidth(false), doc.getPageWidth(true), right - left).map(_.toFloat)
+    val width = state.imgScaleWidth.getValueOfPercentagMulti(decor, widths)
+    val heights = scala.List(boxFramedImage.y, doc.getPageHeight(false), doc.getPageHeight(true), top - bottom).map(_.toFloat)
+    val height = state.imgScaleHeight.getValueOfPercentagMulti(decor, heights)
+    (width, height)
+  }
 
-    /** iText image border functionality not used because the border is scaled
-      * with the image, and the image border is drawn half-way over the image.
-      */
+  private val boxScaledOrFittedImage: Point = {
+    val borderSize = borderWidth * 2f
+    if (state.imgFitUse) {
+      image.scaleToFit(imageFitBox._1 - borderSize, imageFitBox._2 - borderSize)
+      boundingBoxOfFittedImage(boxFramedImage, imageFitBox._1, imageFitBox._2)
+    } else {
+      image.scaleAbsolute(imageScaleBox._1 - borderSize, imageScaleBox._2 - borderSize)
+      Point(imageScaleBox._1, imageScaleBox._2)
+    }
+  }
+
+  val angleDegrees = degreesNormalized(state.imgRotate)
+  image.setRotationDegrees(angleDegrees)
+  
+  private val angle = angleDegrees.toRadians
+  
+  private val boxRotatedImage: Point =
+    boundingBoxOfRotatedImage(boxScaledOrFittedImage, angle)
+
+  private val boxPosition: Point = boundingBoxPosition(boxRotatedImage)
+
+  private val quadrant = (angle * 2d / Pi).toInt // well, something like that: 0 for angle in [0 - pi/2[ etc.
+  private val evenQuadrant: Boolean = quadrant % 2 == 0
+  private val normalizedAngle = angle - quadrant * Pi / 2d
+  private val frameOffset = sqrt(2d) * borderWidth * sin(normalizedAngle + Pi / 4d)
+
+  image.setAbsolutePosition((boxPosition.x + frameOffset).toFloat, (boxPosition.y + frameOffset).toFloat)
+
+  def getImage: Image = image
+
+  def drawFrame(contentByte: PdfContentByte, opacity: Float) {
+    
+    val contactPoints = getContactPoints(boxScaledOrFittedImage, normalizedAngle, evenQuadrant)
+    val frameVector = getFrameVector(normalizedAngle)
+    
+    val a = boxPosition + Point(contactPoints.x, 0) + frameVector
+    val b = boxPosition + Point(0, contactPoints.y) + frameVector.rotate(-Pi / 2d)
+    val c = boxPosition + boxRotatedImage - Point(contactPoints.x, 0) - frameVector
+    val d = boxPosition + boxRotatedImage - Point(0, contactPoints.y) - frameVector.rotate(-Pi / 2d)
 
     val drawingSequence = new DrawingSequence(doc)
-
-    var (x, y, a) = (xBorderPos, yBorderPos, rotationNormalizedDeg)
-
-    def draw(dist: Float) {
-      val r = degressToRadians(a)
-      x += (dist * cos(r)).toFloat
-      y += (dist * sin(r)).toFloat
-      drawingSequence.drawingLineTo(x, y)
-    }
-    drawingSequence.drawingMoveTo(x, y)
-    val (w, h) = (if (((rotationDeg / 90f).toInt & 1) == 0) (width, height) else (height, width))
-    draw(w - borderWidth)
-    a += 90f
-    draw(h - borderWidth)
-    a += 90f
-    draw(w - borderWidth)
-    a += 90f
-    draw(h - borderWidth)
-
+    drawingSequence.drawingMoveTo(a.x, a.y)
+    drawingSequence.drawingLineTo(b.x, b.y)
+    drawingSequence.drawingLineTo(c.x, c.y)
+    drawingSequence.drawingLineTo(d.x, d.y)
+    drawingSequence.drawingLineTo(a.x, a.y)
     drawingSequence.draw(contentByte, state, opacity, borderWidth)
   }
 }

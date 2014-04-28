@@ -21,7 +21,7 @@ class DrawingSequence(pdfDocument: PDFDocument) {
     commands += DrawingCommand.fromDecNums(pdfDocument, "move", List((x, y)))
   }
 
-  def drawingMoveTo(x: Float, y: Float) {
+  def drawingMoveTo(x: Double, y: Double) {
     commands += new DrawingCommand(pdfDocument, "move", List((x, y)))
   }
   
@@ -34,7 +34,7 @@ class DrawingSequence(pdfDocument: PDFDocument) {
     commands += DrawingCommand.fromDecNums(pdfDocument, "line", List((x, y)))
   }
   
-  def drawingLineTo(x: Float, y: Float) {
+  def drawingLineTo(x: Double, y: Double) {
     checkNonEmpty()
     commands += new DrawingCommand(pdfDocument, "line", List((x, y)))
   }
@@ -89,8 +89,8 @@ class DrawingSequence(pdfDocument: PDFDocument) {
     }
     for (d <- commands) {
       d.command match {
-        case "move" => contentByte.moveTo(d.arguments(0)._1, d.arguments(0)._2)
-        case "line" => contentByte.lineTo(d.arguments(0)._1, d.arguments(0)._2)
+        case "move" => contentByte.moveTo(d.arguments(0)._1.toFloat, d.arguments(0)._2.toFloat)
+        case "line" => contentByte.lineTo(d.arguments(0)._1.toFloat, d.arguments(0)._2.toFloat)
       }
     }
     contentByte.stroke()

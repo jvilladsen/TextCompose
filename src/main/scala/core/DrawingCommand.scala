@@ -9,7 +9,7 @@ package textcompose.core
 class DrawingCommand(
   doc: PDFDocument,
   val command: String,
-  val arguments: List[(Float, Float)]) {
+  val arguments: List[(Double, Double)]) {
 
   if (command != "move" && command != "line")
     throw new Exception("Illegal drawing command '" + command + "'.")
@@ -22,8 +22,8 @@ object DrawingCommand {
     command: String,
     arguments: List[(DecoratedNumber, DecoratedNumber)]) = {
     
-	def getCoordinates(xDN: DecoratedNumber, yDN: DecoratedNumber): (Float, Float) =
-      (doc.getAbsoluteX(xDN, 0f), doc.getAbsoluteY(yDN, 0f))
+	def getCoordinates(xDN: DecoratedNumber, yDN: DecoratedNumber): (Double, Double) =
+      (doc.getAbsoluteX(xDN, 0d), doc.getAbsoluteY(yDN, 0d))
     
 	new DrawingCommand(doc, command, arguments.map(c => getCoordinates(c._1, c._2)))
   }
