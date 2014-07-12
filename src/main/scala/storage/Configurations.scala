@@ -30,11 +30,11 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
    * - ResourcesVersion (internal)
    */
 
-  /** Version number of resources. Increase it by one if there are 
+  /** Version number of resources. Increase it by one if there are
     * changes to resources that are copied out to the file system.
     */
   private val currentResourcesVersion = 2
-  
+
   private var extensionToFileName = new HashMap[String, String]
   private var templateToFileName = new HashMap[String, String]
   private var latestDirectory = new HashMap[String, String]
@@ -66,52 +66,72 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   private def extractFromDataSet() {
     var toBeRemoved = new ArrayBuffer[List[String]]
     for (configuration <- dataSet) {
-      if (configuration(0) == "FontLocation" && configuration.length == 2) {
-        core.FontFileRegister.addDirectory(configuration(1))
-      } else if (configuration(0) == "Extension" && configuration.length == 3) {
-        val extensionName = configuration(1)
-        val fullFileName = configuration(2)
-        if (FileMethods.IsFile(fullFileName)) {
-          extensionToFileName += extensionName -> fullFileName
-        } else {
-          toBeRemoved += configuration
-          val message = "Previously registered extension '" + extensionName + "' has been renamed/removed. " +
-            "\nIt was placed in '" + fullFileName + "'."
-          errorsDuringInitialization += message
+      val length = configuration.length
+      configuration(0) match {
+        case "FontLocation" => {
+          if (length == 2) core.FontFileRegister.addDirectory(configuration(1))
         }
-      } else if (configuration(0) == "Template" && configuration.length == 3) {
-        val templateName = configuration(1)
-        val fullFileName = configuration(2)
-        if (FileMethods.IsFile(fullFileName)) {
-          templateToFileName += templateName -> fullFileName
-        } else {
-          toBeRemoved += configuration
-          val message = "Previously registered template '" + templateName + "' has been renamed/removed. " +
-            "\nIt was placed in '" + fullFileName + "'."
-          errorsDuringInitialization += message
+        case "Extension" => {
+          if (length == 3) {
+            val extensionName = configuration(1)
+            val fullFileName = configuration(2)
+            if (FileMethods.IsFile(fullFileName)) {
+              extensionToFileName += extensionName -> fullFileName
+            } else {
+              toBeRemoved += configuration
+              val message = "Previously registered extension '" + extensionName + "' has been renamed/removed. " +
+                "\nIt was placed in '" + fullFileName + "'."
+              errorsDuringInitialization += message
+            }
+          }
         }
-      } else if (configuration(0) == "TabSize" && configuration.length == 2) {
-        tabSize = configuration(1).toInt
-      } else if (configuration(0) == "SaveBeforeCompile" && configuration.length == 2) {
-        saveBeforeCompile = configuration(1).toBoolean
-      } else if (configuration(0) == "WriteErrorMessagesToDocument" && configuration.length == 2) {
-        writeErrorMessagesToDocument = configuration(1).toBoolean
-      } else if (configuration(0) == "ViewAfterCompile" && configuration.length == 2) {
-        viewAfterCompile = configuration(1).toInt
-      } else if (configuration(0) == "LatestDirectory" && configuration.length == 3) {
-        latestDirectory += configuration(1) -> configuration(2)
-      } else if (configuration(0) == "CharacterEncoding" && configuration.length == 2) {
-        characterEncoding = configuration(1)
-      } else if (configuration(0) == "EditorFontName" && configuration.length == 2) {
-        editorFontName = configuration(1)
-      } else if (configuration(0) == "GUITheme" && configuration.length == 2) {
-        guiTheme = configuration(1).toInt
-      } else if (configuration(0) == "DefaultDictionary" && configuration.length == 2) {
-        defaultDictionary = configuration(1)
-      } else if (configuration(0) == "PreviewZoomPercentage" && configuration.length == 2) {
-        previewZoomPercentage = configuration(1).toInt
-      } else if (configuration(0) == "ResourcesVersion" && configuration.length == 2) {
-        storedResourcesVersion = configuration(1).toInt
+        case "Template" => {
+          if (length == 3) {
+            val templateName = configuration(1)
+            val fullFileName = configuration(2)
+            if (FileMethods.IsFile(fullFileName)) {
+              templateToFileName += templateName -> fullFileName
+            } else {
+              toBeRemoved += configuration
+              val message = "Previously registered template '" + templateName + "' has been renamed/removed. " +
+                "\nIt was placed in '" + fullFileName + "'."
+              errorsDuringInitialization += message
+            }
+          }
+        }
+        case "TabSize" => {
+          if (length == 2) tabSize = configuration(1).toInt
+        }
+        case "SaveBeforeCompile" => {
+          if (length == 2) saveBeforeCompile = configuration(1).toBoolean
+        }
+        case "WriteErrorMessagesToDocument" => {
+          if (length == 2) writeErrorMessagesToDocument = configuration(1).toBoolean
+        }
+        case "ViewAfterCompile" => {
+          if (length == 2) viewAfterCompile = configuration(1).toInt
+        }
+        case "LatestDirectory" => {
+          if (length == 3) latestDirectory += configuration(1) -> configuration(2)
+        }
+        case "CharacterEncoding" => {
+          if (length == 2) characterEncoding = configuration(1)
+        }
+        case "EditorFontName" => {
+          if (length == 2) editorFontName = configuration(1)
+        }
+        case "GUITheme" => {
+          if (length == 2) guiTheme = configuration(1).toInt
+        }
+        case "DefaultDictionary" => {
+          if (length == 2) defaultDictionary = configuration(1)
+        }
+        case "PreviewZoomPercentage" => {
+          if (length == 2) previewZoomPercentage = configuration(1).toInt
+        }
+        case "ResourcesVersion" => {
+          if (length == 2) storedResourcesVersion = configuration(1).toInt
+        }
       }
     }
     for (configuration <- toBeRemoved) {
@@ -120,7 +140,7 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   }
 
   private def storeDefaults() {
-
+    
     def updateFontLocation(dir: String) {
       if (FileMethods.IsDirectory(dir)) update(List("FontLocation", dir))
     }
