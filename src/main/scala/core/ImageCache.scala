@@ -12,15 +12,13 @@ import com.itextpdf.text._
 
 object ImageCache {
 
-  /* The point is that if you insert the same image on every page,
-   * (a watermark or logo/decoration in the header or footer)
-   * then you still only want one single instance of it in the PDF file.
-   * Plus it is faster not to load it every time.
-   */
+  /** If you insert the same image on every page such as watermark or logo
+    * then you still only want one single instance of it in the PDF file.
+    */
 
-  private var fullFileNameToImage = new HashMap[String, Image]
-  private var fullFileNameUtilization = new HashMap[String, Int]
-  private var fullFileNameUncached = new HashMap[String, Int]
+  private val fullFileNameToImage = new HashMap[String, Image]
+  private val fullFileNameUtilization = new HashMap[String, Int]
+  private val fullFileNameUncached = new HashMap[String, Int]
 
   def clear {
     fullFileNameToImage.clear
@@ -49,7 +47,7 @@ object ImageCache {
      * - if utilization is zero for more than 3 images
      * - if un-cached counter above 2
      */
-    var warningMessages = new ArrayBuffer[String]
+    val warningMessages = new ArrayBuffer[String]
     var numberOfNonUtilizedCaches = 0
     for (f <- fullFileNameUtilization) { if (f._2 == 0) { numberOfNonUtilizedCaches += 1 } }
 
@@ -65,7 +63,8 @@ object ImageCache {
       if (f._2 > 1) {
         warningMessages.append("Warning: Image used " + f._2.toString +
           " times without use of cache: '" + f._1 + "'. This means that the PDF file is larger than necessary. " +
-          "You can avoid this by using the 'cache' keyword as second parameter for the 'image' tag the first time.")
+          "You can avoid this by using the 'cache' keyword as second parameter for the 'image' tag. " +
+          "It is enough to write 'cache' on the first instance.")
       }
     }
 
