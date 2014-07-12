@@ -87,8 +87,10 @@ class Overview extends Dialog {
   modal = true
   minimumSize = applicationWindowSize
   maximumSize = applicationWindowSize
-  centerOnScreen
-  open
+  centerOnScreen()
+  // We set the background color to avoid getting a brief white flash when the window is opened.
+  background = Colors.overviewBackground 
+  open()
 
   def getSelection = if (confirmed) fileSelection.toList else List()
 }

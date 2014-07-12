@@ -139,7 +139,9 @@ class Preferences(pretend: Boolean) extends Dialog {
   preferredSize = new Dimension(550, 400)
   minimumSize = new Dimension(550, 400)
   maximumSize = new Dimension(550, 400)
-  centerOnScreen
-  pack
+  centerOnScreen()
+  // We set the background color to avoid getting a brief white flash when the window is opened.
+  background = editor.Colors.modalWindows
+  pack()
   if (!pretend) open
 }

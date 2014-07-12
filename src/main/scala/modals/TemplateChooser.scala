@@ -91,9 +91,11 @@ class TemplateChooser extends Dialog {
   modal = true
   resizable = false
   minimumSize = new Dimension(300, 30)
-  centerOnScreen
-  pack
-  open
+  centerOnScreen()
+  // We set the background color to avoid getting a brief white flash when the window is opened.
+  background = editor.Colors.modalWindows
+  pack()
+  open()
 
   def isCompleted = completed
   def isTemplate = selectedTemplate != noTemplate

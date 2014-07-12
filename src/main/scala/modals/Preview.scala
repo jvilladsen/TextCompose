@@ -93,6 +93,8 @@ class Preview(filePath: String, fileTitle: String, initialPageNumber: Int) exten
   val proposedSize = new Dimension(width.toInt, height.toInt - (if (core.Environment.isLinux) 1 else 0))
   minimumSize = proposedSize
   maximumSize = proposedSize
-  centerOnScreen
-  open
+  centerOnScreen()
+  // We set the background color to avoid getting a brief white flash when the window is opened.
+  background = editor.Colors.previewBackground 
+  open()
 }

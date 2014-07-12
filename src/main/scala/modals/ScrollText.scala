@@ -66,7 +66,9 @@ class ScrollText(
   preferredSize = new Dimension(width, 700)
   minimumSize = new Dimension(width, 800)
   maximumSize = new Dimension(width, 1000)
-  centerOnScreen
-  pack
-  open
+  centerOnScreen()
+  // We set the background color to avoid getting a brief white flash when the window is opened.
+  background = editor.Colors.modalWindows
+  pack()
+  open()
 }

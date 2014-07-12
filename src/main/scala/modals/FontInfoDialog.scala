@@ -125,7 +125,9 @@ class FontInfoDialog(fontTitle: String) extends Dialog {
   preferredSize = new Dimension(1050, 700)
   minimumSize = applicationWindowSize
   maximumSize = applicationWindowSize
-  centerOnScreen
-  pack
-  open
+  centerOnScreen()
+  // We set the background color to avoid getting a brief white flash when the window is opened.
+  background = editor.Colors.modalWindows
+  pack()
+  open()
 }
