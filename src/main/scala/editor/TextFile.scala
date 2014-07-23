@@ -80,14 +80,10 @@ class TextFile {
     fileEncodingLabel.text = encoding
   }
 
-  def updateTimeStamp(t: Long) {
-    fileLatestTimeStamp = t
-    fileLatestUpdated = (new Date(t)).toString
+  private def updateTimeStamp() {
+    fileLatestTimeStamp = storage.FileMethods.GetTimeStamp(fullFileName)
+    fileLatestUpdated = (new Date(fileLatestTimeStamp)).toString
     fileLatestUpdatedLabel.text = fileLatestUpdated
-  }
-
-  def updateTimeStampAfterSave() {
-    updateTimeStamp(storage.FileMethods.GetTimeStamp(fullFileName))
   }
 
   def newText(number: Int) {
@@ -111,10 +107,10 @@ class TextFile {
   def updateFromFullName() {
     val fileHandle = new java.io.File(fullFileName)
     fileIsReadOnly = !fileHandle.canWrite
-    updateTimeStamp(fileHandle.lastModified)
     fileName = fileHandle.getName
     fileDirectory = fileHandle.getParent + core.Environment.fileSeparator
     updatePropertiesPane()
+    updateTimeStamp()
   }
 
   def chooseFile(forcedEncoding: String) {

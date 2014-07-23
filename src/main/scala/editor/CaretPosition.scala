@@ -36,8 +36,8 @@ object CaretPosition {
     currentPosition = fileEditor.editor.getCursorPosition
     currentLength = fileEditor.editor.document.getLength
 
-    val updateTimestamp = java.util.Calendar.getInstance().getTimeInMillis
-    def waitingTime = java.util.Calendar.getInstance().getTimeInMillis - updateTimestamp
+    val currentTimeInMillis = java.util.Calendar.getInstance().getTimeInMillis
+    def waitingTime = java.util.Calendar.getInstance().getTimeInMillis - currentTimeInMillis
 
     if (!delayedHandlerSpawned) {
       delayedHandlerSpawned = true

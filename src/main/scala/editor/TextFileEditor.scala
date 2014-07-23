@@ -42,7 +42,6 @@ class TextFileEditor(fontSize: Int) {
       completed = file.checkFileStamp
       if (completed) {
         editor.writeTextToFile(file.fullFileName, true, file.encoding)
-        file.updateTimeStampAfterSave()
         file.updateFromFullName()
         if (updateSourcesMetaData) {
           storage.SourcesMetaData.updateFileData(file.fullFileName, file.fileName, file.encoding, file.dictionary)
