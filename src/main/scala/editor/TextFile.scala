@@ -145,11 +145,14 @@ class TextFile {
     var completed = true
     if (!fileIsReadOnly) {
 
-      val difference = storage.FileMethods.GetTimeStamp(fullFileName) - fileLatestTimeStamp
-      if (difference > 0) {
+      val difference = (storage.FileMethods.GetTimeStamp(fullFileName) - fileLatestTimeStamp) / 1000
+      /* Not happy about the condition > 60 below, but for some reason OS X started
+       * changing the file time stamp after you think that you have saved the file.
+       */
+      if (difference > 60) {
         val message = "This file has been modified from elsewhere. " +
           "If you continue, you will overwrite a newer version with an older version! " +
-          "It is newer by " + difference.toString + "ms."
+          "It is newer by " + difference.toString + "seconds."
         completed = DialogBox.warning(message)
       }
     }
