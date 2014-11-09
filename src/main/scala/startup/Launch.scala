@@ -43,9 +43,13 @@ object Launch {
 
   def main(args: Array[String]): Unit = {
 
-    storageInitializations()
-    if (args.length == 0) guiRelatedInitializations()
-    textcompose.editor.CompileOrGUI.switcher(args)
+    try {
+      storageInitializations()
+      if (args.length == 0) guiRelatedInitializations()
+      textcompose.editor.CompileOrGUI.switcher(args)
+    } catch {
+      case e: Exception => textcompose.editor.DialogBox.stackTrace(e.getMessage, e)
+    }
   }
 }
 

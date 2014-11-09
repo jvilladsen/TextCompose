@@ -156,9 +156,11 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
 
     def prune() {
       for (configuration <- dataSet) {
-        val shortFontId = configuration(0)
-        if (!core.FontFileRegister.exists(shortFontId)) {
-          remove(configuration)
+        try {
+          val shortFontId = configuration(0)
+          if (!core.FontFileRegister.exists(shortFontId)) remove(configuration)
+        } catch {
+          case e: Exception => throw new Exception("Could not handle an entry in list of fonts: " + e.getMessage)
         }
       }
     }
