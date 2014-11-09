@@ -85,15 +85,15 @@ object ResourceHandling {
       }
     }
     // Structure extensions
-    addExtension("Standard_extension.wr", "Standard")
-    addExtension("References_extension.wr", "References")
+    addExtension("Standard_extension.tc", "Standard")
+    addExtension("References_extension.tc", "References")
     // Presentation extensions
-    addExtension("Standard_example_1_extension.wr", "Standard - Example 1")
-    addExtension("Standard_example_2_extension.wr", "Standard - Example 2")
-    addExtension("Typographical_Replacements_extension.wr", "Typographical Replacements")
+    addExtension("Standard_example_1_extension.tc", "Standard - Example 1")
+    addExtension("Standard_example_2_extension.tc", "Standard - Example 2")
+    addExtension("Typographical_Replacements_extension.tc", "Typographical Replacements")
     // Templates
-    addTemplate("Standard_example_1_template.wr", "Standard - Example 1")
-    addTemplate("Standard_example_2_template.wr", "Standard - Example 2")
+    addTemplate("Standard_example_1_template.tc", "Standard - Example 1")
+    addTemplate("Standard_example_2_template.tc", "Standard - Example 2")
   }
 
   val documentationLines = new ArrayBuffer[String]
