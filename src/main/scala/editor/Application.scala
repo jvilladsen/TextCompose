@@ -330,7 +330,7 @@ object Application extends SimpleSwingApplication {
       }
       return button
     }
-
+    
     val newButton = getButton(newFileAction, Images.newIcon)
     val openButton = getButton(openFileAction, Images.openIcon)
     val overviewButton = getButton(overviewAction, Images.overviewIcon)
@@ -345,6 +345,7 @@ object Application extends SimpleSwingApplication {
       background = Colors.toolBar
       border = Swing.MatteBorder(0, 0, 1, 0, Colors.toolBarBorder)
       maximumSize = new Dimension(4000, 30)
+      contents += Swing.HStrut(10)
       contents += newButton
       contents += openButton
       contents += overviewButton

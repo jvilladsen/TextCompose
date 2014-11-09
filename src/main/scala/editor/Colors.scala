@@ -54,6 +54,7 @@ object Colors {
   private val N_sky = new Color(13, 59, 103)
   private val N_light = new Color(158, 200, 226)
   private val N_red = new Color(186, 167, 201)
+  private val N_pale = new Color(20, 93, 150) // Color(24, 110, 183)
   private val N_medium = new Color(16, 73, 122)
 
   private val plainLightGrey = new Color(200, 200, 200)
@@ -101,7 +102,7 @@ object Colors {
       standard = List(black, black, black, black, N_light)(theme)
       warning = List(darkPurple, darkOrange, darkPurple, K_brown, N_light)(theme)
 
-      toolBar = List(lightCyan, lightGrey, B_brown, K_pinku, N_medium)(theme)
+      toolBar = List(lightCyan, lightGrey, B_brown, K_pinku, N_pale)(theme)
       tabsPane = List(greyBlue, mediumGrey, B_fullBeige, K_blue, N_sky)(theme)
       supportPane = List(lightBlue, lightGrey, B_mediumBeige, K_green, N_sky)(theme)
       editorForeground = List(black, black, black, black, N_light)(theme)
