@@ -112,6 +112,8 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     var count = 0
     var newFonts = new Stack[String]
 
+    val progress = new textcompose.modals.ProgressDialog("Analyzing new fonts")
+
     // Get font properties for all fonts not yet analyzed and store the result.
     for (shortFontId <- core.FontFileRegister.getShortFontIds) {
       if (getIndexOf(List(shortFontId)) == -1) {
@@ -120,10 +122,12 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
         updateCharacterStorage(shortFontId)
         count += 1
         newFonts.push(shortFontId)
+        progress.update((count * 100f) / numberOfFonts, shortFontId)
       }
     }
-    if (count > 0) {
-      editor.DialogBox.newFonts(count, newFonts, recalculation)
+    progress.finish()
+    if (numberOfFonts > 0) {
+      editor.DialogBox.newFonts(numberOfFonts, newFonts, recalculation)
     } else if (recalculation) {
       editor.DialogBox.info("No new fonts were found.")
     }
