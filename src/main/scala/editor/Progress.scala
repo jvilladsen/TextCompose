@@ -35,6 +35,8 @@ class Progress(showLabel: Boolean) extends GridBagPanel {
 
   border = Swing.EmptyBorder(2, 10, 2, 10)
 
+  // If the progress bar is not rendered you probably need to run the action in a future.
+  
   def update(p: Float) {
     percentage = p.toInt
     future {

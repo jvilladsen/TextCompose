@@ -9,11 +9,60 @@ package textcompose.editor
 import java.awt.FileDialog
 import textcompose.{ core, storage, modals }
 import core.PreviewType
+import concurrent.ExecutionContext.Implicits.global
+import concurrent._
 
 object BatchBuilding {
 
   def validSourceName(n: String) = n.endsWith(".tc") && !n.startsWith(".")
 
+  def buildChosenDirectory(
+      listOfFiles: Array[java.io.File],
+      numberOfFiles: Int,
+      directory: String) {
+    future {
+      val progress = new modals.ProgressDialog("Building documents")
+      progress.makeVisible()
+      var count = 0
+      var errors = 0
+      var success = 0
+      var messages = "Something went wrong when trying to build document:"
+      for (file <- listOfFiles) {
+        val fileName = file.getName
+        if (validSourceName(fileName)) {
+          progress.update((count * 100f) / numberOfFiles, fileName)
+          val fullFileName = file.getAbsolutePath
+          var args = new core.Arguments(
+            true, // internal
+            fullFileName,
+            false, // temporaryLocation
+            PreviewType.No)
+          try {
+            core.Compiler.build(args)
+            success += 1
+          } catch {
+            case e: Exception => {
+              errors += 1
+              if (errors < 5) {
+                messages += "\n" + fileName + ": " + e.getMessage
+              } else if (errors == 5) {
+                messages += "\n..."
+              }
+            }
+          }
+          count += 1
+        }
+      }
+      progress.finish()
+      if (errors > 0) {
+        DialogBox.error(messages + ".\nIt may help to close any open PDF viewer.")
+      } else {
+        DialogBox.info(success.toString + " documents were built.")
+        storage.Configurations.updateLatestDirectory(directory, "OpenFile")
+      }
+    }
+  }
+  
   def buildDirectory {
     
     val openFileChooser = new java.awt.FileDialog(Application.top.peer, "Build for all .tc files in same folder as selected file", FileDialog.LOAD)
@@ -43,46 +92,8 @@ object BatchBuilding {
           DialogBox.warning(message)
         }
 
-      if (confirmed) {
-        val progress = new modals.ProgressDialog("Building documents")
-        progress.makeVisible()
-        var count = 0
-        var errors = 0
-        var success = 0
-        var messages = "Something went wrong when trying to build document:"
-        for (file <- listOfFiles) {
-          val fileName = file.getName
-          if (validSourceName(fileName)) {
-            progress.update((count * 100f) / numberOfFiles, fileName) // FIXME: Is not shown. Why!?
-            val fullFileName = file.getAbsolutePath
-            var args = new core.Arguments(
-              true, // internal
-              fullFileName,
-              false, // temporaryLocation
-              PreviewType.No)
-            try {
-              core.Compiler.build(args)
-              success += 1
-            } catch {
-              case e: Exception => {
-                errors += 1
-                if (errors < 5) {
-                  messages += "\n" + fileName + ": " + e.getMessage
-                } else if (errors == 5) {
-                  messages += "\n..."
-                }
-              }
-            }
-            count += 1
-          }
-        }
-        progress.finish()
-        if (errors > 0) {
-          DialogBox.error(messages + ".\nIt may help to close any open PDF viewer.")
-        }
-        DialogBox.info(success.toString + " documents were built.")
-        storage.Configurations.updateLatestDirectory(directory, "OpenFile")
-      }
+      if (confirmed) buildChosenDirectory(listOfFiles, numberOfFiles, directory)
+      
     } else {
       throw new Exception("User escaped out of file chooser")
     }
