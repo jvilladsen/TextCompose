@@ -124,12 +124,12 @@ class TagParser(
     val parIndex = if (syntaxIndex >= 0) {
       syntaxAlternatives(syntaxIndex).formalParameters.indexWhere(p => p.getName == parameterName)
     } else {
-      throw new Exception("No syntax '" + syntaxName + "' found for tag '" + tagName)
+      throw new Exception("No syntax '" + syntaxName + "' found for tag '" + tagName + "'")
     }
     val parameter = if (parIndex >= 0) {
       syntaxAlternatives(syntaxIndex).formalParameters(parIndex)
     } else {
-      throw new Exception("No parameter '" + parameterName + "' found in syntax '" + syntaxName + "' for tag '" + tagName)
+      throw new Exception("No parameter '" + parameterName + "' found in syntax '" + syntaxName + "' for tag '" + tagName + "'")
     }
     parameter match {
       case p: FormalOptions => p.options = newOptions
