@@ -21,6 +21,7 @@ class ProgressDialog(dialogTitle: String) extends Dialog {
 
   def update(p: Float, m: String) {
     bar.update(p, m)
+    repaint()
   }
 
   def finish() {
@@ -28,6 +29,15 @@ class ProgressDialog(dialogTitle: String) extends Dialog {
     dispose
   }
 
+  def test(m: String) {
+    var n = 0
+    while (n < 100) {
+      n += 1
+      update(n, "Updated to " + n.toString + "% - " + m)
+      Thread.sleep(80)
+    }
+  }
+  
   contents = bar
   title = dialogTitle
   // modal = true
