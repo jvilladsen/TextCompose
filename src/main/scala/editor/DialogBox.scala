@@ -20,13 +20,19 @@ object DialogBox {
     val stringWriter = new StringWriter
     e.printStackTrace(new PrintWriter(stringWriter))
     val stacktrace = stringWriter.toString
-    val d = new modals.ScrollText(
-      900, // width
-      "System Error: " + message,
-      textcompose.core.Environment.operatingSystemName, // sub text
-      stacktrace,
-      "", // html file name
-      editor.Images.systemErrorIcon)
+    if (CompileOrGUI.canExpectGUI) {
+	    val d = new modals.ScrollText(
+	      900, // width
+	      "System Error: " + message,
+	      textcompose.core.Environment.operatingSystemName, // sub text
+	      stacktrace,
+	      "", // html file name
+	      editor.Images.systemErrorIcon)
+    } else {
+      println("System Error: " + message)
+      println(textcompose.core.Environment.operatingSystemName)
+      println(stacktrace)
+    }
   }
 
   def systemError(message: String) {
