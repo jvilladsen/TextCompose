@@ -27,9 +27,11 @@ object Parsers {
       setOptionMapping(FontEncoding.titleToShortId).
     addFlag("local").addGuiAction(FontInformation, 0)
     
+  val glyphSyntaxName1 = "default encoding"
+  val glyphSyntaxName2 = "specify encoding"
   parser("glyph") = (new TagParser(
       "glyph",
-      "default encoding",
+      glyphSyntaxName1,
       se => se.NumberOfParameters <= 2 || se.Parameters(2) == "local",
       "Font name, encoding (optional), position (hexadecimal) and 'local' (optional).",
       sp => sp.glyphTag)).
@@ -38,7 +40,7 @@ object Parsers {
     addOptions("position", true, List()).setDependency(Dependency.characterOnFont).
       setOptionMapping(Dependency.getFirstWord).setUseFontOffset(0).  // hexadecimal
     addFlag("local").addGuiAction(FontInformation, 0).
-    addSyntax("specify encoding", se => true).
+    addSyntax(glyphSyntaxName2, se => true).
     addOptions(fontName, true, textcompose.storage.StoredFontAnalysis.getAllFontTitles).
       setIsFontName().
     addOptions("encoding", false, List()).setDependency(Dependency.encodingOnFont).
@@ -49,7 +51,8 @@ object Parsers {
 
   def updateFont() {
     parser("font").updateOptions("", fontName, textcompose.storage.StoredFontAnalysis.getAllFontTitles)
-    parser("glyph").updateOptions("", fontName, textcompose.storage.StoredFontAnalysis.getAllFontTitles)
+    parser("glyph").updateOptions(glyphSyntaxName1, fontName, textcompose.storage.StoredFontAnalysis.getAllFontTitles)
+    parser("glyph").updateOptions(glyphSyntaxName2, fontName, textcompose.storage.StoredFontAnalysis.getAllFontTitles)
   }
 
   parser("char") = (new TagParser("char", sp => sp.charTag)).
