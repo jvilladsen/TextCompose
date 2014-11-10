@@ -45,24 +45,19 @@ object ResourceHandling {
 
   def copyDictionaries() {
     if (storage.Configurations.doUpdateResourcesNow) {
+      val dictionaries = List("english_uk.dict", "english_us.dict", "spanish.dict",
+        "portuguese.dict", "russian.dict", "french.dict", "german.dict", "danish.dict")
 
-      val message = "Some dictionaries will be copied; this takes a little while.\n" +
-        "It only happens the first time you start the application or\n" +
-        "a new version with updated or additional dictionaries."
-      DialogBox.info(message)
+      val progress = new textcompose.modals.ProgressDialog("Unpacking dictionaries")
+      progress.makeVisible()
 
-      def copy(name: String) {
-        copyResource("dictionary", name, getFullName(name))
+      var count = 0 
+      for (d <- dictionaries) {
+        progress.update((count * 100f) / dictionaries.length, d)
+        copyResource("dictionary", d, getFullName(d))
+        count += 1
       }
-
-      copy("english_uk.dict")
-      copy("english_us.dict")
-      copy("spanish.dict")
-      copy("portuguese.dict")
-      copy("russian.dict")
-      copy("french.dict")
-      copy("german.dict")
-      copy("danish.dict")
+      progress.finish()
     }
   }
 
