@@ -139,10 +139,10 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
     }
   }
 
-  private def storeDefaults() {
-    
+  private def addMissingEntries() {
+
     def updateFontLocation(dir: String) {
-      if (FileMethods.IsDirectory(dir)) update(List("FontLocation", dir))
+      if (FileMethods.IsDirectory(dir)) addIfMissing(List("FontLocation", dir))
     }
 
     if (core.Environment.isMacOSX) {
@@ -156,16 +156,16 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
       updateFontLocation("C:\\Windows\\Fonts")
     }
 
-    update(List("TabSize", "2"))
-    update(List("SaveBeforeCompile", "true"))
-    update(List("WriteErrorMessagesToDocument", "true"))
-    update(List("ViewAfterCompile", "2"))
-    update(List("CharacterEncoding", "UTF-8"))
-    update(List("EditorFontName", GUIFonts.getStandardFontName))
-    update(List("GUITheme", "1"))
-    update(List("DefaultDictionary", "English UK"))
-    update(List("PreviewZoomPercentage", "170"))
-    update(List("ResourcesVersion", "0"))
+    addIfMissing(List("TabSize", "2"))
+    addIfMissing(List("SaveBeforeCompile", "true"))
+    addIfMissing(List("WriteErrorMessagesToDocument", "true"))
+    addIfMissing(List("ViewAfterCompile", "2"))
+    addIfMissing(List("CharacterEncoding", "UTF-8"))
+    addIfMissing(List("EditorFontName", GUIFonts.getStandardFontName))
+    addIfMissing(List("GUITheme", "1"))
+    addIfMissing(List("DefaultDictionary", "English UK"))
+    addIfMissing(List("PreviewZoomPercentage", "170"))
+    addIfMissing(List("ResourcesVersion", "0"))
     saveToFile()
   }
 
@@ -181,8 +181,8 @@ object Configurations extends StoredArrayOfStringLists("Configuration.txt") {
   def initialize() {
     if (!initialized) {
       core.FontFileRegister.addBuildInFonts()
-      if (!fileExists) { storeDefaults() }
       loadFromFile()
+      addMissingEntries()
       extractFromDataSet()
       initialized = true
       if (!errorsDuringInitialization.isEmpty) {

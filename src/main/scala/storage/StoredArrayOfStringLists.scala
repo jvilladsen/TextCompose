@@ -57,6 +57,8 @@ abstract class StoredArrayOfStringLists(fileName: String) {
     dataSet.indexWhere(_.startsWith(lookupKey))
   }
 
+  def hasKey(stringList: List[String]): Boolean = getIndexOf(stringList) > -1
+
   def update(stringList: List[String]) {
     val index = getIndexOf(stringList)
     if (index < 0) {
@@ -72,6 +74,10 @@ abstract class StoredArrayOfStringLists(fileName: String) {
       dataSet(index) = dataSet(index).
         patch(offset, stringList, stringList.length)
     }
+  }
+  
+  def addIfMissing(stringList: List[String]) {
+    if (!hasKey(stringList)) update(stringList)
   }
 
   def remove(key: List[String]) {
