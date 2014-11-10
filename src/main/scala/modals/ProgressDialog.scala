@@ -42,7 +42,7 @@ class ProgressDialog(dialogTitle: String) extends Dialog {
   title = dialogTitle
   // modal = true
   resizable = false
-  preferredSize = new Dimension(350, 130)
+  preferredSize = new Dimension(450, 130)
   centerOnScreen()
   // We set the background color to avoid getting a brief white flash when the window is opened.
   background = Colors.modalWindows

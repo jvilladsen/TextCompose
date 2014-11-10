@@ -119,11 +119,11 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     for (shortFontId <- core.FontFileRegister.getShortFontIds) {
       if (getIndexOf(List(shortFontId)) == -1) {
 
+        progress.update((count * 100f) / numberOfFonts, shortFontId)
         update(getFontProperties(shortFontId))
         updateCharacterStorage(shortFontId)
         count += 1
         newFonts.push(shortFontId)
-        progress.update((count * 100f) / numberOfFonts, shortFontId)
       }
     }
     progress.finish()
