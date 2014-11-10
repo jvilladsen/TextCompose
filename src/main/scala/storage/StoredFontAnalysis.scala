@@ -173,10 +173,6 @@ object StoredFontAnalysis extends StoredArrayOfStringLists("FontAnalysis.txt") {
     if (fileExists) {
       loadFromFile()
       prune()
-    } else {
-      val appTitle = textcompose.startup.Launch.appTitle
-      editor.DialogBox.info("Since it is the first time you run " + appTitle +
-        " here,\nyour fonts will be analyzed. This can take a minute.")
     }
     updateStorage(false)
   }
